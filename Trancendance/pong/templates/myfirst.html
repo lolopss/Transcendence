@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong</title>
+    <title>Pong Game</title>
     <style>
         body {
             display: flex;
@@ -11,39 +11,114 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: black;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            overflow: hidden;
         }
 
         canvas {
-            background-color: #020202;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 2px solid #ffffff;
+            box-shadow: 0px 0px 10px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        #menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: absolute;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        #menu button {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #menu button:hover {
+            background-color: #ddd;
         }
     </style>
 </head>
 <body>
-    <canvas id="pongCanvas" width="800" height="400"></canvas>
+    <div id="menu">
+        <button id="soloBtn">Solo</button>
+        <button id="multiBtn">Multiplayer</button>
+    </div>
+    <canvas id="pongCanvas" width="800" height="400" style="display: none;"></canvas>
     <script>
         const canvas = document.getElementById('pongCanvas');
         const context = canvas.getContext('2d');
+        const menu = document.getElementById('menu');
+        let isMultiplayer = false; // Default to solo mode
 
         const paddleWidth = 10, paddleHeight = 100;
         const ballSize = 10;
+        let initialBallSpeed = 3; // Initial ball speed
+        let ballSpeed = initialBallSpeed;
 
-        let playerPaddle = { x: 0, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, dy: 0 };
-        let aiPaddle = { x: canvas.width - paddleWidth, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, dy: 2 };
-        let ball = { x: canvas.width / 2, y: canvas.height / 2, dx: 3, dy: 3, size: ballSize };
+        let playerPaddle = { x: 0, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, dy: 0, color: 'rgb(255,0,0)' };
+        let aiPaddle = { x: canvas.width - paddleWidth, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, dy: 2, color: 'rgb(0,0,255)' };
+        let ball = { x: canvas.width / 2, y: canvas.height / 2, dx: ballSpeed, dy: ballSpeed, size: ballSize };
+
+        let hue1 = 0; // Hue for player paddle
+        let hue2 = 180; // Hue for AI paddle
+        let impactEffect = 0; // Track the intensity of the impact effect
+        let shakeDuration = 0; // Track the duration of the screen shake
+
+        document.getElementById('soloBtn').addEventListener('click', () => {
+            isMultiplayer = false;
+            startGame();
+        });
+
+        document.getElementById('multiBtn').addEventListener('click', () => {
+            isMultiplayer = true;
+            startGame();
+        });
+
+        function startGame() {
+            menu.style.display = 'none'; // Hide the menu
+            canvas.style.display = 'block'; // Show the canvas
+            gameLoop(); // Start the game loop
+        }
 
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowUp') playerPaddle.dy = -5;
-            if (event.key === 'ArrowDown') playerPaddle.dy = 5;
+            if (event.key === 'ArrowUp') {
+                playerPaddle.dy = -5;
+            }
+            if (event.key === 'ArrowDown') {
+                playerPaddle.dy = 5;
+            }
+            if (event.key === 'w') {
+                if (isMultiplayer) aiPaddle.dy = -5; // Use 'W' to move AI paddle up in multiplayer
+            }
+            if (event.key === 's') {
+                if (isMultiplayer) aiPaddle.dy = 5; // Use 'S' to move AI paddle down in multiplayer
+            }
         });
 
         document.addEventListener('keyup', (event) => {
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') playerPaddle.dy = 0;
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                playerPaddle.dy = 0;
+            }
+            if (event.key === 'w' || event.key === 's') {
+                aiPaddle.dy = 0;
+            }
         });
 
         function drawRect(x, y, width, height, color) {
             context.fillStyle = color;
+            context.shadowBlur = 20; // Amount of glow
+            context.shadowColor = color; // Glow color
             context.fillRect(x, y, width, height);
+            context.shadowBlur = 0; // Reset shadow blur
         }
 
         function drawBall(x, y, size, color) {
@@ -62,43 +137,102 @@
             ball.x += ball.dx;
             ball.y += ball.dy;
 
+            // Ball collision with top and bottom
             if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
                 ball.dy *= -1;
             }
 
-            if (ball.x < 0) {
-                resetBall();
-            } else if (ball.x > canvas.width) {
+            // Ball out of bounds
+            if (ball.x < 0 || ball.x > canvas.width) {
                 resetBall();
             }
 
+            // Ball collision with player paddle
             if (ball.x - ball.size < playerPaddle.x + playerPaddle.width &&
                 ball.y > playerPaddle.y && ball.y < playerPaddle.y + playerPaddle.height) {
-                ball.dx *= -1;
+                ball.dx *= -1.1; // Increase speed by 10% on hit
+                ball.dy += playerPaddle.dy / 2; // Add dynamic movement based on paddle speed
+                triggerImpactEffect(); // Trigger impact effect
             }
 
+            // Ball collision with AI or multiplayer paddle
             if (ball.x + ball.size > aiPaddle.x &&
                 ball.y > aiPaddle.y && ball.y < aiPaddle.y + aiPaddle.height) {
-                ball.dx *= -1;
+                ball.dx *= -1.1; // Increase speed by 10% on hit
+                ball.dy += aiPaddle.dy / 2; // Add dynamic movement based on paddle speed
+                triggerImpactEffect(); // Trigger impact effect
             }
 
-            aiPaddle.y += aiPaddle.dy;
-            if (aiPaddle.y < 0 || aiPaddle.y + paddleHeight > canvas.height) {
-                aiPaddle.dy *= -1;
+            // AI Paddle movement (only for solo mode)
+            if (!isMultiplayer) {
+                if (ball.dy > 0) {
+                    aiPaddle.dy = Math.min(ballSpeed, 2); // Slightly follow the ball
+                } else {
+                    aiPaddle.dy = Math.max(-ballSpeed, -2);
+                }
+
+                aiPaddle.y += aiPaddle.dy;
+                if (aiPaddle.y < 0) aiPaddle.y = 0;
+                if (aiPaddle.y + paddleHeight > canvas.height) aiPaddle.y = canvas.height - paddleHeight;
+            }
+
+            // Update paddle colors
+            updatePaddleColors();
+
+            // Update impact effect
+            if (impactEffect > 0) {
+                impactEffect -= 1; // Gradually reduce impact effect
+                let effectIntensity = impactEffect / 10; // Scale the intensity
+                canvas.style.backgroundColor = `rgba(255, 255, 255, ${effectIntensity})`; // Apply effect
+            } else {
+                canvas.style.backgroundColor = "rgba(0, 0, 0, 0.6)"; // Reset to default background color
+            }
+
+            // Handle screen shake
+            if (shakeDuration > 0) {
+                shakeDuration--;
+                const shakeIntensity = shakeDuration * 2; // Shake intensity based on duration
+                const offsetX = Math.random() * shakeIntensity - shakeIntensity / 2;
+                const offsetY = Math.random() * shakeIntensity - shakeIntensity / 2;
+                canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            } else {
+                canvas.style.transform = "translate(0, 0)"; // Reset position after shake
+            }
+        }
+
+        function updatePaddleColors() {
+            // Increment hues for RGB effect
+            hue1 = (hue1 + 1) % 360;
+            hue2 = (hue2 + 1) % 360;
+
+            // Update paddle colors using HSL for smooth RGB transitions
+            playerPaddle.color = `hsl(${hue1}, 100%, 50%)`;
+            aiPaddle.color = `hsl(${hue2}, 100%, 50%)`;
+        }
+
+        function triggerImpactEffect() {
+            let speedRatio = ball.dx / initialBallSpeed;
+            impactEffect = Math.min(10, speedRatio * 5); // Set impact effect based on speed ratio
+
+            // If the ball speed is at least twice the initial speed, trigger screen shake
+            if (Math.abs(ball.dx) >= initialBallSpeed * 2) {
+                shakeDuration = 10; // Set screen shake duration
             }
         }
 
         function resetBall() {
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
-            ball.dx = -ball.dx;
+            ballSpeed = initialBallSpeed; // Reset speed
+            ball.dx = (Math.random() > 0.5 ? 1 : -1) * ballSpeed; // Randomize initial direction
+            ball.dy = (Math.random() * 2 - 1) * ballSpeed; // Randomize initial angle
         }
 
         function draw() {
             context.clearRect(0, 0, canvas.width, canvas.height);
 
-            drawRect(playerPaddle.x, playerPaddle.y, playerPaddle.width, playerPaddle.height, 'white');
-            drawRect(aiPaddle.x, aiPaddle.y, aiPaddle.width, aiPaddle.height, 'white');
+            drawRect(playerPaddle.x, playerPaddle.y, playerPaddle.width, playerPaddle.height, playerPaddle.color);
+            drawRect(aiPaddle.x, aiPaddle.y, aiPaddle.width, aiPaddle.height, aiPaddle.color);
             drawBall(ball.x, ball.y, ball.size, 'white');
         }
 
@@ -107,8 +241,6 @@
             draw();
             requestAnimationFrame(gameLoop);
         }
-
-        gameLoop();
     </script>
 </body>
 </html>

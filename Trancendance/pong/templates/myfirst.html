@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pong Game</title>
+    <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
+
     <style>
         body {
             display: flex;
@@ -13,6 +16,7 @@
             margin: 0;
             background: linear-gradient(45deg, #1e3c72, #2a5298);
             overflow: hidden;
+            position: relative;
         }
 
         canvas {
@@ -20,10 +24,29 @@
             border: 2px solid #ffffff;
             box-shadow: 0px 0px 10px 2px rgba(255, 255, 255, 0.5);
         }
+
+        .scoreboard {
+            position: absolute;
+            top: 20px;
+            font-size: 24px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 40px;
+        }
     </style>
 </head>
 <body>
+    <!-- Scoreboard -->
+    <div class="scoreboard">
+        <div id="playerScore">Player: 0</div>
+        <div id="aiScore">AI: 0</div>
+    </div>
+
+    <!-- Pong Game Canvas -->
     <canvas id="pongCanvas" width="800" height="400"></canvas>
+
     <script>
         const canvas = document.getElementById('pongCanvas');
         const context = canvas.getContext('2d');
@@ -33,8 +56,11 @@
         let initialBallSpeed = 3;
         let ballSpeed = initialBallSpeed;
 
-        let playerPaddle = { x: 0, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, dy: 0, color: 'rgb(255,0,0)' };
-        let aiPaddle = { x: canvas.width - paddleWidth, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, dy: 2, color: 'rgb(0,0,255)' };
+        let playerScore = 0;
+        let aiScore = 0;
+
+        let playerPaddle = { x: 0 + 15, y: canvas.height / 2 - paddleHeight / 2 , width: paddleWidth, height: paddleHeight, dy: 0, color: 'rgb(255,0,0)' };
+        let aiPaddle = { x: canvas.width - paddleWidth - 15, y: canvas.height / 2 - paddleHeight / 2, width: paddleWidth, height: paddleHeight, dy: 2, color: 'rgb(0,0,255)' };
         let ball = { x: canvas.width / 2, y: canvas.height / 2, dx: ballSpeed, dy: ballSpeed, size: ballSize };
 
         let hue1 = 0;
@@ -47,25 +73,25 @@
         }
 
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowUp') {
+            if (event.key === 'w') {
                 playerPaddle.dy = -5;
             }
-            if (event.key === 'ArrowDown') {
+            if (event.key === 's') {
                 playerPaddle.dy = 5;
             }
-            if (event.key === 'w') {
+            if (event.key === 'ArrowUp') {
                 aiPaddle.dy = -5;
             }
-            if (event.key === 's') {
+            if (event.key === 'ArrowDown') {
                 aiPaddle.dy = 5;
             }
         });
 
         document.addEventListener('keyup', (event) => {
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            if (event.key === 'w' || event.key === 's') {
                 playerPaddle.dy = 0;
             }
-            if (event.key === 'w' || event.key === 's') {
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
                 aiPaddle.dy = 0;
             }
         });
@@ -97,7 +123,14 @@
                 ball.dy *= -1;
             }
 
-            if (ball.x < 0 || ball.x > canvas.width) {
+            // Check for scoring
+            if (ball.x < 0) {
+                aiScore++;
+                updateScore();
+                resetBall();
+            } else if (ball.x > canvas.width) {
+                playerScore++;
+                updateScore();
                 resetBall();
             }
 
@@ -130,6 +163,11 @@
             } else {
                 canvas.style.transform = "translate(0, 0)";
             }
+        }
+
+        function updateScore() {
+            document.getElementById('playerScore').textContent = `Player: ${playerScore}`;
+            document.getElementById('aiScore').textContent = `AI: ${aiScore}`;
         }
 
         function updatePaddleColors() {

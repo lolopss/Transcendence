@@ -1,12 +1,17 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
-
-#Used for the registration
 class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
+    nickname = forms.CharField(max_length=15, required=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ('username', 'email', 'password1', 'password2', 'nickname')
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        if commit:
+            user.profile.nickname = self.cleaned_data['nickname']
+            user.profile.save()
+        return user

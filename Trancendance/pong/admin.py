@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import User
-
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('nickname', 'email', 'wins', 'losses', 'winrate_display')
+from .models import Profile
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'nickname', 'wins', 'losses', 'winrate_display')  # Ensure fields are correct
 
     def winrate_display(self, obj):
-        # Format winrate as a percentage with 2 decimal places
-        return f"{obj.winrate:.2f}%"
-    winrate_display.short_description = 'Winrate'
+        # Use obj to access the profile instance
+        return f"{obj.winrate:.2f}%"  # Format winrate to 2 decimal places
 
-admin.site.register(User, UserAdmin)
+    winrate_display.short_description = 'Winrate (%)'  # Set column name in the admin interface
+
+admin.site.register(Profile, ProfileAdmin)

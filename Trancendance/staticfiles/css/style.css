@@ -1,0 +1,36 @@
+#pongCanvas {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    border: 2px solid #ffffff;
+    box-shadow: 0px 0px 10px 2px rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}
+
+#fxCanvas {
+    position: absolute;
+    z-index: 2;
+}
+
+.is-animated {
+    animation: pongEntrance 4s 1 ease-in-out;
+}
+
+@keyframes pongEntrance {
+    from {
+        -webkit-filter: blur(25px);
+        transform: translateY(-70vh) rotate3d(1, 0, 0, -80deg);
+    }
+    to {
+        transform: translateY(0vh);
+    }
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(45deg, #5c440f, #6f1985);
+    overflow: hidden;
+}

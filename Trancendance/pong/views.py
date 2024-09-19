@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect  # Import redirect and render functions
 from .forms import RegistrationForm
@@ -17,6 +17,10 @@ def register(request):
         form = RegistrationForm()
     return render(request, 'register.html', {'form': form})
 
+def user_logout(request):
+    logout(request)
+    return(redirect('login'))
+
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')  # Safely get username
@@ -32,4 +36,4 @@ def user_login(request):
 
 @login_required
 def pong(request):
-    return render(request, 'myfirst.html')
+    return render(request, 'index.html')

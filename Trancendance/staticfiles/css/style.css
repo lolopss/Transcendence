@@ -12,7 +12,7 @@
 }
 
 .is-animated {
-    animation: pongEntrance 4s 1 ease-in-out;
+    animation: pongEntrance 3s 1 ease-in-out;
 }
 
 @keyframes pongEntrance {
@@ -31,6 +31,41 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background: linear-gradient(45deg, #5c440f, #6f1985);
+    background: linear-gradient(45deg, #bd8714, #9f06e6);
     overflow: hidden;
 }
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#startButton, #modeButtons button {
+    font-size: 20px;
+    font-family: 'Press Start 2P', sans-serif;
+    padding: 15px 30px;
+    border: 2px solid transparent;
+    background: linear-gradient(45deg, #bd8714, #9f06e6); /* Gradient background */
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: background 0.3s, border 0.3s, transform 0.3s;
+    border-radius: 5px; /* Optional: rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Optional: shadow effect */
+    margin: 10px; /* Space between buttons */
+    outline: none;
+}
+
+#startButton:hover, #modeButtons button:hover {
+    background: linear-gradient(45deg, #9f06e6, #bd8714); /* Reverse gradient on hover */
+    border: 2px solid #fff; /* Light border on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+#startButton:active, #modeButtons button:active {
+    transform: scale(0.98); /* Slightly shrink on click */
+}
+
+

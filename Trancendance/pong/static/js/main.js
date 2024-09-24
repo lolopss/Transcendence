@@ -92,6 +92,7 @@ document.addEventListener('keyup', (event) => {
     }
 });
 
+
 function drawRect(x, y, width, height, color) {
     context.fillStyle = color;
     context.shadowBlur = 20;
@@ -233,47 +234,60 @@ function draw() {
     drawPoints(textPoint.x, textPoint.y);
 }
 
-function drawFxLine(x, y, width, height) {
-    fxContext.clearRect(0, 0, fx.width, fx.height);
-    fxContext.fillStyle = fxBlock.color;
-    fxContext.shadowBlur = 10;
-    fxContext.shadowColor = fxBlock.color;
-    fxContext.fillRect(x, y, width, height);
-    fxContext.shadowBlur = 0;
+function drawFxLine(x, y, width, height, color) {
+    fxContext.clearRect(0, 0, fx.width, fx.height); // Clear previous frame
+    fxContext.strokeStyle = color; // Use color for line
+    fxContext.lineWidth = 5; // Adjust thickness of the line
+    fxContext.shadowBlur = 20; // Increase blur for luminous effect
+    fxContext.shadowColor = color; // Glow color matches line color
+    fxContext.beginPath();
+    fxContext.moveTo(x, y); // Start the line
+    fxContext.lineTo(x + width, y + height); // End the line
+    fxContext.stroke(); // Draw the line
+    fxContext.shadowBlur = 0; // Remove shadow for next frame
 }
 
+// Variables for line position and size
 let fxPosX = 5;
 let fxPosY = 5;
-let fxWidth = 10;
-let fxHeight = 10;
+let fxLineLength = 50; // Length of the line
 
-let fxBlock = {x: fxPosX, y: fxPosY, width: fxWidth, height: fxHeight, color: 'white' }
+let fxBlock = {
+    x: fxPosX,
+    y: fxPosY,
+    lineLength: fxLineLength,
+    color: 'white'
+};
 
 function fxUpdate() {
-    drawFxLine(fxBlock.x, fxBlock.y, fxBlock.width, fxBlock.height);
+    // Determine the line color based on the score
     if (player1.point === player2.point) {
         fxBlock.color = 'white';
-    }
-    else if (player1.point > player2.point) {
+    } else if (player1.point > player2.point) {
         fxBlock.color = player1.paddle.color;
-    }
-    else if (player1.point < player2.point) {
+    } else if (player1.point < player2.point) {
         fxBlock.color = player2.paddle.color;
     }
 
-    if (fxBlock.x < fx.width - 10 && fxBlock.y === 5){
+    // Draw the luminous line
+    // drawFxLine(fxBlock.x, fxBlock.y, fxBlock.lineLength, 0, fxBlock.color);
+
+    // Move the line around the edges
+    if (fxBlock.x < fx.width - fxLineLength && fxBlock.y === 5) {
+        // Move right along the top edge
         fxBlock.x += 5;
-    }
-    else if (fxBlock.y < fx.height - 10 && fxBlock.x === fx.width - 10){
+    } else if (fxBlock.y < fx.height - 5 && fxBlock.x === fx.width - fxLineLength) {
+        // Move down along the right edge
         fxBlock.y += 5;
-    }
-    else if (fxBlock.x > 5 && fxBlock.y === fx.height - 10){
+    } else if (fxBlock.x > 5 && fxBlock.y === fx.height - 5) {
+        // Move left along the bottom edge
         fxBlock.x -= 5;
-    }
-    else if (fxBlock.y > 5 && fxBlock.x === 5){
+    } else if (fxBlock.y > 5 && fxBlock.x === 5) {
+        // Move up along the left edge
         fxBlock.y -= 5;
     }
 }
+
 
 function gameLoop() {
     update();

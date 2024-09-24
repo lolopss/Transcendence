@@ -6,14 +6,16 @@
         <meta charset="utf-8"/>
         <meta name="Author" content="ABougy" />
         <link rel="shortcut icon" href="{% static 'Images/TestLogo.ico' %}"/>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}?v={{ static_version }}">
     </head>
     <body>
         <div id="menu">
             <button id="startButton">Start Game</button>
+            <button id="dodgeballButton" style="display: none;">Dodgeball Mode</button>
         </div>
         <canvas id="pongCanvas" width="800" height="400"></canvas>
         <canvas id="fxCanvas" width="850" height="450"></canvas>
-        <script src="{% static 'js/main.js' %}"></script>
+        <script src="{% static 'js/main.js' %}?v={{ static_version }}"></script>
+
     </body>
 </html>

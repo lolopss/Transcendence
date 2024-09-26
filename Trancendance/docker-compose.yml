@@ -21,7 +21,7 @@ services:
         condition: service_healthy
     build:
       context: ./
-      dockerfile: ./back-end/Dockerfile
+      dockerfile: ./Backend/pong/Dockerfile
     restart: always
     networks:
       - main
@@ -31,24 +31,30 @@ services:
       timeout: 10s
       retries: 3
     env_file: .env
-    ports:
-      - "8000:8000"
 
-  front:
+  nginx:
+    container_name: nginx
     depends_on:
       django:
         condition: service_healthy
     build:
-      context: ./front-end
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./front-end/src:/app/src
+      context: ./
+      dockerfile: ./nginx/Dockerfile
+      args:
+        - NGINX_PROTOCOL=https
+    ports:
+      - '8000:8000'
+    restart: always
     networks:
       - main
-    restart: always
-    init: true
-    ports:
-      - "3000:3000"
+    volumes:
+      - /var/www/html
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 3s
+      timeout: 10s
+      retries: 3
+    env_file: .env
 
 networks:
   main:

@@ -1,0 +1,14 @@
+asgiref==3.8.1
+bcrypt==3.2.0
+channels==4.1.0
+cryptography==3.4.8
+Django==4.2.16
+django-cors-headers==3.13.0  # If you're using CORS headers
+django-debug-toolbar==3.6.0  # Only if you are using the debug toolbar
+django-environ==0.10.0  # If you manage environment variables via django-environ
+djangorestframework==3.14.0  # Only if you're using DRF
+gunicorn==20.1.0  # If deploying Django with Gunicorn
+psycopg2-binary==2.9.3  # For PostgreSQL support
+sqlparse==0.5.1
+websockets==10.3  # If you are using WebSockets
+daphne

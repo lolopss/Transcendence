@@ -1,0 +1,61 @@
+services:
+  db:
+    container_name: db
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - main
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 5s
+      retries: 3
+      timeout: 5s
+
+  django:
+    container_name: django
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: ./Backend/Dockerfile
+    restart: always
+    networks:
+      - main
+    healthcheck:
+      test: ["CMD-SHELL", "curl localhost:8000 || exit 1"]
+      interval: 3s
+      timeout: 10s
+      retries: 3
+    env_file: .env
+
+  nginx:
+    container_name: nginx
+    depends_on:
+      django:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: ./nginx/Dockerfile
+      args:
+        - NGINX_PROTOCOL=https
+    ports:
+      - '8000:8000'
+    restart: always
+    networks:
+      - main
+    volumes:
+      - /var/www/html
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 3s
+      timeout: 10s
+      retries: 3
+    env_file: .env
+
+networks:
+  main:
+    name: main
+    driver: bridge

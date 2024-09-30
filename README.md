@@ -1,4 +1,4 @@
-# Trancendance
+# Transcendence
 42 final common-core project
 
 doc : 

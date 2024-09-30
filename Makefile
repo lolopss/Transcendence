@@ -1,18 +1,18 @@
 all: build
-	cd Trancendance/ && docker-compose up -d
+	cd Transcendence/ && docker-compose up -d
 
 build: 
-	cd Trancendance/ && docker-compose build
+	cd Transcendence/ && docker-compose build
 
 fclean:
 	$(MAKE) clean
 	docker system prune --force --volumes --all
 
 stop:
-	cd Trancendance/ && docker-compose -f docker-compose.yml stop
+	cd Transcendence/ && docker-compose -f docker-compose.yml stop
 
 clean:
-	cd Trancendance/ && docker-compose -f docker-compose.yml down -v
+	cd Transcendence/ && docker-compose -f docker-compose.yml down -v
 
 
 re: stop clean build

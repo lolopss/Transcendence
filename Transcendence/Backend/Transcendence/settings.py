@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-du&03o*5z)di#634%jy#11-3!loep#k3(%i%4sepx($6$ocgby
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -79,9 +79,9 @@ WSGI_APPLICATION = 'Transcendence.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'NAME': 'database_PONG',
+        'USER': 'logan',
+        'PASSWORD': '1',
         'HOST': 'db',  # This should match the service name in your docker-compose
         'PORT': '5432',
     }

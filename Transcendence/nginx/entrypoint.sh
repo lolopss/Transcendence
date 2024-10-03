@@ -1,5 +1,5 @@
 #!/bin/bash
-mv /etc/nginx/nginx_https.conf /etc/nginx/nginx.conf
-/etc/nginx/nginx_start.sh
+mv /etc/nginx/https.conf /etc/nginx/nginx.conf
+/etc/nginx/launch_nginx.sh
 
 exec nginx -g 'daemon off;'

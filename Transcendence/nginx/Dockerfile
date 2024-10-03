@@ -26,7 +26,7 @@ COPY --from=build /app/front-end/build /var/www/html
 #COPY --from=build /app/front-end/build/static/css /var/www/html
 
 # Nginx configuration and script setup
-COPY ./nginx/https.conf /etc/nginx/nginx_https.conf
+COPY ./nginx/https.conf /etc/nginx/https.conf
 COPY ./nginx/launch_nginx.sh /etc/nginx/launch_nginx.sh
 RUN chmod +x /etc/nginx/launch_nginx.sh
 

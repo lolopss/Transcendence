@@ -1,12 +1,11 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <link rel="icon" type="image/x-icon" href="../static/image/TestLogo.ico">
+        <link rel="icon" type="image/x-icon" href="/static/image/TestLogo.ico">
         <meta charset="utf-8"/>
         <meta name="Author" content="ABougy" />
-        <link rel="shortcut icon" href="{% static 'Images/TestLogo.ico' %}"/>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}?v={{ static_version }}">
+        <link rel="shortcut icon" href="/static/Images/TestLogo.ico"/>
+        <link rel="stylesheet" href="/static/css/style.css?v=1.0">
     </head>
     <body>
         <div id="menu">
@@ -15,7 +14,6 @@
         </div>
         <canvas id="pongCanvas" width="800" height="400"></canvas>
         <canvas id="fxCanvas" width="850" height="450"></canvas>
-        <script src="{% ../src/main.js' %}?v={{ static_version }}"></script>
-
+        <script src="/static/src/main.js?v=1.0"></script>
     </body>
 </html>

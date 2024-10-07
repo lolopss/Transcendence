@@ -13,6 +13,7 @@ WORKDIR /app/front-end
 RUN npm cache clean --force
 
 # Install dependencies and run build
+RUN npm update
 RUN npm install
 RUN npm run build
 
@@ -22,6 +23,7 @@ RUN rm -rf /var/www/html
 RUN mkdir -p /etc/nginx/ssl
 
 # Copy built files from the Node.js build stage
+
 COPY --from=build /app/front-end/build /var/www/html
 #COPY --from=build /app/front-end/build/static/css /var/www/html
 

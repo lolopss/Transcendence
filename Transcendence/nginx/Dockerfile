@@ -32,7 +32,7 @@ COPY ./nginx/https.conf /etc/nginx/https.conf
 COPY ./nginx/launch_nginx.sh /etc/nginx/launch_nginx.sh
 RUN chmod +x /etc/nginx/launch_nginx.sh
 
-EXPOSE 8000
+EXPOSE 3000
 
 COPY ./nginx/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

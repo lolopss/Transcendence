@@ -25,7 +25,7 @@ services:
     networks:
       - main
     healthcheck:
-      test: ["CMD-SHELL", "curl localhost:8000 || exit 1"]
+      test: ["CMD-SHELL", "curl localhost:3000 || exit 1"]
       interval: 3s
       timeout: 10s
       retries: 3
@@ -42,14 +42,14 @@ services:
       args:
         - NGINX_PROTOCOL=https
     ports:
-      - '8000:8000'
+      - '3000:3000'
     restart: always
     networks:
       - main
     volumes:
       - /var/www/html
     healthcheck:
-      test: ["CMD-SHELL", "curl -f https://localhost:8000/ || exit 1"]
+      test: ["CMD-SHELL", "curl -f https://localhost:3000/ || exit 1"]
       interval: 3s
       timeout: 10s
       retries: 3

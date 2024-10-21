@@ -24,8 +24,7 @@ RUN mkdir -p /etc/nginx/ssl
 
 # Copy built files from the Node.js build stage
 
-COPY --from=build /app/front-end/build /var/www/html
-#COPY --from=build /app/front-end/build/static/css /var/www/html
+COPY --from=build /app/front-end/dist /var/www/html
 
 # Nginx configuration and script setup
 COPY ./nginx/https.conf /etc/nginx/https.conf

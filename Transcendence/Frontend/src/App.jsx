@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 
+
 const PongGame = () => {
   const canvasRef = useRef(null);
   const fxCanvasRef = useRef(null);

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-du&03o*5z)di#634%jy#11-3!loep#k3(%i%4sepx($6$ocgby
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
 # Application definition
@@ -82,10 +82,15 @@ DATABASES = {
         'NAME': 'database_PONG',
         'USER': 'logan',
         'PASSWORD': '1',
-        'HOST': 'db',  # This should match the service name in your docker-compose
+        'HOST': 'DB',  # This should match the service name in your docker-compose
         'PORT': '5432',
     }
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:3000',
+    'http://localhost:3000',  # For non-HTTPS connections
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

@@ -1,0 +1,17 @@
+#gameCanvas {
+    background-color: black;
+}
+
+.is-animated {
+    animation: pongEntrance 4s 1 ease-in-out;
+}
+
+@keyframes pongEntrance {
+    from {
+        -webkit-filter: blur(25px);
+        transform: translateY(-70vh) rotate3d(1, 0, 0, -80deg);
+    }
+    to {
+        transform: translateY(0vh);
+    }
+}

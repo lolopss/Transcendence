@@ -14,5 +14,5 @@ RUN  pip install --upgrade pip \
 
 EXPOSE 3000
 
-CMD  python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 3000 Transcendence.asgi:application
+CMD  python manage.py collectstatic --noinput && python3 manage.py makemigrations && python3 manage.py migrate && daphne -b 0.0.0.0 -p 3000 Transcendence.asgi:application
 #Peut etre mettre collectstatics pour recuperer les statics (ex : /admin moche car trouves pas les fichiers)

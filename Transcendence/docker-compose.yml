@@ -30,7 +30,9 @@ services:
       timeout: 10s
       retries: 3
     env_file: .env
-
+    volumes:
+      - static_volume:/app/back-end/staticfiles  # Sync static files
+  
   nginx:
     container_name: nginx
     depends_on:
@@ -48,6 +50,7 @@ services:
       - main
     volumes:
       - /var/www/html
+      - static_volume:/static
     healthcheck:
       test: ["CMD-SHELL", "curl -kf https://localhost:3000/ || exit 1"]
       interval: 3s
@@ -59,3 +62,6 @@ networks:
   main:
     name: main
     driver: bridge
+
+volumes:
+  static_volume:

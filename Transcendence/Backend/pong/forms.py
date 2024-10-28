@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Profile
 
 class RegistrationForm(UserCreationForm):
     nickname = forms.CharField(max_length=15, required=True)
@@ -15,3 +16,9 @@ class RegistrationForm(UserCreationForm):
             user.profile.nickname = self.cleaned_data['nickname']
             user.profile.save()
         return user
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['nickname', 'wins', 'losses']

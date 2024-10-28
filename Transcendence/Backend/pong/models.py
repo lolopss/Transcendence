@@ -10,7 +10,10 @@ class Profile(models.Model):
     nickname = models.CharField(max_length=15)
     wins = models.IntegerField(default=0)  # Track the number of wins
     losses = models.IntegerField(default=0)  # Track the number of losses
-
+    goals = models.IntegerField(default=0)  # Track the number of goals done
+    goals_taken = models.IntegerField(default=0)  # Track the number of goals taken
+    longuest_exchange = models.IntegerField(default=0)  # Track the longuest exchange
+    ace = models.IntegerField(default=0)  # Track the number of ace
     @property
     def winrate(self):
         # Calculate winrate as a percentage

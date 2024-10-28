@@ -39,8 +39,27 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pong',
-    'channels'
+    'channels',
+    'rest_framework',
 ]
+#FOR API / LOGIN ... 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Set token expiry as needed
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -79,17 +98,17 @@ WSGI_APPLICATION = 'Transcendence.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'database_PONG',
-        'USER': 'logan',
-        'PASSWORD': '1',
-        'HOST': 'DB',  # This should match the service name in your docker-compose
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': 'db',  # This should match the service name in your docker-compose
         'PORT': '5432',
     }
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:3000',
-    'http://localhost:3000',  # For non-HTTPS connections
+    'https://localhost:8000',
+    'http://localhost:8000',  # For non-HTTPS connections
 ]
 
 # Password validation

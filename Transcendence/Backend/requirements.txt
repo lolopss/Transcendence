@@ -12,3 +12,4 @@ psycopg2-binary==2.9.3  # For PostgreSQL support
 sqlparse==0.5.1
 websockets==10.3  # If you are using WebSockets
 daphne
+djangorestframework-simplejwt

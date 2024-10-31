@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -20,11 +20,8 @@ const LoginPage = () => {
       const data = await response.json();
   
       if (response.ok) {
-        // Save token to localStorage
         localStorage.setItem('authToken', data.token);
         console.log('Login successful!');
-        
-        // Redirect to a protected page after login
         navigate('/menu');
       } else {
         setError(data.error || 'An error occurred during login.');
@@ -52,6 +49,11 @@ const LoginPage = () => {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button onClick={handleLogin}>Login</button>
+      
+      {/* Link to the registration page */}
+      <p>
+        Don't have an account? <Link to="/register">Register here</Link>
+      </p>
     </div>
   );
 };

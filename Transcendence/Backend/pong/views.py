@@ -15,13 +15,16 @@ from .forms import ProfileForm
 from .models import Profile
 
 @api_view(['POST'])
+@permission_classes([permissions.AllowAny])  # Allows anyone to access this view
 def user_register(request):
     form = RegistrationForm(request.data)
     if form.is_valid():
         user = form.save()
         login(request, user)
         return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+
     return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @authentication_classes([])
 class UserLoginView(APIView):

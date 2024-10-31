@@ -4,7 +4,7 @@ from django.core.management import execute_from_command_line
 
 # To automate the creation of the django admin (Superuser) 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "your_project_name.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Transcendence.settings")
     try:
         import django
         django.setup()

@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const RegistrationPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [password1, setPassword1] = useState(''); // Changed to password1
-  const [password2, setPassword2] = useState(''); // Added password2
+  const [password1, setPassword1] = useState('');
+  const [password2, setPassword2] = useState('');
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState(null);
+  const [csrftoken, setCsrfToken] = useState('');
+  const navigate = useNavigate();
+
+
+  useEffect(() => {
+    // Get CSRF token from cookies when component mounts
+    const getCookie = (name) => {
+      const cookieValue = `; ${document.cookie}`;
+      const parts = cookieValue.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    };
+
+    const token = getCookie('csrftoken');
+    setCsrfToken(token);
+  }, []);
 
   const handleRegister = async () => {
     try {
@@ -14,12 +30,13 @@ const RegistrationPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken, // Ensure this is set
         },
         body: JSON.stringify({
           username,
           email,
-          password1, // Use password1 here
-          password2, // Use password2 here
+          password1,
+          password2,
           nickname,
         }),
       });
@@ -28,7 +45,7 @@ const RegistrationPage = () => {
 
       if (response.ok) {
         console.log('Registration successful!');
-        navigate('/login');
+        navigate('/login'); // Ensure `navigate` is defined or imported if using react-router
       } else {
         console.error(data);
         setError(data.error || 'An error occurred during registration.');
@@ -59,13 +76,13 @@ const RegistrationPage = () => {
         type="password"
         placeholder="Password"
         value={password1}
-        onChange={(e) => setPassword1(e.target.value)} // Update password1
+        onChange={(e) => setPassword1(e.target.value)}
       />
       <input
         type="password"
         placeholder="Confirm Password"
         value={password2}
-        onChange={(e) => setPassword2(e.target.value)} // Update password2
+        onChange={(e) => setPassword2(e.target.value)}
       />
       <input
         type="text"

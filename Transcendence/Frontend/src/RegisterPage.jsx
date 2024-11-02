@@ -11,7 +11,6 @@ const RegistrationPage = () => {
   const [csrftoken, setCsrfToken] = useState('');
   const navigate = useNavigate();
 
-
   useEffect(() => {
     // Get CSRF token from cookies when component mounts
     const getCookie = (name) => {
@@ -56,6 +55,13 @@ const RegistrationPage = () => {
     }
   };
 
+  // Function to handle Enter key press
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleRegister();
+    }
+  };
+
   return (
     <div>
       <h2>Register</h2>
@@ -65,30 +71,35 @@ const RegistrationPage = () => {
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <input
         type="text"
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <input
         type="password"
         placeholder="Password"
         value={password1}
         onChange={(e) => setPassword1(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <input
         type="password"
         placeholder="Confirm Password"
         value={password2}
         onChange={(e) => setPassword2(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <input
         type="text"
         placeholder="Nickname"
         value={nickname}
         onChange={(e) => setNickname(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <button onClick={handleRegister}>Register</button>
     </div>

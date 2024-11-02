@@ -1,23 +1,54 @@
-import './Menu.css'
-
-function GameButton(props) {
-    return (
-        <div className="GameButton">
-            <p>{props.usage}</p>
-            <button>{props.name}</button>
-        </div>
-    );
-}
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 function GameMenu() {
+    const navigate = useNavigate(); // Ensure you have useNavigate for navigation
+
+    function GameButton({ usage, name, onClick }) {
+        return (
+            <div className="GameButton">
+                <p>{usage}</p>
+                <button onClick={onClick}>{name}</button>
+            </div>
+        );
+    }
+    
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('/api/logout/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+
+            if (response.ok) {
+                // Clear auth tokens from local storage
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken'); // Clear refresh token if you store it
+
+                // Redirect to the login page
+                navigate('/login');
+            } else {
+                console.error('Logout failed.');
+                // Handle logout error if needed
+            }
+        } catch (error) {
+            console.error('Error during logout:', error);
+            // Handle any unexpected errors
+        }
+    };
+
     return (
         <div>
             <h2>THE PONG</h2>
-            <GameButton usage="start the game" name="Start"></GameButton>
-            <GameButton usage="see the option" name="Option"></GameButton>
-            <GameButton usage="quit the game" name="Quit"></GameButton>
+            <GameButton usage="Start the game" name="Start" />
+            <GameButton usage="See the options" name="Option" />
+            <GameButton usage="Quit the game" name="Quit" />
+            <GameButton usage="Logout from your account" name="Logout" onClick={handleLogout} /> {/* Pass handleLogout to onClick */}
         </div>
     );
 }
 
-export default GameMenu
+export default GameMenu;

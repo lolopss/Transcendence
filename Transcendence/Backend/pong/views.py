@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from .forms import RegistrationForm
 from .forms import ProfileForm
 from .models import Profile
+import random  # For simulating matchmaking
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])  # Allows anyone to access this view
@@ -83,3 +84,21 @@ def edit_profile_view(request):
     else:
         form = ProfileForm(instance=profile)
     return render(request, 'edit_profile.html', {'form': form})
+
+
+
+# This will hold your matchmaking queue
+matchmaking_queue = []
+
+@api_view(['POST'])
+async def matchmaking(request):
+    user_id = request.data.get('user_id')  # Assume you send the user ID
+    matchmaking_queue.append(user_id)
+
+    if len(matchmaking_queue) >= 2:
+        player1 = matchmaking_queue.pop(0)
+        player2 = matchmaking_queue.pop(0)
+        # You can return the game details or room info
+        return Response({'message': 'Match found', 'players': [player1, player2]})
+    
+    return Response({'message': 'Waiting for another player...'})

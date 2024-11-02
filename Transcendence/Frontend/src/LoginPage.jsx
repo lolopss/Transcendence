@@ -32,6 +32,13 @@ const LoginPage = () => {
     }
   };
 
+  // Function to handle Enter key press
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div>
       <h2>Login</h2>
@@ -41,12 +48,14 @@ const LoginPage = () => {
         placeholder="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <button onClick={handleLogin}>Login</button>
       

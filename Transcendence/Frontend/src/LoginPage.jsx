@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useEffect } from 'react';
 
@@ -16,6 +16,14 @@ const LoginPage = () => {
     }
   }, [navigate]);
 
+  useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+      // Redirect to the main page if already logged in
+      navigate('/menu');
+    }
+  }, [navigate]);
+
   const handleLogin = async () => {
     try {
       const response = await fetch('/api/login/', {
@@ -25,9 +33,9 @@ const LoginPage = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         localStorage.setItem('authToken', data.token);
         console.log('Login successful!');
@@ -67,7 +75,7 @@ const LoginPage = () => {
         onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
       />
       <button onClick={handleLogin}>Login</button>
-      
+
       {/* Link to the registration page */}
       <p>
         Don't have an account? <Link to="/register">Register here</Link>

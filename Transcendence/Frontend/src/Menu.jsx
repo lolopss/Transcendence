@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function GameMenu() {
-    const navigate = useNavigate();
-
+    const navigate = useNavigate(); // Ensure you have useNavigate for navigation
+    const handleStartGame = () => navigate('/game');
+    const [showGame, setShowGame] = useState(false);
     function GameButton({ usage, name, onClick }) {
         return (
             <div className="GameButton">

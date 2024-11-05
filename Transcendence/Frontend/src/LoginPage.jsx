@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useEffect } from 'react';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  
-  useEffect(() => {
-    // Redirect to /menu if already logged in
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      navigate('/menu');
-    }
-  }, [navigate]);
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');

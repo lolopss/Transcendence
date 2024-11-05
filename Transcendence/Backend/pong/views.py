@@ -91,14 +91,16 @@ def edit_profile_view(request):
 matchmaking_queue = []
 
 @api_view(['POST'])
-async def matchmaking(request):
-    user_id = request.data.get('user_id')  # Assume you send the user ID
-    matchmaking_queue.append(user_id)
+def matchmaking(request):
+    try:
+        user_id = request.data.get('user_id')
+        matchmaking_queue.append(user_id)
 
-    if len(matchmaking_queue) >= 2:
-        player1 = matchmaking_queue.pop(0)
-        player2 = matchmaking_queue.pop(0)
-        # You can return the game details or room info
-        return Response({'message': 'Match found', 'players': [player1, player2]})
-    
-    return Response({'message': 'Waiting for another player...'})
+        if len(matchmaking_queue) >= 2:
+            player1 = matchmaking_queue.pop(0)
+            player2 = matchmaking_queue.pop(0)
+            return Response({'message': 'Match found', 'players': [player1, player2]})
+        
+        return Response({'message': 'Waiting for another player...'})
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)

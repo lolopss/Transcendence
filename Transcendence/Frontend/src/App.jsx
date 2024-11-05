@@ -4,10 +4,13 @@ import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import Game from './Game';
 import Menu from './Menu';
+import Matchmaking from './Matchmaking';
 
-// Protected Route component to check for token
 const ProtectedRoute = ({ children }) => {
+  
   const isAuthenticated = !!localStorage.getItem('authToken');
+  console.log("Authenticated:", isAuthenticated); // Debugging output
+
   return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
@@ -29,6 +32,14 @@ const App = () => {
         element={
           <ProtectedRoute>
             <Menu />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/matchmaking"
+        element={
+          <ProtectedRoute>
+            <Matchmaking />
           </ProtectedRoute>
         }
       />

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-du&03o*5z)di#634%jy#11-3!loep#k3(%i%4sepx($6$ocgby
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
@@ -90,7 +90,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Transcendence.wsgi.application'
-
+ASGI_APPLICATION = 'Transcendence.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -109,6 +109,15 @@ DATABASES = {
 CSRF_TRUSTED_ORIGINS = [
     'https://localhost:8000',
     'http://localhost:8000',  # For non-HTTPS connections
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    'https://localhost:8000',
+    'https://*'
 ]
 
 # Password validation

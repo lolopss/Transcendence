@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import Game from './Game';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function GameMenu() {
-    const navigate = useNavigate(); // Ensure you have useNavigate for navigation
-    const handleStartGame = () => navigate('/game');
-    const [showGame, setShowGame] = useState(false);
+    const navigate = useNavigate();
 
     function GameButton({ usage, name, onClick }) {
         return (
@@ -27,20 +24,19 @@ function GameMenu() {
             });
 
             if (response.ok) {
-                // Clear auth tokens from local storage
                 localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken'); // Clear refresh token if you store it
-
-                // Redirect to the login page
+                localStorage.removeItem('refreshToken');
                 navigate('/login');
             } else {
                 console.error('Logout failed.');
-                // Handle logout error if needed
             }
         } catch (error) {
             console.error('Error during logout:', error);
-            // Handle any unexpected errors
         }
+    };
+
+    const goToMatchmaking = () => {
+        navigate('/matchmaking');
     };
 
     return (
@@ -49,6 +45,7 @@ function GameMenu() {
             <GameButton usage="Start the game" name="Start" onClick={handleStartGame} />
             <GameButton usage="See the options" name="Option" />
             <GameButton usage="Quit the game" name="Quit" />
+            <GameButton usage="Find a match" name="Matchmaking" onClick={goToMatchmaking} /> {/* New Matchmaking button */}
             <GameButton usage="Logout from your account" name="Logout" onClick={handleLogout} />
         </div>
     );

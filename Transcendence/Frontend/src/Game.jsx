@@ -41,6 +41,8 @@ function Game() {
     const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const pongCanvas = useRef(null);
+    let limitHitbox = 25;       // Starting limitHitbox value
+    let paddleHitCount = 0;     // Track paddle hits
 
     const startGame = () => {
         console.log('yes');
@@ -118,7 +120,7 @@ function Game() {
                 player2.paddle.dy = 5;
             }
         });
-        
+
         document.addEventListener('keyup', (event) => {
             if (event.key === 'w' || event.key === 's') {
                 player1.paddle.dy = 0;
@@ -135,14 +137,14 @@ function Game() {
             context.fillRect(x, y, width, height);
             context.shadowBlur = 0;
         }
-        
+
         const drawBall = (x, y, size, color) => {
             context.fillStyle = color;
             context.beginPath();
             context.arc(x, y, size, 0, Math.PI * 2, true);
             context.fill();
         }
-        
+
         const drawMiddleBar = (x, y, width, height, color) => {
             context.fillStyle = color;
             context.shadowBlur = 20;
@@ -160,7 +162,7 @@ function Game() {
 
         const draw = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
-        
+
             drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
             drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
             drawBall(ball.x, ball.y, ball.size, 'white');
@@ -188,41 +190,62 @@ function Game() {
             ball.x += ball.dx;
             ball.y += ball.dy;
 
+            // Bounce off top and bottom edges
             if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
                 ball.dy *= -1;
             }
 
-            if (ball.x < 0) {
+            // Check if the ball passes the left or right limit hitbox
+            console.log('Limite : ' + limitHitbox);
+            if (ball.x < limitHitbox) {
                 player2.point++;
                 resetBall();
-            }
-            else if (ball.x > canvas.width) {
+            } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
                 resetBall();
             }
-        }
+        };
 
         const ballToPaddleCheck = (playerN) => {
-            if (playerN === 1)
-            {
-                if (ball.x - ball.size < player1.paddle.x + player1.paddle.width &&
-                    ball.y > player1.paddle.y &&
-                    ball.y < player1.paddle.y + player1.paddle.height) {
-                    ball.dx *= -1.1;
-                    ball.dy += player1.paddle.dy / 2;
-                    triggerImpactEffect();
+            let paddle, ballHitY;
+            if (playerN === 1) {
+                paddle = player1.paddle;
+                ballHitY = ball.y - paddle.y;
+
+                if (ball.x - ball.size < paddle.x + paddle.width && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
+                    handlePaddleHit();
+                }
+            } else if (playerN === 2) {
+                paddle = player2.paddle;
+                ballHitY = ball.y - paddle.y;
+
+                if (ball.x + ball.size > paddle.x && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
+                    handlePaddleHit();
                 }
             }
-            if (playerN === 2)
-            {
-                if (ball.x + ball.size > player2.paddle.x &&
-                    ball.y > player2.paddle.y &&
-                    ball.y < player2.paddle.y + player2.paddle.height)
-                {
-                    ball.dx *= -1.1;
-                    ball.dy += player2.paddle.dy / 2;
-                    triggerImpactEffect();
-                }
+        }
+
+        const handlePaddleHit = () => {
+            // Increase ball speed and adjust direction based on paddle hit location
+            ball.dx *= -1.1;
+            if (Math.abs(ball.dx) > 30) {
+                ball.dx = 30 * Math.sign(ball.dx); // Keep the direction (positive or negative) of ball.dx
+            }
+
+            // Calculate relative hit position to adjust dy for angled bounce
+            let relativeIntersectY = (ball.y - paddle.y - paddle.height / 2) / (paddle.height / 2);
+            ball.dy = relativeIntersectY * 4;
+
+            // Clamp dy to avoid extreme angles
+            if (ball.dy > 5) ball.dy = 5;
+            if (ball.dy < -5) ball.dy = -5;
+
+            triggerImpactEffect();
+
+            // Increment paddle hit count and adjust limitHitbox
+            paddleHitCount++;
+            if (paddleHitCount % 2 === 0 && limitHitbox > 15) {
+                limitHitbox--; // Reduce limitHitbox after every two paddle hits
             }
         }
 

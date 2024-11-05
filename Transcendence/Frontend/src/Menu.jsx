@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Game from './Game';
 
 function GameMenu() {
     const navigate = useNavigate(); // Ensure you have useNavigate for navigation
+    const handleStartGame = () => navigate('/game');
+    const [showGame, setShowGame] = useState(false);
 
     function GameButton({ usage, name, onClick }) {
         return (
@@ -12,7 +15,7 @@ function GameMenu() {
             </div>
         );
     }
-    
+
     const handleLogout = async () => {
         try {
             const response = await fetch('/api/logout/', {
@@ -43,10 +46,10 @@ function GameMenu() {
     return (
         <div>
             <h2>THE PONG</h2>
-            <GameButton usage="Start the game" name="Start" />
+            <GameButton usage="Start the game" name="Start" onClick={handleStartGame} />
             <GameButton usage="See the options" name="Option" />
             <GameButton usage="Quit the game" name="Quit" />
-            <GameButton usage="Logout from your account" name="Logout" onClick={handleLogout} /> {/* Pass handleLogout to onClick */}
+            <GameButton usage="Logout from your account" name="Logout" onClick={handleLogout} />
         </div>
     );
 }

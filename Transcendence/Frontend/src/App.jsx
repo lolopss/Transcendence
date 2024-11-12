@@ -8,6 +8,15 @@ import Matchmaking from './Matchmaking';
 
 const ProtectedRoute = ({ children }) => {
   
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+      console.log("No token found. Redirecting to login.");
+      return <Navigate to="/login" replace />;
+  }
+  else
+  {
+    console.log("token found : ", token);
+  }
   const isAuthenticated = !!localStorage.getItem('authToken');
   console.log("Authenticated:", isAuthenticated); // Debugging output
 

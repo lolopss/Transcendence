@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const [identifier, setIdentifier] = useState('');  // Changed to `identifier` to accept username or email
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -10,7 +10,6 @@ const LoginPage = () => {
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
     if (authToken) {
-      // Redirect to the main page if already logged in
       navigate('/menu');
     }
   }, [navigate]);
@@ -22,25 +21,22 @@ const LoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ identifier, password }),  // Use `identifier`
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('authToken', data.token);
-        console.log('Login successful!');
+        localStorage.setItem('authToken', data.access);
         navigate('/menu');
       } else {
         setError(data.error || 'An error occurred during login.');
       }
     } catch (error) {
-      console.error('Login failed:', error);
       setError('An error occurred during login.');
     }
   };
 
-  // Function to handle Enter key press
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
       handleLogin();
@@ -53,21 +49,20 @@ const LoginPage = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
+        placeholder="Username or Email"  // Updated placeholder
+        value={identifier}
+        onChange={(e) => setIdentifier(e.target.value)}  // Updated to `setIdentifier`
+        onKeyDown={handleKeyDown}
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        onKeyDown={handleKeyDown} // Add onKeyDown to trigger Enter
+        onKeyDown={handleKeyDown}
       />
       <button onClick={handleLogin}>Login</button>
 
-      {/* Link to the registration page */}
       <p>
         Don't have an account? <Link to="/register">Register here</Link>
       </p>

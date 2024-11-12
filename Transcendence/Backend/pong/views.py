@@ -1,7 +1,8 @@
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, permissions
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from django.conf import settings
 from django.http import JsonResponse
@@ -10,10 +11,12 @@ from django.contrib.auth import login, get_user_model, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect  # Import redirect and render functions
 from rest_framework.decorators import authentication_classes
+from django.contrib.auth import login, logout, authenticate, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from .forms import RegistrationForm
-from .forms import ProfileForm
-from .models import Profile
+from django.core.exceptions import ValidationError
+
+import logging
 import random  # For simulating matchmaking
 import logging
 
@@ -105,47 +108,131 @@ def oauth_callback(request):
     return JsonResponse({'error': 'Authentication failed.'}, status=401)
 
 
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])  # Allows anyone to access this view
-def user_register(request):
-    form = RegistrationForm(request.data)
-    if form.is_valid():
-        user = form.save()
-        login(request, user)
-        return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+from .forms import RegistrationForm, ProfileForm
+from .models import Profile, GameServerModel, WaitingPlayerModel
+from django.db.models import Q
 
-    return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+from .serializers import UserRegisterSerializer, UserLoginSerializer
+from .utils import custom_validation, valid_email, valid_password, create_user_token
+import json
 
+UserModel = get_user_model()
+logger = logging.getLogger(__name__)
 
-@authentication_classes([])
-class UserLoginView(APIView):
+# Register new user
+class UserRegister(APIView):
+    permission_classes = [AllowAny]
 
-    permission_classes = [permissions.AllowAny]
     def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
+        # Clean data using the custom validation function
+        print("Request data:", request.data)
+        logger.info(f"!!!!!!!!!!!!!!!!!!!!Data is : {request.data}")
+        try:
+            clean_data = custom_validation(request.data)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Authenticate the user
-        user = authenticate(username=username, password=password)
-
-        if user is not None:
-            # Generate JWT token
-            refresh = RefreshToken.for_user(user)
+        # Serialize and save user data
+        serializer = UserRegisterSerializer(data=clean_data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()  # save() calls create() in the serializer
             return Response({
-                'message': 'Login successful.',
-                'token': str(refresh.access_token),  # Access token for authorization
-                'refresh_token': str(refresh)        # Refresh token to get a new access token when it expires
-            }, status=status.HTTP_200_OK)
+                "message": "User successfully registered",
+                "user": {
+                    "username": user.username,
+                    "email": user.email,
+                },
+            }, status=status.HTTP_201_CREATED)
 
-        return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
-def user_logout(request):
-    logout(request)
-    return Response({'message': 'Logged out successfully.'})
+# Login user and generate JWT token
+class UserLogin(APIView):
+    permission_classes = [AllowAny]
 
-from rest_framework.permissions import IsAuthenticated
+    @csrf_exempt
+    def post(self, request):
+        data = request.data
+        identifier = data.get("identifier")  # Use identifier for email or username
+        password = data.get("password")
+
+        # Log identifier and password for debugging
+        logger.info(f"!!!!!!!!!!!!!!!!!!!!identifier is : {identifier}")
+        logger.info(f"!!!!!!!!!!!!!!!!!!!!password is : {password}")
+
+        # Check if identifier and password are provided
+        if not identifier or not password:
+            return Response({"error": "Identifier and password are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Attempt to retrieve user by email or username
+        try:
+            user = UserModel.objects.get(Q(email=identifier) | Q(username=identifier))
+        except UserModel.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check password correctness
+        if not user.check_password(password):
+            return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Generate the JWT tokens (access and refresh)
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        # Add `user_id` to the access token
+        refresh.access_token["user_id"] = user.id
+
+        # Set user to online (if your app has an 'isOnline' field in the profile model)
+        if hasattr(user, 'profile'):
+            user.profile.isOnline = True
+            user.profile.save()
+
+        return Response({
+            "access": access_token,
+            "refresh": refresh_token
+        }, status=status.HTTP_200_OK)
+
+
+# Logout user and update online status
+
+class UserLogout(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated with JWT
+
+    def post(self, request):
+        # Get the JWT token from the request headers
+        auth_header = request.headers.get("Authorization")
+        if not auth_header:
+            return Response({'error': 'Authorization header missing'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Extract the token (it will be in the form of "Bearer <token>")
+        token = auth_header.split(' ')[1]
+
+        try:
+            # Decode the token to get the user
+            access_token = AccessToken(token)
+            user_id = access_token["user_id"]  # Get the user_id from the token
+
+            # Log the extracted user_id to check if it's correct
+            logger.info(f"Extracted user_id: {user_id}")
+
+            # Retrieve the user object using the user_id
+            user_obj = UserModel.objects.get(pk=user_id)
+            if user_obj.profile:
+                user_obj.profile.isOnline = False  # Set user to offline
+                user_obj.profile.save()
+
+            # Successfully logged out
+            logger.info(f"User {user_obj.username} logged out successfully.")
+
+        except Exception as e:
+            # Log the error message for debugging
+            logger.error(f"Error during logout: {e}")
+            return Response({'error': 'Failed to logout or user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Log out the user from the session
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -175,20 +262,104 @@ def edit_profile_view(request):
         form = ProfileForm(instance=profile)
     return render(request, 'edit_profile.html', {'form': form})
 
-# This will hold your matchmaking queue
-matchmaking_queue = []
 
-@api_view(['POST'])
-def matchmaking(request):
-    try:
-        user_id = request.data.get('user_id')
-        matchmaking_queue.append(user_id)
 
-        if len(matchmaking_queue) >= 2:
-            player1 = matchmaking_queue.pop(0)
-            player2 = matchmaking_queue.pop(0)
-            return Response({'message': 'Match found', 'players': [player1, player2]})
+# # This will hold your matchmaking queue
+# matchmaking_queue = []
 
-        return Response({'message': 'Waiting for another player...'})
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
+# @api_view(['POST'])
+# async def matchmaking(request):
+#     user_id = request.data.get('user_id')
+#     matchmaking_queue.append(user_id)
+
+#     if len(matchmaking_queue) >= 2:
+#         player1_id = matchmaking_queue.pop(0)
+#         player2_id = matchmaking_queue.pop(0)
+
+#         player1 = Profile.objects.get(user_id=player1_id)
+#         player2 = Profile.objects.get(user_id=player2_id)
+
+#         # Return the nicknames instead of just user IDs
+#         return Response({
+#             'message': 'Match found',
+#             'players': [player1.nickname, player2.nickname]
+#         })
+
+#     return Response({'message': 'Waiting for another player...'})
+
+class JoinQueue(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        user_id = request.data.get("userId")
+        if not user_id:
+            return Response({"message": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Add player to waiting queue
+        WaitingPlayerModel.objects.create(player_id=user_id)
+        return Response({'message': 'You have joined the queue.'}, status=status.HTTP_200_OK)
+
+
+def manage_game_queue():
+    # Get players in queue
+    waiting_players = WaitingPlayerModel.objects.all()
+    if waiting_players.count() >= 2:
+        # Retrieve and delete two players from the queue
+        player1 = waiting_players[0]
+        player2 = waiting_players[1]
+
+        # Remove players from waiting queue
+        player1.delete()
+        player2.delete()
+
+        # Create new game
+        new_game = GameServerModel.objects.create(
+            firstPlayerId=player1.player_id,
+            secondPlayerId=player2.player_id,
+            state='full'
+        )
+        return new_game
+    return None
+
+class CheckJoinGame(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        user_id = request.data.get("userId")
+
+        # Check and assign game if two players are available
+        new_game = manage_game_queue()
+
+        # Check if the user is already assigned to a game
+        game_server = GameServerModel.objects.filter(
+            Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)
+        ).first()
+
+        if game_server and game_server.state == 'full':
+            return Response({'gameId': game_server.serverId}, status=status.HTTP_200_OK)
+
+        return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
+
+class ExitQueue(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        user_id = request.data.get("userId")
+
+        # Remove player from waiting queue
+        WaitingPlayerModel.objects.filter(player_id=user_id).delete()
+
+        # Update game server if player was in a game
+        game_server = GameServerModel.objects.filter(
+            Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)
+        ).first()
+
+        if game_server:
+            if game_server.firstPlayerId == user_id:
+                game_server.firstPlayerId = -1
+            elif game_server.secondPlayerId == user_id:
+                game_server.secondPlayerId = -1
+            game_server.state = 'waiting'
+            game_server.save()
+
+        return Response({"message": 'You left the queue'}, status=status.HTTP_200_OK)

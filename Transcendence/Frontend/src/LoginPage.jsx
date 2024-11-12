@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
-  const [username, setUsername] = useState('');
+  const [identifier, setIdentifier] = useState('');  // Changed to `identifier` to accept username or email
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [clientId, setClientId] = useState(null);
@@ -32,21 +32,21 @@ const LoginPage = () => {
     try {
       const response = await fetch('/api/login/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ identifier, password }),  // Use `identifier`
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('authToken', data.token);
-        console.log('Login successful!');
+        localStorage.setItem('authToken', data.access);
         navigate('/menu');
       } else {
         setError(data.error || 'An error occurred during login.');
       }
     } catch (error) {
-      console.error('Login failed:', error);
       setError('An error occurred during login.');
     }
   };
@@ -76,9 +76,9 @@ const LoginPage = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Username or Email"  // Updated placeholder
+        value={identifier}
+        onChange={(e) => setIdentifier(e.target.value)}  // Updated to `setIdentifier`
         onKeyDown={handleKeyDown}
       />
       <input

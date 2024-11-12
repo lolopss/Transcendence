@@ -29,3 +29,14 @@ class Profile(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+class GameServerModel(models.Model):
+	serverId = models.AutoField(primary_key=True)
+	firstPlayerId = models.IntegerField(default=-1)
+	secondPlayerId = models.IntegerField(default=-1)
+	state = models.CharField(max_length=10, default="waiting")
+	def __str__(self):
+		return f"{self.serverId}"
+
+class WaitingPlayerModel(models.Model):
+	player_id = models.IntegerField()

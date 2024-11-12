@@ -13,3 +13,5 @@ sqlparse==0.5.1
 websockets==10.3  # If you are using WebSockets
 daphne
 djangorestframework-simplejwt
+python-dotenv==1.0.0  # Add the python-dotenv package for environment variable management
+social-auth-app-django>=5.0.0

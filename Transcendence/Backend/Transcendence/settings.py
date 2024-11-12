@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path, os
 
+# import dotenv
+
+# dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,8 +44,10 @@ INSTALLED_APPS = [
     'pong',
     'channels',
     'rest_framework',
+    'django.contrib.sites',  # Required for social-auth
+    'social_django',
 ]
-#FOR API / LOGIN ... 
+#FOR API / LOGIN ...
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -69,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'Transcendence.urls'
@@ -122,6 +128,37 @@ CORS_ALLOWED_ORIGINS = [
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # default
+]
+
+SOCIAL_AUTH_42_KEY = os.environ.get('CLIENT_ID')
+SOCIAL_AUTH_42_SECRET = os.environ.get('CLIENT_SECRET')
+SOCIAL_AUTH_42_REDIRECT_URI = 'https://localhost:8000/auth/callback'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',  # Logs INFO and higher levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

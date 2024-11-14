@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 function GameMenu() {
     const navigate = useNavigate(); // Ensure you have useNavigate for navigation
-    const handleStartGame = () => navigate('/game');
     const [showGame, setShowGame] = useState(false);
+
     function GameButton({ usage, name, onClick }) {
         return (
             <div className="GameButton">
@@ -13,6 +13,8 @@ function GameMenu() {
             </div>
         );
     }
+
+    const handleStartGame = () => navigate('/game');
 
     const handleLogout = async () => {
         try {
@@ -40,14 +42,35 @@ function GameMenu() {
         navigate('/matchmaking');
     };
 
+    const printUserDetails = async () => {
+        try {
+            const response = await fetch('/api/user-details/', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+
+            if (response.ok) {
+                const userDetails = await response.json();
+                console.log('User Details:', userDetails);
+            } else {
+                console.error('Failed to fetch user details');
+            }
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+        }
+    };
+
     return (
         <div>
             <h2>THE PONG</h2>
             <GameButton usage="Start the game" name="Start" onClick={handleStartGame} />
             <GameButton usage="See the options" name="Option" />
             <GameButton usage="Quit the game" name="Quit" />
-            <GameButton usage="Find a match" name="Matchmaking" onClick={goToMatchmaking} /> {/* New Matchmaking button */}
+            <GameButton usage="Find a match" name="Matchmaking" onClick={goToMatchmaking} />
             <GameButton usage="Logout from your account" name="Logout" onClick={handleLogout} />
+            <GameButton usage="Print User Details" name="Print Details" onClick={printUserDetails} /> {/* New button */}
         </div>
     );
 }

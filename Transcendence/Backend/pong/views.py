@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, permissions
 from rest_framework.response import Response
@@ -18,7 +19,7 @@ from .models import Profile, GameServerModel, WaitingPlayerModel
 from django.db.models import Q
 
 from .serializers import UserRegisterSerializer, UserLoginSerializer
-from .utils import custom_validation, valid_email, valid_password, create_user_token
+from .utils import custom_validation, valid_email, valid_password, create_user_token, ManageGameQueue
 import json
 
 UserModel = get_user_model()
@@ -30,8 +31,6 @@ class UserRegister(APIView):
 
     def post(self, request):
         # Clean data using the custom validation function
-        print("Request data:", request.data)
-        logger.info(f"!!!!!!!!!!!!!!!!!!!!Data is : {request.data}")
         try:
             clean_data = custom_validation(request.data)
         except ValidationError as e:
@@ -193,78 +192,92 @@ def edit_profile_view(request):
 #     return Response({'message': 'Waiting for another player...'})
 
 class JoinQueue(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
-        user_id = request.data.get("userId")
-        if not user_id:
-            return Response({"message": "User ID is required"}, status=status.HTTP_400_BAD_REQUEST)
+        # Extract the JWT token from the Authorization header
+        auth_header = request.headers.get('Authorization')
+        token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
         
-        # Add player to waiting queue
+        # Decode the token to get the user_id
+        validated_token = JWTAuthentication().get_validated_token(token)
+        user_id = validated_token['user_id']  # Extract user_id from the token payload
+        
+        # Add player to waiting queue using the extracted user_id
         WaitingPlayerModel.objects.create(player_id=user_id)
+        
         return Response({'message': 'You have joined the queue.'}, status=status.HTTP_200_OK)
 
 
-def manage_game_queue():
-    # Get players in queue
-    waiting_players = WaitingPlayerModel.objects.all()
-    if waiting_players.count() >= 2:
-        # Retrieve and delete two players from the queue
-        player1 = waiting_players[0]
-        player2 = waiting_players[1]
-        
-        # Remove players from waiting queue
-        player1.delete()
-        player2.delete()
-        
-        # Create new game
-        new_game = GameServerModel.objects.create(
-            firstPlayerId=player1.player_id,
-            secondPlayerId=player2.player_id,
-            state='full'
-        )
-        return new_game
-    return None
-
 class CheckJoinGame(APIView):
-    permission_classes = [permissions.AllowAny]
+    permission_classes = (permissions.AllowAny,)
+
 
     def post(self, request):
-        user_id = request.data.get("userId")
+        # Initialize logging
+        logger = logging.getLogger(__name__)
         
-        # Check and assign game if two players are available
-        new_game = manage_game_queue()
-        
-        # Check if the user is already assigned to a game
-        game_server = GameServerModel.objects.filter(
-            Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)
-        ).first()
+        # Manage the game queue
+        ManageGameQueue()
 
-        if game_server and game_server.state == 'full':
-            return Response({'gameId': game_server.serverId}, status=status.HTTP_200_OK)
+        # Extract JWT token from Authorization header
+        auth_header = request.headers.get('Authorization')
+
+        token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
+
+        # Decode the token to get the user_id
+        validated_token = JWTAuthentication().get_validated_token(token)
+        user_id = validated_token['user_id']
+
+        # Query the GameServerModel to check if the user is in an existing game
+        game_server = GameServerModel.objects.filter(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)).first()
         
-        return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
+        # Check game state and return appropriate response
+        if game_server:
+            if game_server.state == 'full':
+                return Response({'gameId': game_server.serverId}, status=status.HTTP_200_OK)
+            else:
+                return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
 
 class ExitQueue(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        user_id = request.data.get("userId")
-        
-        # Remove player from waiting queue
-        WaitingPlayerModel.objects.filter(player_id=user_id).delete()
-
-        # Update game server if player was in a game
-        game_server = GameServerModel.objects.filter(
-            Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)
-        ).first()
-        
+        logger = logging.getLogger(__name__)
+        data = request.data
+        user_id = data.get("userId")
+        game_server = GameServerModel.objects.get(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id))
+        try:
+            waiting_player = WaitingPlayerModel.objects.get(player_id=user_id)
+            waiting_player.delete()
+        except WaitingPlayerModel.DoesNotExist:
+            pass
         if game_server:
-            if game_server.firstPlayerId == user_id:
+            if int(game_server.firstPlayerId) == int(user_id):
                 game_server.firstPlayerId = -1
-            elif game_server.secondPlayerId == user_id:
+            if int(game_server.secondPlayerId) == int(user_id):
                 game_server.secondPlayerId = -1
             game_server.state = 'waiting'
             game_server.save()
-
         return Response({"message": 'You left the queue'}, status=status.HTTP_200_OK)
+
+        
+#to check if properly connected
+class UserDetails(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user  # Get the currently authenticated user
+
+        # Assuming the user has a 'nickname' field in the profile model
+        nickname = user.profile.nickname if hasattr(user, 'profile') else None
+
+        # Return the user details
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            'nickname': nickname,
+            # Note: Never send the hashed password to the frontend!
+        })

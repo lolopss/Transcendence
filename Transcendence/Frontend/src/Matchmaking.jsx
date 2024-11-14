@@ -6,20 +6,35 @@ function Matchmaking() {
 
     // Function to join the queue
     const joinQueue = async () => {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            setStatus('No valid token found');
+            return;
+        }
+    
         try {
             const response = await fetch('/api/join-queue/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,  // Add the token here
                 },
-                body: JSON.stringify({ userId: localStorage.getItem('userId') }),
             });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error joining queue:', errorData);
+                setStatus(errorData.detail || 'Failed to join queue');
+                return;
+            }
+    
             const data = await response.json();
             setStatus(data.message);
 
-            // Start polling for game status
-            const id = setInterval(checkGameStatus, 3000); // Poll every 3 seconds
+            // Start polling for game status only after successfully joining the queue
+            const id = setInterval(checkGameStatus, 5000);
             setIntervalId(id);
+
         } catch (error) {
             console.error('Error joining queue:', error);
             setStatus('Failed to join queue');
@@ -29,22 +44,36 @@ function Matchmaking() {
     // Function to check if a game has been created
     const checkGameStatus = async () => {
         try {
+            const token = localStorage.getItem('authToken'); // Ensure token is saved in localStorage
             const response = await fetch('/api/check-game/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,  // Pass token in the Authorization header
                 },
-                body: JSON.stringify({ userId: localStorage.getItem('userId') }),
+                body: JSON.stringify({
+                    userId: localStorage.getItem('userId'),  // Assuming userId is saved in localStorage
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to check game status');
+            }
+
             const data = await response.json();
             setStatus(data.message);
 
             if (data.gameId) {
-                // Stop polling
-                clearInterval(intervalId);
+                // Wait until both players are in the game (i.e., game state is 'full')
+                if (data.gameState === 'full') {
+                    // Stop polling
+                    clearInterval(intervalId);
 
-                // Redirect to game screen with gameId
-                window.location.href = `/game/${data.gameId}`;
+                    // Redirect to game screen with gameId
+                    window.location.href = `/game/${data.gameId}`;
+                } else {
+                    setStatus('Waiting for another player to join...');
+                }
             }
         } catch (error) {
             console.error('Error checking game status:', error);
@@ -55,13 +84,22 @@ function Matchmaking() {
     // Function to leave the queue
     const leaveQueue = async () => {
         try {
+            const token = localStorage.getItem('authToken'); // Ensure token is saved in localStorage
             const response = await fetch('/api/exit-queue/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,  // Pass token in the Authorization header
                 },
-                body: JSON.stringify({ userId: localStorage.getItem('userId') }),
+                body: JSON.stringify({
+                    userId: localStorage.getItem('userId'),  // Assuming userId is saved in localStorage
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to leave queue');
+            }
+
             const data = await response.json();
             setStatus(data.message);
 

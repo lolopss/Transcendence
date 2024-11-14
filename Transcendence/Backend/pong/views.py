@@ -7,117 +7,149 @@ from rest_framework.views import APIView
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, get_user_model, logout, authenticate
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect  # Import redirect and render functions
-from rest_framework.decorators import authentication_classes
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.core.exceptions import ValidationError
+from .forms import RegistrationForm, ProfileForm
+from .models import Profile, GameServerModel, WaitingPlayerModel
+from django.db.models import Q
+from .serializers import UserRegisterSerializer, UserLoginSerializer
+from .utils import custom_validation, valid_email, valid_password, create_user_token
+import os
+import ssl
+import json
+import urllib.parse
+import urllib.request
+import requests
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
+UserModel = get_user_model()
 import logging
 import random  # For simulating matchmaking
-import logging
-
+import json
 
 User = get_user_model()
 API_URL = 'https://api.intra.42.fr'
 logger = logging.getLogger(__name__)
 
 class GetClientIdView(APIView):
-    @permission_classes([permissions.AllowAny])
+    permission_classes = [AllowAny]
 
     def get(self, request):
         return JsonResponse({'client_id': settings.SOCIAL_AUTH_42_KEY})
 
-def oauth_callback(request):
-    # Step 1: Get authorization code
-    code = request.GET.get('code')
-    if not code:
-        return JsonResponse({'error': 'Missing code parameter'}, status=400)
+import json
+import os
+import logging
+import requests
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
-    # Step 2: Exchange code for an access token
-    data = {
+logger = logging.getLogger(__name__)
+
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+import requests, os, json
+import logging
+
+logger = logging.getLogger(__name__)
+
+def register42(request):
+    # Extract code and state from the query parameters
+    code = request.GET.get('code')
+    state = request.GET.get('state')
+
+    if not code or not state:
+        return JsonResponse({'error': 'Missing code or state in the callback.'}, status=400)
+
+    # Validate the state (ensure it matches the one stored in the session or database)
+    saved_state = request.session.get('oauth_state')
+    if state != saved_state:
+        return JsonResponse({'error': 'State mismatch. Potential CSRF attack.'}, status=400)
+
+    # Exchange the authorization code for access tokens
+    token_url = 'https://api.intra.42.fr/oauth/token'
+    payload = {
         'grant_type': 'authorization_code',
-        'client_id': settings.SOCIAL_AUTH_42_KEY,
-        'client_secret': settings.SOCIAL_AUTH_42_SECRET,
-        'code': code,
-        'redirect_uri': settings.SOCIAL_AUTH_42_REDIRECT_URI,
+        'client_id': os.getenv("CLIENT_ID"),
+        'client_secret': os.getenv("CLIENT_SECRET"),
+        'redirect_uri': 'https://localhost:8000/register42',  # Ensure this matches the frontend redirect URL
+        'code': code
     }
 
-    try:
-        token_response = requests.post(f'{API_URL}/oauth/token', data=data)
-        token_response.raise_for_status()  # Will raise an HTTPError for bad responses
-    except requests.exceptions.RequestException as e:
-        # Log the error and return a user-friendly error response
-        logger.error(f"Error exchanging code for token: {e}")
-        return JsonResponse({'error': 'Failed to exchange code for token'}, status=400)
+    response = requests.post(token_url, data=payload)
+    if response.status_code == 200:
+        data = response.json()
+        access_token = data.get('access_token')
+        refresh_token = data.get('refresh_token')
 
-    # Log the token response JSON for debugging
-    logger.debug(f"Token response: {token_response.json()}")
+        # Save tokens (session, database, etc.)
+        request.session['access_token'] = access_token
+        request.session['refresh_token'] = refresh_token
 
-    # Step 3: Retrieve access token from response
-    token_data = token_response.json()
-    access_token = token_data.get('access_token')
-    if not access_token:
-        return JsonResponse({'error': 'Access token not found in the response'}, status=400)
+        # Redirect to /menu or the desired page
+        return redirect('/menu')  # Or another redirect URL you want to use
+    else:
+        return JsonResponse({'error': 'Failed to exchange code for token.'}, status=500)
 
-    headers = {'Authorization': f'Bearer {access_token}'}
+class CallbackView(APIView):
+    permission_classes = [AllowAny]
 
-    # Step 4: Fetch user info from 42 API
-    try:
-        user_info_response = requests.get(f'{API_URL}/v2/me', headers=headers)
-        user_info_response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        # Log the error and return a user-friendly error response
-        logger.error(f"Error fetching user info: {e}")
-        return JsonResponse({'error': 'Failed to fetch user info'}, status=400)
+    def get(self, request, *args, **kwargs):
+        logger.info("OAuth callback received with authorization code.")
+        code = request.query_params.get('code')
+        # Token request parameters
+        token_params = {
+            "client_id": os.getenv("CLIENT_ID"),
+            "client_secret": os.getenv("CLIENT_SECRET"),
+            "code": code,
+            "grant_type": "authorization_code",
+            "redirect_uri": 'https://localhost:8000/register42',
+        }
+        # Exchange authorization code for access token
+        try:
+            token_response = requests.post(
+                "https://api.intra.42.fr/oauth/token",
+                data=token_params,
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
+            if token_response.status_code == 200:
+                token_data = token_response.json()
+                access_token = token_data.get('access_token')
+                # Fetch user profile with the obtained access token
+                profile_url = "https://api.intra.42.fr/v2/me"
+                headers = {"Authorization": f"Bearer {access_token}"}
+                profile_response = requests.get(profile_url, headers=headers)
+                if profile_response.status_code == 200:
+                    user_data = profile_response.json()
+                    # Try to get or create the user in the app
+                    user, created = UserModel.objects.get_or_create(
+                        username=user_data['login'],
+                        defaults={'email': user_data['email']}
+                    )
+                    # Generate JWT tokens
+                    refresh = RefreshToken.for_user(user)
+                    access = str(refresh.access_token)
+                    refresh_token = str(refresh)
+                    # Respond with tokens for the frontend
+                    return Response({
+                        "access": access,
+                        "refresh": refresh_token,
+                        "detail": "User logged in successfully."
+                    }, status=status.HTTP_200_OK)
+                else:
+                    return Response({'error': 'Unable to fetch user profile'}, status=status.HTTP_504_GATEWAY_TIMEOUT)
+            else:
+                return Response({'error': 'Unable to obtain access token'}, status=status.HTTP_502_BAD_GATEWAY)
+        except requests.RequestException as e:
+            logger.error(f"Error during token exchange: {str(e)}")
+            return Response({'error': 'Error during token exchange'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
-    # Log the user info response JSON for debugging
-    logger.debug(f"User info response: {user_info_response.json()}")
-
-    user_info = user_info_response.json()
-    username = user_info.get('login')
-    email = user_info.get('email')
-
-    if not username or not email:
-        return JsonResponse({'error': 'User info is incomplete'}, status=400)
-
-    # Step 5: Check if the user exists, create if not
-    user, created = User.objects.get_or_create(username=username, defaults={'email': email})
-
-    # Step 6: Authenticate and create JWT tokens
-    if user is not None:
-        # Log the user in
-        login(request, user)
-
-        # Generate JWT tokens
-        refresh = RefreshToken.for_user(user)
-
-        # Store tokens in the session (optional)
-        request.session['access_token'] = str(refresh.access_token)
-        request.session['refresh_token'] = str(refresh)
-
-        # Log successful login
-        logger.info(f"User {username} logged in successfully.")
-
-        # Redirect to /menu after successful login
-        return redirect('/menu')
-
-    return JsonResponse({'error': 'Authentication failed.'}, status=401)
-
-
-from .forms import RegistrationForm, ProfileForm
-from .models import Profile, GameServerModel, WaitingPlayerModel
-from django.db.models import Q
-
-from .serializers import UserRegisterSerializer, UserLoginSerializer
-from .utils import custom_validation, valid_email, valid_password, create_user_token
-import json
-
-UserModel = get_user_model()
-logger = logging.getLogger(__name__)
 
 # Register new user
 class UserRegister(APIView):

@@ -163,7 +163,7 @@ AUTHENTICATION_BACKENDS = [
 
 SOCIAL_AUTH_42_KEY = os.environ.get('CLIENT_ID')
 SOCIAL_AUTH_42_SECRET = os.environ.get('CLIENT_SECRET')
-SOCIAL_AUTH_42_REDIRECT_URI = 'https://localhost:8000/auth/callback'
+SOCIAL_AUTH_42_REDIRECT_URI = 'https://localhost:8000/register42'
 
 LOGGING = {
     'version': 1,

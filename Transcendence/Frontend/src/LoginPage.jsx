@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
-  const [identifier, setIdentifier] = useState('');  // Changed to `identifier` to accept username or email
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [clientId, setClientId] = useState(null);
@@ -14,7 +14,7 @@ const LoginPage = () => {
       navigate('/menu');
     }
 
-    // Fetch client ID from Django
+    // Fetch client ID for OAuth from Django
     const fetchClientId = async () => {
       try {
         const response = await fetch('/api/client-id/');
@@ -35,7 +35,7 @@ const LoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ identifier, password }),  // Use `identifier`
+        body: JSON.stringify({ identifier, password }),
       });
 
       const data = await response.json();
@@ -63,11 +63,12 @@ const LoginPage = () => {
       return;
     }
 
-    const redirectUri = encodeURIComponent('https://localhost:8000/auth/callback');
+    const redirectUri = encodeURIComponent('https://localhost:8000/register42');  // Ensure this matches the backend
     const state = encodeURIComponent(Math.random().toString(36).substring(2));
-
     const oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=public&state=${state}`;
-    window.location.href = oauthUrl;
+
+    localStorage.setItem('oauthState', state);  // Save the state to validate on callback
+    window.location.href = oauthUrl;  // Redirect to the OAuth provider
   };
 
   return (
@@ -76,9 +77,9 @@ const LoginPage = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <input
         type="text"
-        placeholder="Username or Email"  // Updated placeholder
+        placeholder="Username or Email"
         value={identifier}
-        onChange={(e) => setIdentifier(e.target.value)}  // Updated to `setIdentifier`
+        onChange={(e) => setIdentifier(e.target.value)}
         onKeyDown={handleKeyDown}
       />
       <input

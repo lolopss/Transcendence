@@ -51,24 +51,19 @@ def create_user_token(user):
 
 import logging
 from django.conf import settings
-from .models import GameServerModel, WaitingPlayerModel
 
 def ManageGameQueue():
     logger = logging.getLogger(__name__)
-    
     if not settings.IS_SEARCHING:
         settings.IS_SEARCHING = True
-        
+        from . models import GameServerModel, WaitingPlayerModel
         # Attempt to find a game server with a 'waiting' state
         game_server = GameServerModel.objects.filter(state='waiting').first()
         
         if game_server:
-            logger.info(f"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-
             if game_server.firstPlayerId == -1:
                 player1 = WaitingPlayerModel.objects.first()
                 if player1:
-                    logger.info(f"Assigning first player: {player1.player_id} to game server {game_server.serverId}")
                     game_server.firstPlayerId = player1.player_id
                     game_server.save()
                     player1.delete()
@@ -76,7 +71,6 @@ def ManageGameQueue():
             if game_server.secondPlayerId == -1:
                 player2 = WaitingPlayerModel.objects.first()
                 if player2:
-                    logger.info(f"Assigning second player: {player2.player_id} to game server {game_server.serverId}")
                     game_server.secondPlayerId = player2.player_id
                     game_server.save()
                     player2.delete()

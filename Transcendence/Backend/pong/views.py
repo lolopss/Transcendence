@@ -202,11 +202,14 @@ class JoinQueue(APIView):
         # Decode the token to get the user_id
         validated_token = JWTAuthentication().get_validated_token(token)
         user_id = validated_token['user_id']  # Extract user_id from the token payload
-        
-        # Add player to waiting queue using the extracted user_id
-        WaitingPlayerModel.objects.create(player_id=user_id)
-        
-        return Response({'message': 'You have joined the queue.'}, status=status.HTTP_200_OK)
+
+        # Check if the player is already in the queue
+        if not WaitingPlayerModel.objects.filter(player_id=user_id).exists():
+            # Add player to the waiting queue if they aren't already in it
+            WaitingPlayerModel.objects.create(player_id=user_id)
+            return Response({'message': 'You have joined the queue.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'You are already in the queue.'}, status=status.HTTP_200_OK)
 
 
 class CheckJoinGame(APIView):
@@ -246,21 +249,41 @@ class ExitQueue(APIView):
 
     def post(self, request):
         logger = logging.getLogger(__name__)
-        data = request.data
-        user_id = data.get("userId")
-        game_server = GameServerModel.objects.get(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id))
+        auth_header = request.headers.get('Authorization')
+        token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
+        
+        # Decode the token to get the user_id
+        validated_token = JWTAuthentication().get_validated_token(token)
+        user_id = validated_token['user_id']  # Extract user_id from the token payload
+        logger.info(f"User ID for exit queue: {user_id}")
+        
+        # Attempt to find the game server; handle the case where no match is found
+        game_server = GameServerModel.objects.filter(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)).first()
+
+        # Remove the player from the waiting queue
         try:
             waiting_player = WaitingPlayerModel.objects.get(player_id=user_id)
             waiting_player.delete()
+            logger.info(f"Player {user_id} removed from waiting queue.")
         except WaitingPlayerModel.DoesNotExist:
-            pass
+            logger.info(f"Player {user_id} not found in waiting queue.")
+        
+        # If a matching game server exists, reset the player slot and state
         if game_server:
             if int(game_server.firstPlayerId) == int(user_id):
                 game_server.firstPlayerId = -1
             if int(game_server.secondPlayerId) == int(user_id):
                 game_server.secondPlayerId = -1
-            game_server.state = 'waiting'
+
+            # Update state back to 'waiting' only if both slots are empty
+            if game_server.firstPlayerId == -1 and game_server.secondPlayerId == -1:
+                game_server.state = 'waiting'
+            
             game_server.save()
+            logger.info(f"Game server {game_server.serverId} updated: {game_server.firstPlayerId}, {game_server.secondPlayerId}, state: {game_server.state}")
+        else:
+            logger.info(f"No game server found for player {user_id}.")
+        
         return Response({"message": 'You left the queue'}, status=status.HTTP_200_OK)
 
         

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
@@ -17,6 +17,30 @@ const ProtectedRoute = ({ children }) => {
 };
 
 const App = () => {
+  const validateToken = async () => { // To check if the token is still valid when reloading the page
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    try {
+        const response = await fetch("/api/validate-token/", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            localStorage.removeItem("authToken");
+            window.location.href = "/login";  // Redirect to login
+        }
+    } catch (error) {
+        console.error("Token validation error:", error);
+        localStorage.removeItem("authToken");
+        window.location.href = "/login";
+    }
+  };
+
+  useEffect(() => {
+      validateToken();
+  }, []);
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />

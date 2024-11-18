@@ -48,3 +48,44 @@ def create_user_token(user):
         "access": str(refresh.access_token),
         "refresh": str(refresh)
     }
+
+import logging
+from django.conf import settings
+
+def ManageGameQueue():
+    logger = logging.getLogger(__name__)
+    if not settings.IS_SEARCHING:
+        settings.IS_SEARCHING = True
+        from . models import GameServerModel, WaitingPlayerModel
+        # Attempt to find a game server with a 'waiting' state
+        game_server = GameServerModel.objects.filter(state='waiting').first()
+        
+        if game_server:
+            if game_server.firstPlayerId == -1:
+                player1 = WaitingPlayerModel.objects.first()
+                if player1:
+                    game_server.firstPlayerId = player1.player_id
+                    game_server.save()
+                    player1.delete()
+
+            if game_server.secondPlayerId == -1:
+                player2 = WaitingPlayerModel.objects.first()
+                if player2:
+                    game_server.secondPlayerId = player2.player_id
+                    game_server.save()
+                    player2.delete()
+            
+            # If both players are assigned, set the game server state to 'full'
+            if game_server.firstPlayerId != -1 and game_server.secondPlayerId != -1:
+                game_server.state = 'full'
+                game_server.save()
+                logger.info(f"Game server {game_server.serverId} is now full")
+
+        else:
+            # Create a new game server if none is available
+            GameServerModel.objects.create()
+            logger.info("No waiting game server found. Creating a new game server.")
+        
+        settings.IS_SEARCHING = False
+    else:
+        settings.IS_SEARCHING = False

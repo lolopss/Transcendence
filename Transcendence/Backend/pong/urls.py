@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/join-queue/', views.JoinQueue.as_view(), name='join_queue'),  # JoinQueue view
     path('api/check-game/', views.CheckJoinGame.as_view(), name='check_game'),  # CheckJoinGame view
     path('api/exit-queue/', views.ExitQueue.as_view(), name='exit_queue'),  # ExitQueue view
+    path('api/user-details/', views.UserDetails.as_view(), name='user-details'),
 ]

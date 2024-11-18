@@ -6,6 +6,11 @@ const OAuthCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const authToken = localStorage.getItem('authToken');
+    if (authToken) {
+      navigate('/menu');
+    }
+
     const processOAuthCallback = async () => {
       console.log('OAuth callback process started.');
 

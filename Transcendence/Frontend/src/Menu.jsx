@@ -26,6 +26,7 @@ function GameMenu() {
 
             if (response.ok) {
                 localStorage.removeItem('authToken');
+                localStorage.removeItem('oauthState');
                 localStorage.removeItem('refreshToken');
                 navigate('/login');
             } else {

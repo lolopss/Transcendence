@@ -5,22 +5,15 @@ import RegisterPage from './RegisterPage';
 import Game from './Game';
 import Menu from './Menu';
 import Matchmaking from './Matchmaking';
+import OAuthCallback from './OAuthCallback';
 
 const ProtectedRoute = ({ children }) => {
-  
   const token = localStorage.getItem('authToken');
   if (!token) {
-      console.log("No token found. Redirecting to login.");
-      return <Navigate to="/login" replace />;
+    console.log("No token found. Redirecting to login.");
+    return <Navigate to="/login" replace />;
   }
-  else
-  {
-    console.log("token found : ", token);
-  }
-  const isAuthenticated = !!localStorage.getItem('authToken');
-  console.log("Authenticated:", isAuthenticated); // Debugging output
-
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return children;
 };
 
 const App = () => {
@@ -51,7 +44,7 @@ const App = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} /> {/* Register route */}
+      <Route path="/register" element={<RegisterPage />} />
       <Route
         path="/game"
         element={
@@ -76,6 +69,7 @@ const App = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/register42" element={<OAuthCallback />} /> {/* OAuth callback route */}
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );

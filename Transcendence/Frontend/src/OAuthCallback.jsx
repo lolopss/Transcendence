@@ -11,6 +11,11 @@ const OAuthCallback = () => {
       navigate('/menu');
     }
 
+    const isVerif = localStorage.getItem('isVerifying2FA');
+    if (isVerif) {
+      navigate('/verify-2fa');
+    }
+
     const processOAuthCallback = async () => {
       console.log('OAuth callback process started.');
 
@@ -43,15 +48,23 @@ const OAuthCallback = () => {
           console.log('Response from backend:', data);
 
           if (response.ok) {
-            console.log('Token exchange successful. Storing tokens.');
+            console.log('Token exchange successful.');
 
-            // Store the tokens in localStorage
-            localStorage.setItem('authToken', data.access);
-            localStorage.setItem('refreshToken', data.refresh);
+            if (data.requires_2fa) {
+              console.log('2FA required. Redirecting to 2FA verification page.');
+              localStorage.setItem('userId', data.user_id);
+              localStorage.setItem('isVerifying2FA', 'true'); // Set flag
+              navigate('/verify-2fa');
+          } else {
+              console.log('Storing tokens and redirecting to menu.');
+              // Store the tokens in localStorage
+              localStorage.setItem('authToken', data.access);
+              localStorage.setItem('refreshToken', data.refresh);
 
-            // Redirect to the appropriate page (default: /menu)
-            console.log('Redirecting to:', data.redirect || '/menu');
-            navigate(data.redirect || '/menu');
+              // Redirect to the appropriate page (default: /menu)
+              console.log('Redirecting to:', data.redirect || '/menu');
+              navigate(data.redirect || '/menu');
+          }
           } else {
             console.error('Error during token exchange:', data.error || 'An error occurred during OAuth login.');
             setError(data.error || 'An error occurred during OAuth login.');

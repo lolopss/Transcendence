@@ -16,4 +16,6 @@ urlpatterns = [
     path('api/check-game/', views.CheckJoinGame.as_view(), name='check_game'),  # CheckJoinGame view
     path('api/exit-queue/', views.ExitQueue.as_view(), name='exit_queue'),  # ExitQueue view
     path('api/user-details/', views.UserDetails.as_view(), name='user-details'),
+    path('api/toggle-2fa/', Toggle2FA.as_view(), name='toggle-2fa'),
+    path('api/verify-2fa/', Verify2FA.as_view(), name='verify-2fa'),
 ]

@@ -23,16 +23,11 @@ import json
 import urllib.parse
 import urllib.request
 import requests
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-UserModel = get_user_model()
 import logging
 import random  # For simulating matchmaking
-import json
+import pyotp  # For generating 2FA tokens
 
-User = get_user_model()
+UserModel = get_user_model()
 API_URL = 'https://api.intra.42.fr'
 logger = logging.getLogger(__name__)
 
@@ -41,24 +36,6 @@ class GetClientIdView(APIView):
 
     def get(self, request):
         return JsonResponse({'client_id': settings.SOCIAL_AUTH_42_KEY})
-
-import json
-import os
-import logging
-import requests
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-logger = logging.getLogger(__name__)
-
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework_simplejwt.tokens import RefreshToken
-import requests, os, json
-import logging
-
-logger = logging.getLogger(__name__)
 
 def register42(request):
     # Extract code and state from the query parameters
@@ -133,10 +110,26 @@ class CallbackView(APIView):
                         username=user_data['login'],
                         defaults={'email': user_data['email']}
                     )
+                    # Check if 2FA is enabled
+                    if user.profile.is_2fa_enabled:
+                        return Response({
+                            "requires_2fa": True,
+                            "user_id": user.id
+                        }, status=status.HTTP_200_OK)
+
                     # Generate JWT tokens
                     refresh = RefreshToken.for_user(user)
                     access = str(refresh.access_token)
                     refresh_token = str(refresh)
+
+                    # Add `user_id` to the access token
+                    refresh.access_token["user_id"] = user.id
+
+                    # Set user to online (if your app has an 'isOnline' field in the profile model)
+                    if hasattr(user, 'profile'):
+                        user.profile.isOnline = True
+                        user.profile.save()
+
                     # Respond with tokens for the frontend
                     return Response({
                         "access": access,
@@ -206,6 +199,13 @@ class UserLogin(APIView):
         if not user.check_password(password):
             return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
 
+        # Check if 2FA is enabled
+        if user.profile.is_2fa_enabled:
+            return Response({
+                "requires_2fa": True,
+                "user_id": user.id
+            }, status=status.HTTP_200_OK)
+
         # Generate the JWT tokens (access and refresh)
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
@@ -223,7 +223,6 @@ class UserLogin(APIView):
             "access": access_token,
             "refresh": refresh_token
         }, status=status.HTTP_200_OK)
-
 
 # Logout user and update online status
 
@@ -264,6 +263,74 @@ class UserLogout(APIView):
         # Log out the user from the session
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+class Toggle2FA(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        profile = user.profile
+
+        if not profile.is_2fa_enabled:
+            # Generate a new secret key for 2FA only if it doesn't already exist
+            if not profile.two_fa_secret:
+                profile.two_fa_secret = pyotp.random_base32()
+            # Generate a provisioning URI for Google Authenticator
+            totp = pyotp.TOTP(profile.two_fa_secret)
+            provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="Transcendence")
+        else:
+            # Clear the secret key when 2FA is disabled
+            provisioning_uri = None
+
+        profile.is_2fa_enabled = not profile.is_2fa_enabled
+        profile.save()
+
+        return Response({
+            'is_2fa_enabled': profile.is_2fa_enabled,
+            'two_fa_secret': profile.two_fa_secret if profile.is_2fa_enabled else None,
+            'provisioning_uri': provisioning_uri
+        })
+
+class Verify2FA(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        otp = request.data.get('otp')
+
+        if not user_id or not otp:
+            return Response({'error': 'User ID and OTP are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = UserModel.objects.get(pk=user_id)
+        except UserModel.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        profile = user.profile
+        if not profile.is_2fa_enabled or not profile.two_fa_secret:
+            return Response({'error': '2FA is not enabled for this user'}, status=status.HTTP_400_BAD_REQUEST)
+
+        totp = pyotp.TOTP(profile.two_fa_secret)
+        if totp.verify(otp):
+            # Generate the JWT tokens (access and refresh)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            # Add `user_id` to the access token
+            refresh.access_token["user_id"] = user.id
+
+            # Set user to online (if your app has an 'isOnline' field in the profile model)
+            if hasattr(user, 'profile'):
+                user.profile.isOnline = True
+                user.profile.save()
+
+            return Response({
+                "access": access_token,
+                "refresh": refresh_token
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -424,10 +491,19 @@ class UserDetails(APIView):
         # Assuming the user has a 'nickname' field in the profile model
         nickname = user.profile.nickname if hasattr(user, 'profile') else None
 
+        # Generate a provisioning URI for Google Authenticator if 2FA is enabled
+        provisioning_uri = None
+        if user.profile.is_2fa_enabled:
+            totp = pyotp.TOTP(user.profile.two_fa_secret)
+            provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="Transcendence")
+
         # Return the user details
         return Response({
             'username': user.username,
             'email': user.email,
             'nickname': nickname,
+            'is_2fa_enabled': user.profile.is_2fa_enabled,
+            'two_fa_secret': user.profile.two_fa_secret if user.profile.is_2fa_enabled else None,
+            'provisioning_uri': provisioning_uri
             # Note: Never send the hashed password to the frontend!
         })

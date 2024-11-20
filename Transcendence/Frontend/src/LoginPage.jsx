@@ -30,26 +30,34 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('/api/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ identifier, password }),
-      });
+        const response = await fetch('/api/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ identifier, password }),
+        });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('authToken', data.access);
-        navigate('/menu');
-      } else {
-        setError(data.error || 'An error occurred during login.');
-      }
+        if (response.ok) {
+            const data = await response.json();
+            if (data.requires_2fa) {
+                localStorage.setItem('userId', data.user_id);
+                localStorage.setItem('isVerifying2FA', 'true'); // Set flag
+                navigate('/verify-2fa');
+            } else {
+                localStorage.setItem('authToken', data.access);
+                localStorage.setItem('refreshToken', data.refresh);
+                navigate('/menu');
+            }
+        } else {
+            const errorData = await response.json();
+            setError(errorData.error);
+        }
     } catch (error) {
-      setError('An error occurred during login.');
+        console.error('Error during login:', error);
+        setError('Login failed');
     }
-  };
+};
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {

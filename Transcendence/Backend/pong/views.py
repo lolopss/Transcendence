@@ -110,10 +110,26 @@ class CallbackView(APIView):
                         username=user_data['login'],
                         defaults={'email': user_data['email']}
                     )
+                    # Check if 2FA is enabled
+                    if user.profile.is_2fa_enabled:
+                        return Response({
+                            "requires_2fa": True,
+                            "user_id": user.id
+                        }, status=status.HTTP_200_OK)
+
                     # Generate JWT tokens
                     refresh = RefreshToken.for_user(user)
                     access = str(refresh.access_token)
                     refresh_token = str(refresh)
+
+                    # Add `user_id` to the access token
+                    refresh.access_token["user_id"] = user.id
+
+                    # Set user to online (if your app has an 'isOnline' field in the profile model)
+                    if hasattr(user, 'profile'):
+                        user.profile.isOnline = True
+                        user.profile.save()
+
                     # Respond with tokens for the frontend
                     return Response({
                         "access": access,
@@ -182,6 +198,13 @@ class UserLogin(APIView):
         # Check password correctness
         if not user.check_password(password):
             return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Check if 2FA is enabled
+        if user.profile.is_2fa_enabled:
+            return Response({
+                "requires_2fa": True,
+                "user_id": user.id
+            }, status=status.HTTP_200_OK)
 
         # Generate the JWT tokens (access and refresh)
         refresh = RefreshToken.for_user(user)
@@ -254,7 +277,7 @@ class Toggle2FA(APIView):
                 profile.two_fa_secret = pyotp.random_base32()
             # Generate a provisioning URI for Google Authenticator
             totp = pyotp.TOTP(profile.two_fa_secret)
-            provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="YourAppName")
+            provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="Transcendence")
         else:
             # Clear the secret key when 2FA is disabled
             provisioning_uri = None
@@ -269,14 +292,19 @@ class Toggle2FA(APIView):
         })
 
 class Verify2FA(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request):
-        user = request.user
+        user_id = request.data.get('user_id')
         otp = request.data.get('otp')
 
-        if not otp:
-            return Response({'error': 'OTP is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if not user_id or not otp:
+            return Response({'error': 'User ID and OTP are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = UserModel.objects.get(pk=user_id)
+        except UserModel.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         profile = user.profile
         if not profile.is_2fa_enabled or not profile.two_fa_secret:
@@ -284,7 +312,23 @@ class Verify2FA(APIView):
 
         totp = pyotp.TOTP(profile.two_fa_secret)
         if totp.verify(otp):
-            return Response({'success': 'OTP is valid'}, status=status.HTTP_200_OK)
+            # Generate the JWT tokens (access and refresh)
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            # Add `user_id` to the access token
+            refresh.access_token["user_id"] = user.id
+
+            # Set user to online (if your app has an 'isOnline' field in the profile model)
+            if hasattr(user, 'profile'):
+                user.profile.isOnline = True
+                user.profile.save()
+
+            return Response({
+                "access": access_token,
+                "refresh": refresh_token
+            }, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -451,7 +495,7 @@ class UserDetails(APIView):
         provisioning_uri = None
         if user.profile.is_2fa_enabled:
             totp = pyotp.TOTP(user.profile.two_fa_secret)
-            provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="YourAppName")
+            provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="Transcendence")
 
         # Return the user details
         return Response({

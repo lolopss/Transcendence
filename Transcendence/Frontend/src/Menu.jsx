@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Verify2FA from './Verify2A';
 
 function GameMenu() {
     const navigate = useNavigate();
@@ -116,10 +115,6 @@ function GameMenu() {
                     <p>2FA Secret: {twoFASecret}</p>
                     <p>Scan this QR code with Google Authenticator:</p>
                     <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(provisioningUri)}&size=200x200`} alt="QR Code" />
-                    <button onClick={() => setShowVerify2FA(!showVerify2FA)}>
-                        {showVerify2FA ? 'Hide Verify 2FA' : 'Show Verify 2FA'}
-                    </button>
-                    {showVerify2FA && <Verify2FA />}
                 </div>
             )}
         </div>

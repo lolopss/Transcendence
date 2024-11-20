@@ -6,7 +6,7 @@ from django.contrib.auth.models import User  # Import Django's built-in User mod
 class Profile(models.Model):
     # Establish a one-to-one relationship with the Django built-in User model
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    
+
     nickname = models.CharField(max_length=15)
     wins = models.IntegerField(default=0)  # Track the number of wins
     losses = models.IntegerField(default=0)  # Track the number of losses
@@ -14,6 +14,8 @@ class Profile(models.Model):
     goals_taken = models.IntegerField(default=0)  # Track the number of goals taken
     longuest_exchange = models.IntegerField(default=0)  # Track the longuest exchange
     ace = models.IntegerField(default=0)  # Track the number of ace
+    is_2fa_enabled = models.BooleanField(default=False)
+    two_fa_secret = models.CharField(max_length=32, blank=True, null=True)
     @property
     def winrate(self):
         # Calculate winrate as a percentage

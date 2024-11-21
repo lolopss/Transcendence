@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.utils.translation import get_language
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -360,7 +361,64 @@ def edit_profile_view(request):
         form = ProfileForm(instance=profile)
     return render(request, 'edit_profile.html', {'form': form})
 
+class UpdateLanguage(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
+        user = request.user
+        language = request.data.get('language')
+
+        if language not in ['en', 'es', 'fr']:
+            return Response({'error': 'Invalid language'}, status=status.HTTP_400_BAD_REQUEST)
+
+        profile = user.profile
+        profile.language = language
+        profile.save()
+
+        return Response({'message': 'Language updated successfully'}, status=status.HTTP_200_OK)
+
+import json
+import os
+from django.conf import settings
+from django.http import JsonResponse
+from rest_framework.views import APIView
+import logging
+
+logger = logging.getLogger(__name__)
+
+class GetTranslations(APIView):
+    def get(self, request, language_code):
+        if language_code not in ['en', 'es', 'fr']:
+            return JsonResponse({'error': 'Invalid language code'}, status=400)
+
+        # Construct the path relative to the project root
+        translations_dir = os.path.abspath(os.path.join(settings.BASE_DIR, 'translations'))
+        file_path = os.path.join(translations_dir, f'{language_code}.json')
+
+        # Log the current working directory
+        logger.info(f"Current working directory: {os.getcwd()}")
+        logger.info(f"Translations directory: {translations_dir}")
+        logger.info(f"Translation file path: {file_path}")
+
+        # Check if the directory exists
+        if not os.path.isdir(translations_dir):
+            logger.error(f"Translations directory does not exist: {translations_dir}")
+            return JsonResponse({'error': 'Translations directory not found'}, status=404)
+
+        # Check if the file exists
+        if not os.path.exists(file_path):
+            logger.error(f"Translation file does not exist: {file_path}")
+            return JsonResponse({'error': 'Translation file not found'}, status=404)
+
+        # Check file permissions
+        if not os.access(file_path, os.R_OK):
+            logger.error(f"Translation file is not readable: {file_path}")
+            return JsonResponse({'error': 'Translation file is not readable'}, status=403)
+
+        with open(file_path, 'r', encoding='utf-8') as file:
+            translations = json.load(file)
+
+        return JsonResponse(translations)
 
 # # This will hold your matchmaking queue
 # matchmaking_queue = []
@@ -480,7 +538,6 @@ class ExitQueue(APIView):
 
         return Response({"message": 'You left the queue'}, status=status.HTTP_200_OK)
 
-
 #to check if properly connected
 class UserDetails(APIView):
     permission_classes = [IsAuthenticated]
@@ -504,6 +561,7 @@ class UserDetails(APIView):
             'nickname': nickname,
             'is_2fa_enabled': user.profile.is_2fa_enabled,
             'two_fa_secret': user.profile.two_fa_secret if user.profile.is_2fa_enabled else None,
-            'provisioning_uri': provisioning_uri
+            'provisioning_uri': provisioning_uri,
+            'language': user.profile.language
             # Note: Never send the hashed password to the frontend!
         })

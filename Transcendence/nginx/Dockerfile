@@ -11,8 +11,8 @@ WORKDIR /app/front-end
 RUN npm cache clean --force
 
 # Install dependencies and run build
-RUN npm install  
-COPY ./Frontend /app/front-end 
+RUN npm install
+COPY ./Frontend /app/front-end
 RUN npm run build
 
 FROM nginx:1.25.3

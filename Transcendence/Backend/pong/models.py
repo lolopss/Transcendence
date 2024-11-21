@@ -16,6 +16,8 @@ class Profile(models.Model):
     ace = models.IntegerField(default=0)  # Track the number of ace
     is_2fa_enabled = models.BooleanField(default=False)
     two_fa_secret = models.CharField(max_length=32, blank=True, null=True)
+    language = models.CharField(max_length=2, default='en')
+
     @property
     def winrate(self):
         # Calculate winrate as a percentage

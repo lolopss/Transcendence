@@ -1,6 +1,7 @@
 {
 	"title": "EL PONG",
 	"start_game": "Iniciar el juego",
+	"start_game_ai": "Iniciar el juego contra la IA",
 	"start_btn": "Iniciar",
 	"see_options": "Ver las opciones",
 	"options_btn": "Opciones",

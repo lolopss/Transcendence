@@ -1,6 +1,7 @@
 {
 	"title": "THE PONG",
 	"start_game": "Start the game",
+	"start_game_ai": "Start the game against AI",
 	"start_btn": "Start",
 	"see_options": "See the settings",
 	"options_btn": "Settings",

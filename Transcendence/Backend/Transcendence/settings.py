@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'pong',
     'channels',
     'rest_framework',
-    'django.contrib.sites',  # Required for social-auth
     'social_django',
 ]
 #FOR API / LOGIN ...

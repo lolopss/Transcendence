@@ -64,6 +64,28 @@ function AIGame() {
     }, [isStarted]);
     console.log(`is started2 -> ${isStarted}`);
 
+    const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
+        try {
+            const response = await fetch('/api/update-goals/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assuming you use token-based authentication
+                },
+                body: JSON.stringify({ goals, goals_taken, longuest_exchange, ace }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update goals');
+            }
+
+            const data = await response.json();
+            console.log(data.message);
+        } catch (error) {
+            console.error('Error updating goals:', error);
+        }
+    };
+
     const handleResize = () => {
         if (!isStarted)
             return ;
@@ -198,20 +220,25 @@ function AIGame() {
         const ballMovement = () => {
             ball.x += ball.dx;
             ball.y += ball.dy;
-
             // Bounce off top and bottom edges
-            if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+            if (ball.y + ball.size > canvas.height) {
+                ball.y = canvas.height - ball.size - 3; // Adjust position to prevent sticking
+                ball.dy *= -1;
+            } else if (ball.y - ball.size < 0) {
+                ball.y = ball.size + 3; // Adjust position to prevent sticking
                 ball.dy *= -1;
             }
 
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
+                updateGoalsInDatabase(0, 1, paddleHitCount, paddleHitCount); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
+                updateGoalsInDatabase(1, 0, paddleHitCount, 0); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
@@ -226,19 +253,21 @@ function AIGame() {
                 ballHitY = ball.y - paddle.y;
 
                 if (ball.x - ball.size < paddle.x + paddle.width && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
-                    handlePaddleHit();
+                    handlePaddleHit(paddle.y);
                 }
             } else if (playerN === 2) {
                 paddle = player2.paddle;
                 ballHitY = ball.y - paddle.y;
 
                 if (ball.x + ball.size > paddle.x && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
-                    handlePaddleHit();
+                    handlePaddleHit(paddle.y);
                 }
             }
         }
 
-        const handlePaddleHit = () => {
+        let lastAiMoveCall = Date.now(); // Track the last time aiMove was called
+
+        const handlePaddleHit = (paddleY) => {
             // Increase ball speed and adjust direction based on paddle hit location
             ball.dx *= -1.1;
             if (Math.abs(ball.dx) > 30) {
@@ -246,8 +275,8 @@ function AIGame() {
             }
 
             // Calculate relative hit position to adjust dy for angled bounce
-            let relativeIntersectY = (ball.y - paddle.y - paddle.height / 2) / (paddle.height / 2);
-            ball.dy = relativeIntersectY * 4;
+            let relativeIntersectY = (ball.y - (paddleY + paddle.height / 2)) / (paddle.height / 2);
+            ball.dy = relativeIntersectY * 5; // Adjust the multiplier to ensure a proper bounce angle
 
             // Clamp dy to avoid extreme angles
             if (ball.dy > 5) ball.dy = 5;
@@ -260,7 +289,33 @@ function AIGame() {
             if (paddleHitCount % 2 === 0 && limitHitbox > 15) {
                 limitHitbox--; // Reduce limitHitbox after every two paddle hits
             }
-        }
+
+            if (ball.dx > 0) {
+                const now = Date.now();
+                const timeSinceLastCall = now - lastAiMoveCall;
+
+                console.log(`Time since last aiMove call: ${timeSinceLastCall}ms`);
+
+                if (timeSinceLastCall >= 1000) {
+                    console.log('Calling aiMove immediately');
+                    aiMove();
+                    lastAiMoveCall = now;
+                } else {
+                    console.log(`Setting timeout for aiMove in ${1000 - timeSinceLastCall}ms`);
+                    clearInterval(aiInterval);
+                    setTimeout(() => {
+                        console.log('Calling aiMove after timeout');
+                        aiMove();
+                        lastAiMoveCall = Date.now();
+                        aiInterval = setInterval(() => {
+                            console.log('Calling aiMove from interval');
+                            aiMove();
+                            lastAiMoveCall = Date.now();
+                        }, 1000);
+                    }, 1000 - timeSinceLastCall);
+                }
+            }
+        };
 
         const shakeScreen = () => {
             if (shakeDuration > 0) {
@@ -292,7 +347,7 @@ function AIGame() {
                 predictedX += predictedDx;
 
                 // Bounce off top and bottom edges
-                if (predictedY + ball.size > canvas.height || predictedY - ball.size < 0) {
+                if (predictedY + ball.size > canvas.height - 5|| predictedY - ball.size < 5) {
                     predictedDy *= -1;
                 }
             }
@@ -305,7 +360,6 @@ function AIGame() {
         const aiMove = () => {
             const speed = 5; // Paddle speed
             const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
-            const tolerance = player2.paddle.height / 2 - 5; // Tolerance range slightly less than the size of the paddle
 
             if (ball.dx < 0) {
                 // Ball is moving towards the left, move paddle to the middle of the board
@@ -334,7 +388,9 @@ function AIGame() {
                     player2.paddle.dy = 0;
                     clearInterval(currentStopInterval);
                     currentStopInterval = null;
+                    aiInterval = 10000;
                 }, timeToReach);
+
             } else {
                 // Ball is moving towards the right, predict the ball's position
                 const targetY = predictBallPosition(); // Get the predicted position of the ball
@@ -352,6 +408,7 @@ function AIGame() {
 
                 // Calculate the time it will take to reach the target position
                 const timeToReach = Math.abs(distance) / speed * 10; // Convert to milliseconds
+                console.log(timeToReach / 1000 + ' secondes to reach the target');
 
                 // Clear any existing interval
                 if (currentStopInterval) {
@@ -363,7 +420,7 @@ function AIGame() {
                     player2.paddle.dy = 0;
                     clearInterval(currentStopInterval);
                     currentStopInterval = null;
-                }, timeToReach);
+                }, timeToReach * 1.10);
             }
         };
 

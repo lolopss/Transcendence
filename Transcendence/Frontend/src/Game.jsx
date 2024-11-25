@@ -62,6 +62,28 @@ function Game() {
     }, [isStarted]);
     console.log(`is started2 -> ${isStarted}`);
 
+    const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
+        try {
+            const response = await fetch('/api/update-goals/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assuming you use token-based authentication
+                },
+                body: JSON.stringify({ goals, goals_taken, longuest_exchange, ace }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update goals');
+            }
+
+            const data = await response.json();
+            console.log(data.message);
+        } catch (error) {
+            console.error('Error updating goals:', error);
+        }
+    };
+
     const handleResize = () => {
         if (!isStarted)
             return ;
@@ -198,11 +220,13 @@ function Game() {
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
+                updateGoalsInDatabase(0, 1, paddleHitCount, paddleHitCount); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
+                updateGoalsInDatabase(1, 0, paddleHitCount, 0); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();

@@ -28,11 +28,16 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Profile"
+
 # Signal handler to create or update the Profile whenever the User is saved
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+        profile = instance.profile
+        if not profile.nickname:
+            profile.nickname = instance.username
+        profile.save()
 
 class GameServerModel(models.Model):
 	serverId = models.AutoField(primary_key=True)

@@ -16,7 +16,10 @@ class Profile(models.Model):
     ace = models.IntegerField(default=0)  # Track the number of ace
     is_2fa_enabled = models.BooleanField(default=False)
     two_fa_secret = models.CharField(max_length=32, blank=True, null=True)
+    anonymized = models.BooleanField(default=False) #RGPD
+    deletion_requested = models.BooleanField(default=False) #RGPD
     language = models.CharField(max_length=2, default='en')
+    profile_picture = models.ImageField(upload_to='profile_pictures/', default='profile_pictures/pepe.jpg')
 
     @property
     def winrate(self):

@@ -11,9 +11,6 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path, os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,8 +40,8 @@ INSTALLED_APPS = [
     'pong',
     'channels',
     'rest_framework',
-    'django.contrib.sites',  # Required for social-auth
     'social_django',
+    # 'django.contrib.sites',  # Required for social-auth
 ]
 #FOR API / LOGIN ...
 
@@ -92,6 +89,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -163,29 +162,6 @@ AUTHENTICATION_BACKENDS = [
 SOCIAL_AUTH_42_KEY = os.environ.get('CLIENT_ID')
 SOCIAL_AUTH_42_SECRET = os.environ.get('CLIENT_SECRET')
 SOCIAL_AUTH_42_REDIRECT_URI = 'https://localhost:8000/register42'
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'INFO',  # Logs INFO and higher levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        '': {
-            'handlers': ['console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-    },
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {

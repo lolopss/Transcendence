@@ -7,6 +7,8 @@ import Menu from './Menu';
 import Matchmaking from './Matchmaking';
 import OAuthCallback from './OAuthCallback';
 import Verify2FA from './Verify2FA';
+import EditAccount from './EditAccount.jsx';
+
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('authToken');
@@ -49,6 +51,7 @@ const App = () => {
       <Route path="/verify-2fa" element={<Verify2FA />} />
       <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
       <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
+      <Route path="/edit-account" element={<EditAccount />} />
       <Route path="/matchmaking" element={<ProtectedRoute><Matchmaking /></ProtectedRoute>} />
       <Route path="/register42" element={<OAuthCallback />} /> {/* OAuth callback route */}
       <Route path="*" element={<Navigate to="/login" />} />

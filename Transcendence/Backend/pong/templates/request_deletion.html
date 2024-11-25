@@ -1,0 +1,14 @@
+<!-- Transcendence/Backend/pong/templates/pong/request_deletion.html -->
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Request Account Deletion</h1>
+  <p>Warning: Once your account is deleted, you will no longer be able to log in or recover your personal data. This action is irreversible and ensures your privacy is protected. Are you sure you want to proceed?</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Confirm Deletion</button>
+    <a href="{% url 'profile' %}">Cancel</a>
+  </form>
+{% endblock %}

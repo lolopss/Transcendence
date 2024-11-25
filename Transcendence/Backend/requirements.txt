@@ -16,3 +16,4 @@ djangorestframework-simplejwt
 python-dotenv==1.0.0  # Add the python-dotenv package for environment variable management
 social-auth-app-django>=5.0.0
 pyotp>= 2.6.0
+Pillow==10.0.0

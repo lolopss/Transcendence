@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Menu.css'; // Import the CSS file
 
 function GameMenu() {
     const navigate = useNavigate();
@@ -8,6 +9,8 @@ function GameMenu() {
     const [provisioningUri, setProvisioningUri] = useState('');
     const [language, setLanguage] = useState('en');
     const [translations, setTranslations] = useState({});
+    const [profilePicture, setProfilePicture] = useState('/media/profile_pictures/pepe.jpg');
+
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -133,6 +136,81 @@ function GameMenu() {
             console.error('Error toggling 2FA:', error);
         }
     };
+    useEffect(() => {
+        const fetchProfilePicture = async () => {
+          const token = localStorage.getItem('authToken');
+          if (!token) return;
+    
+          try {
+            const response = await fetch('/api/user-details/', {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+            if (response.ok) {
+              const data = await response.json();
+              setProfilePicture(data.profile_picture); // Assuming the backend returns the profile picture URL in this field
+            }
+          } catch (error) {
+            console.error('Error fetching profile picture:', error);
+          }
+        };
+    
+        fetchProfilePicture();
+      }, []);
+    
+
+    const deleteAccount = async () => {
+        const confirmed = window.confirm("Are you sure you want to delete your account? This action is irreversible.");
+        if (!confirmed) {
+            return;
+        }
+    
+        try {
+            const response = await fetch('/api/delete-account/', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+            if (response.ok) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('oauthState');
+                localStorage.removeItem('refreshToken');
+                navigate('/login');
+            } else {
+                console.error('Failed to delete account');
+            }
+        } catch (error) {
+            console.error('Error deleting account:', error);
+        }
+    };
+
+    const anonymizeAccount = async () => {
+        const confirmed = window.confirm("Are you sure you want to anonymize your account? This action is irreversible.");
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/anonymize-account/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+            if (response.ok) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('oauthState');
+                localStorage.removeItem('refreshToken');
+                navigate('/login');
+            } else {
+                console.error('Failed to anonymize account');
+            }
+        } catch (error) {
+            console.error('Error anonymizing account:', error);
+        }
+    };
 
     return (
         <div>
@@ -155,6 +233,15 @@ function GameMenu() {
                 <button onClick={() => updateLanguage('en')} disabled={language === 'en'}>{translations.english}</button>
                 <button onClick={() => updateLanguage('es')} disabled={language === 'es'}>{translations.spanish}</button>
                 <button onClick={() => updateLanguage('fr')} disabled={language === 'fr'}>{translations.french}</button>
+            </div>
+            <div>
+                <h3>Account</h3>
+                <GameButton usage="Edit your account" name="Edit Account" onClick={() => navigate('/edit-account')} />
+                <GameButton usage="Anonymize your account" name="Anonymize Account" onClick={anonymizeAccount} />
+                <GameButton usage="Delete your account" name="Delete Account" onClick={deleteAccount} />
+            </div>
+            <div className="profile-picture">
+                {profilePicture && <img src={profilePicture} alt="Profile" />}
             </div>
         </div>
     );

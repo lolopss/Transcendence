@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import './Edit.css'; // Import the CSS file
+
+const pepeImages = [
+    '/media/profile_pictures/pepe_boxe.png',
+    '/media/profile_pictures/pepe_glasses.png',
+    '/media/profile_pictures/pepe_thumbup.png',
+    '/media/profile_pictures/pepe-ohhh.png',
+    '/media/profile_pictures/pepe.png'
+];
+
 const EditAccount = () => {
     const [userDetails, setUserDetails] = useState({
         username: '',
@@ -9,7 +19,9 @@ const EditAccount = () => {
         lastName: '',
         profilePicture: null,
     });
-    const [preview, setPreview] = useState('/media/profile_pictures/pepe.jpg');
+    const [preview, setPreview] = useState(pepeImages[pepeImages.length - 1]); // Default to the last image
+    const [currentImageIndex, setCurrentImageIndex] = useState(pepeImages.length - 1);
+    const [isFileUploaded, setIsFileUploaded] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -32,6 +44,7 @@ const EditAccount = () => {
                 setPreview(reader.result);
             };
             reader.readAsDataURL(file);
+            setIsFileUploaded(true);
         }
         console.log('Selected file path:', file ? file.name : 'No file selected');
     };
@@ -43,8 +56,10 @@ const EditAccount = () => {
         formData.append('email', userDetails.email);
         formData.append('firstName', userDetails.firstName);
         formData.append('lastName', userDetails.lastName);
-        if (userDetails.profilePicture) {
+        if (isFileUploaded && userDetails.profilePicture) {
             formData.append('profilePicture', userDetails.profilePicture);
+        } else {
+            formData.append('profilePictureUrl', preview);
         }
 
         try {
@@ -58,10 +73,27 @@ const EditAccount = () => {
             if (response.ok) {
                 navigate('/menu');
             } else {
-                console.error('Failed to update account');
+                const errorData = await response.json();
+                console.error('Failed to update account:', errorData);
             }
         } catch (error) {
             console.error('Error updating account:', error);
+        }
+    };
+
+    const handleNextImage = () => {
+        const nextIndex = (currentImageIndex + 1) % pepeImages.length;
+        setCurrentImageIndex(nextIndex);
+        if (!isFileUploaded) {
+            setPreview(pepeImages[nextIndex]);
+        }
+    };
+
+    const handlePrevImage = () => {
+        const prevIndex = (currentImageIndex - 1 + pepeImages.length) % pepeImages.length;
+        setCurrentImageIndex(prevIndex);
+        if (!isFileUploaded) {
+            setPreview(pepeImages[prevIndex]);
         }
     };
 
@@ -88,7 +120,11 @@ const EditAccount = () => {
                     Profile Picture:
                     <input type="file" accept="image/*" onChange={handleImageChange} />
                 </label>
-                {preview && <img src={preview} alt="Profile Preview" />}
+                <div className="image-carousel">
+                    <button type="button" onClick={handlePrevImage}>←</button>
+                    {preview && <img src={preview} alt="Profile Preview" />}
+                    <button type="button" onClick={handleNextImage}>→</button>
+                </div>
                 <button type="submit">Save Changes</button>
             </form>
         </div>

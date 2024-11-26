@@ -9,8 +9,7 @@ function GameMenu() {
     const [provisioningUri, setProvisioningUri] = useState('');
     const [language, setLanguage] = useState('en');
     const [translations, setTranslations] = useState({});
-    const [profilePicture, setProfilePicture] = useState('/media/profile_pictures/pepe.jpg');
-
+    const [profilePicture, setProfilePicture] = useState('/media/profile_pictures/pepe.png');
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -136,36 +135,36 @@ function GameMenu() {
             console.error('Error toggling 2FA:', error);
         }
     };
+
     useEffect(() => {
         const fetchProfilePicture = async () => {
-          const token = localStorage.getItem('authToken');
-          if (!token) return;
-    
-          try {
-            const response = await fetch('/api/user-details/', {
-              headers: {
-                'Authorization': `Bearer ${token}`
-              }
-            });
-            if (response.ok) {
-              const data = await response.json();
-              setProfilePicture(data.profile_picture); // Assuming the backend returns the profile picture URL in this field
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+
+            try {
+                const response = await fetch('/api/user-details/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setProfilePicture(data.profile_picture); // Assuming the backend returns the profile picture URL in this field
+                }
+            } catch (error) {
+                console.error('Error fetching profile picture:', error);
             }
-          } catch (error) {
-            console.error('Error fetching profile picture:', error);
-          }
         };
-    
+
         fetchProfilePicture();
-      }, []);
-    
+    }, []);
 
     const deleteAccount = async () => {
         const confirmed = window.confirm("Are you sure you want to delete your account? This action is irreversible.");
         if (!confirmed) {
             return;
         }
-    
+
         try {
             const response = await fetch('/api/delete-account/', {
                 method: 'DELETE',
@@ -237,8 +236,12 @@ function GameMenu() {
             <div>
                 <h3>Account</h3>
                 <GameButton usage="Edit your account" name="Edit Account" onClick={() => navigate('/edit-account')} />
-                <GameButton usage="Anonymize your account" name="Anonymize Account" onClick={anonymizeAccount} />
-                <GameButton usage="Delete your account" name="Delete Account" onClick={deleteAccount} />
+                <div className="data-privacy">
+                    <h3>Data Privacy Rights</h3>
+                    <p>You have the right to delete or anonymize your account. Please use the buttons below to exercise these rights.</p>
+                    <GameButton usage="Anonymize your account" name="Anonymize Account" onClick={anonymizeAccount} />
+                    <GameButton usage="Delete your account" name="Delete Account" onClick={deleteAccount} />
+                </div>
             </div>
             <div className="profile-picture">
                 {profilePicture && <img src={profilePicture} alt="Profile" />}

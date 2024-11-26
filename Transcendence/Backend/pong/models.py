@@ -19,8 +19,8 @@ class Profile(models.Model):
     anonymized = models.BooleanField(default=False) #RGPD
     deletion_requested = models.BooleanField(default=False) #RGPD
     language = models.CharField(max_length=2, default='en')
-    profile_picture = models.ImageField(upload_to='profile_pictures/', default='profile_pictures/pepe.jpg')
-
+    profile_picture = models.ImageField(upload_to='profile_pictures/', default='profile_pictures/pepe.png')
+    connected_from_42_api = models.BooleanField(default=False)  # New field
     @property
     def winrate(self):
         # Calculate winrate as a percentage

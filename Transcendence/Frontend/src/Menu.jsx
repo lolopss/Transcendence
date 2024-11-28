@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Menu.css'; // Import the CSS file
+import './FriendList.css';
+import './Menu.css';
 
 function GameMenu() {
     const navigate = useNavigate();
@@ -211,6 +212,11 @@ function GameMenu() {
         }
     };
 
+    const handleProfileClick = () => {
+        navigate('/Profile');
+    };
+    
+
     return (
         <div>
             <h2>{translations.title}</h2>
@@ -243,7 +249,7 @@ function GameMenu() {
                     <GameButton usage="Delete your account" name="Delete Account" onClick={deleteAccount} />
                 </div>
             </div>
-            <div className="profile-picture">
+            <div className="profile-picture" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
                 {profilePicture && <img src={profilePicture} alt="Profile" />}
             </div>
         </div>

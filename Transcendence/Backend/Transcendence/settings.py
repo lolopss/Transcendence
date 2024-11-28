@@ -101,6 +101,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'pong.middleware.UpdateLastActivityMiddleware',
 ]
 
 ROOT_URLCONF = 'Transcendence.urls'

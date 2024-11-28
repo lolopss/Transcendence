@@ -89,3 +89,16 @@ def ManageGameQueue():
         settings.IS_SEARCHING = False
     else:
         settings.IS_SEARCHING = False
+
+from django.utils import timezone
+from django.contrib.auth.models import User
+from datetime import timedelta
+
+def check_inactive_users():
+    now = timezone.now()
+    three_seconds_ago = now - timedelta(seconds=3)
+    inactive_users = User.objects.filter(profile__last_activity__lt=three_seconds_ago, profile__isOnline=True)
+
+    for user in inactive_users:
+        user.profile.isOnline = False
+        user.profile.save()

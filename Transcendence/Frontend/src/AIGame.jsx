@@ -293,14 +293,14 @@ function AIGame() {
                 if (timeSinceLastCall >= 1000) {
                     clearInterval(aiInterval);
                     aiMove();
-                    aiInterval = 1000;
                     lastAiMoveCall = now;
                 } else {
                     clearInterval(aiInterval);
+                    // wait for 1000 - timeSinceLastCall before calling aiMove
+                    console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
                     setTimeout(() => {
                         aiMove();
-                        lastAiMoveCall = Date.now();
-                        aiInterval = 1000;
+                        lastAiMoveCall = now;
                     }, 1000 - timeSinceLastCall);
                 }
             }
@@ -352,7 +352,12 @@ function AIGame() {
             const speed = 5; // Paddle speed
             const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
 
-            if (ball.dx < 0) {
+            // log the ball's speed
+            console.log(`Ball speed: ${ball.dx.toFixed(2)}`);
+
+            if (ball.dx < 0 ) {
+                // if absolute speed of the ball is more than 15, do not go to the middle
+                if (Math.abs(ball.dx) < 12) {
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
                 console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the left, move paddle to the middle of the board
@@ -371,19 +376,20 @@ function AIGame() {
                 }
                 // Calculate the time it will take to reach the middle position with a random offset
                 const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);
+
                 // Clear any existing interval
                 if (currentStopInterval) {
                     clearInterval(currentStopInterval);
                 }
 
+                clearInterval(aiInterval);
                 // Set an interval to stop the paddle's movement after the calculated time
                 currentStopInterval = setInterval(() => {
                     player2.paddle.dy = 0;
                     clearInterval(currentStopInterval);
                     currentStopInterval = null;
-                    clearInterval(aiInterval);
                 }, timeToReach);
-
+                }
             } else {
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
                 console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
@@ -419,6 +425,7 @@ function AIGame() {
                     aiInterval = setInterval(() => {
                         aiMove();
                     }, 1000);
+                    lastAiMoveCall = now;
                 }, timeToReach * 1.10);
             }
         };

@@ -240,19 +240,19 @@ function Game() {
                 ballHitY = ball.y - paddle.y;
 
                 if (ball.x - ball.size < paddle.x + paddle.width && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
-                    handlePaddleHit();
+                    handlePaddleHit(paddle.y);
                 }
             } else if (playerN === 2) {
                 paddle = player2.paddle;
                 ballHitY = ball.y - paddle.y;
 
                 if (ball.x + ball.size > paddle.x && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
-                    handlePaddleHit();
+                    handlePaddleHit(paddle.y);
                 }
             }
         }
 
-        const handlePaddleHit = () => {
+        const handlePaddleHit = (paddleY) => {
             // Increase ball speed and adjust direction based on paddle hit location
             ball.dx *= -1.1;
             if (Math.abs(ball.dx) > 30) {
@@ -260,8 +260,8 @@ function Game() {
             }
 
             // Calculate relative hit position to adjust dy for angled bounce
-            let relativeIntersectY = (ball.y - paddle.y - paddle.height / 2) / (paddle.height / 2);
-            ball.dy = relativeIntersectY * 4;
+            let relativeIntersectY = (ball.y - (paddleY + paddle.height / 2)) / (paddle.height / 2);
+            ball.dy = relativeIntersectY * 5; // Adjust the multiplier to ensure a proper bounce angle
 
             // Clamp dy to avoid extreme angles
             if (ball.dy > 5) ball.dy = 5;

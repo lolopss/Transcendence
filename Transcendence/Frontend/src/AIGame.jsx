@@ -8,6 +8,7 @@ let shakeDuration = 10;
 let shakeSpeed = 5;
 let aiInterval = null; // Declare aiInterval globally
 let currentStopInterval = null; // Declare currentStopInterval globally
+let lastAiMoveCall = Date.now(); // Track the last time aiMove was called
 
 class Paddle {
     constructor(x, y, width, height, color) {
@@ -80,7 +81,6 @@ function AIGame() {
             }
 
             const data = await response.json();
-            console.log(data.message);
         } catch (error) {
             console.error('Error updating goals:', error);
         }
@@ -207,11 +207,7 @@ function AIGame() {
             }
 
             // Clear existing AI move interval
-            if (aiInterval) {
-                clearInterval(aiInterval);
-            }
-
-            // Set a new AI move interval
+            clearInterval(aiInterval);
             aiInterval = setInterval(() => {
                 aiMove();
             }, 1000);
@@ -232,13 +228,13 @@ function AIGame() {
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
-                updateGoalsInDatabase(0, 1, paddleHitCount, paddleHitCount); // Increment goals taken for player 1
+                updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
-                updateGoalsInDatabase(1, 0, paddleHitCount, 0); // Increment goals for player 1
+                updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
@@ -294,24 +290,17 @@ function AIGame() {
                 const now = Date.now();
                 const timeSinceLastCall = now - lastAiMoveCall;
 
-                console.log(`Time since last aiMove call: ${timeSinceLastCall}ms`);
-
                 if (timeSinceLastCall >= 1000) {
-                    console.log('Calling aiMove immediately');
+                    clearInterval(aiInterval);
                     aiMove();
+                    aiInterval = 1000;
                     lastAiMoveCall = now;
                 } else {
-                    console.log(`Setting timeout for aiMove in ${1000 - timeSinceLastCall}ms`);
                     clearInterval(aiInterval);
                     setTimeout(() => {
-                        console.log('Calling aiMove after timeout');
                         aiMove();
                         lastAiMoveCall = Date.now();
-                        aiInterval = setInterval(() => {
-                            console.log('Calling aiMove from interval');
-                            aiMove();
-                            lastAiMoveCall = Date.now();
-                        }, 1000);
+                        aiInterval = 1000;
                     }, 1000 - timeSinceLastCall);
                 }
             }
@@ -358,15 +347,20 @@ function AIGame() {
         let currentStopInterval = null; // Variable to keep track of the current interval
 
         const aiMove = () => {
+            const now = Date.now();
+
             const speed = 5; // Paddle speed
             const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
 
             if (ball.dx < 0) {
+                const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
+                console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the left, move paddle to the middle of the board
+                lastAiMoveCall = now; // Update the last call time
                 const middleY = canvas.height / 2;
                 const distance = middleY - paddleCenterY;
 
-                if (Math.abs(distance) > 20) {
+                if (Math.abs(distance) > 30) {
                     if (distance < 0) {
                         player2.paddle.dy = -speed; // Move up with a speed of 5
                     } else if (distance > 0) {
@@ -375,9 +369,8 @@ function AIGame() {
                 } else {
                     player2.paddle.dy = 0; // Stop if already aligned
                 }
-
-                // Calculate the time it will take to reach the middle position
-                const timeToReach = Math.abs(distance) / speed * 10; // Convert to milliseconds
+                // Calculate the time it will take to reach the middle position with a random offset
+                const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);
                 // Clear any existing interval
                 if (currentStopInterval) {
                     clearInterval(currentStopInterval);
@@ -388,15 +381,18 @@ function AIGame() {
                     player2.paddle.dy = 0;
                     clearInterval(currentStopInterval);
                     currentStopInterval = null;
-                    aiInterval = 10000;
+                    clearInterval(aiInterval);
                 }, timeToReach);
 
             } else {
+                const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
+                console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the right, predict the ball's position
+                lastAiMoveCall = now; // Update the last call time
                 const targetY = predictBallPosition(); // Get the predicted position of the ball
                 const distance = targetY - paddleCenterY;
 
-                if (Math.abs(distance) > 20) {
+                if (Math.abs(distance) > 30) {
                     if (distance < 0) {
                         player2.paddle.dy = -speed; // Move up with a speed of 5
                     } else if (distance > 0) {
@@ -407,8 +403,7 @@ function AIGame() {
                 }
 
                 // Calculate the time it will take to reach the target position
-                const timeToReach = Math.abs(distance) / speed * 10; // Convert to milliseconds
-                console.log(timeToReach / 1000 + ' secondes to reach the target');
+                const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);// Convert to milliseconds
 
                 // Clear any existing interval
                 if (currentStopInterval) {
@@ -420,6 +415,10 @@ function AIGame() {
                     player2.paddle.dy = 0;
                     clearInterval(currentStopInterval);
                     currentStopInterval = null;
+                    clearInterval(aiInterval);
+                    aiInterval = setInterval(() => {
+                        aiMove();
+                    }, 1000);
                 }, timeToReach * 1.10);
             }
         };

@@ -11,6 +11,7 @@ urlpatterns = [
     path('api/join-queue/', JoinQueue.as_view(), name='join_queue'),
     path('api/check-game/', CheckJoinGame.as_view(), name='check_game'),
     path('api/exit-queue/', ExitQueue.as_view(), name='exit_queue'),
+    path('api/validate-token/', validate_token, name='validate-token'),
     path('api/user-details/', UserDetails.as_view(), name='user-details'),
     path('api/toggle-2fa/', Toggle2FA.as_view(), name='toggle-2fa'),
     path('api/verify-2fa/', Verify2FA.as_view(), name='verify-2fa'),
@@ -18,6 +19,8 @@ urlpatterns = [
     path('api/update-goals/', update_goals, name='update-goals'),
     path('pong/', pong, name='pong'),
     path('profile/', profile_view, name='profile'),
-    path('profile/edit/', edit_profile_view, name='edit_profile'),
+    path('api/edit-account/', edit_account, name='edit-account'),
     path('register42', register42, name='register42'),
+    path('api/delete-account/', DeleteAccount.as_view(), name='delete-account'),
+    path('api/anonymize-account/', AnonymizeAccount.as_view(), name='anonymize-account'),
 ]

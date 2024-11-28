@@ -13,7 +13,7 @@ from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.core.exceptions import ValidationError
-from .forms import RegistrationForm, ProfileForm
+from .forms import RegistrationForm, ProfileForm, AnonymizationRequestForm, DeletionRequestForm
 from .models import Profile, GameServerModel, WaitingPlayerModel
 from django.db.models import Q
 from .serializers import UserRegisterSerializer, UserLoginSerializer
@@ -37,6 +37,11 @@ class GetClientIdView(APIView):
 
     def get(self, request):
         return JsonResponse({'client_id': settings.SOCIAL_AUTH_42_KEY})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def validate_token(request):
+    return Response({'message': 'Token is valid'}, status=status.HTTP_200_OK)
 
 def register42(request):
     # Extract code and state from the query parameters
@@ -129,6 +134,7 @@ class CallbackView(APIView):
                     # Set user to online (if your app has an 'isOnline' field in the profile model)
                     if hasattr(user, 'profile'):
                         user.profile.isOnline = True
+                        user.profile.connected_from_42_api = True
                         user.profile.save()
 
                     # Respond with tokens for the frontend
@@ -575,7 +581,7 @@ class UserDetails(APIView):
         if user.profile.is_2fa_enabled:
             totp = pyotp.TOTP(user.profile.two_fa_secret)
             provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="Transcendence")
-
+        profile_picture_url = user.profile.profile_picture.url if user.profile.profile_picture else '/media/profile_pictures/pepe.png'
         # Return the user details
         return Response({
             'username': user.username,
@@ -584,6 +590,91 @@ class UserDetails(APIView):
             'is_2fa_enabled': user.profile.is_2fa_enabled,
             'two_fa_secret': user.profile.two_fa_secret if user.profile.is_2fa_enabled else None,
             'provisioning_uri': provisioning_uri,
-            'language': user.profile.language
+            'language': user.profile.language,
+            'profile_picture': profile_picture_url,
+            'connected_from_42_api': user.profile.connected_from_42_api
             # Note: Never send the hashed password to the frontend!
         })
+
+class DeleteAccount(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response({'message': 'User account deleted successfully'}, status=status.HTTP_200_OK)
+
+class AnonymizeAccount(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        user.email = f'anonymized_{user.id}@example.com'
+        user.username = f'anonymized_{user.id}'
+        user.first_name = ''
+        user.last_name = ''
+        user.save()
+        return Response({'message': 'User account anonymized successfully'}, status=status.HTTP_200_OK)
+    
+
+# views.py
+from django.contrib.auth.models import User
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def edit_account(request):
+    user = request.user
+    data = request.data
+    # Initialize a dictionary to collect errors
+    errors = {}
+    # Validate and update the username
+    username = data.get('username')
+    # Check if the user's email ends with '@student.42lehavre.fr'   
+    if User.objects.exclude(pk=user.pk).filter(username=username).exists():
+        if username:
+            if not user.email.endswith('@student.42lehavre.fr'):
+
+                errors['username'] = 'This username is already taken.'
+            else:
+                user.username = username
+        # Validate and update the email
+        email = data.get('email')
+        if email:
+            if User.objects.exclude(pk=user.pk).filter(email=email).exists():
+                errors['email'] = 'This email is already in use.'
+            else:
+                user.email = email
+
+    # Validate and update the profile picture
+    try:
+        profile_picture = request.FILES['profilePicture']
+        if profile_picture:
+            user.profile.profile_picture.save(profile_picture.name, profile_picture)
+    except KeyError:
+        profile_picture_url = data.get('profilePictureUrl')
+        # List of default carousel images
+        default_carousel_images = [
+            'profile_pictures/pepe_boxe.png',
+            'profile_pictures/pepe_glasses.png',
+            'profile_pictures/pepe_thumbup.png',
+            'profile_pictures/pepe-ohhh.png',
+            'profile_pictures/pepe.png'
+        ]
+        if profile_picture_url:
+            # Ensure the URL does not include the MEDIA_URL prefix twice
+            if profile_picture_url.startswith(settings.MEDIA_URL):
+                profile_picture_url = profile_picture_url[len(settings.MEDIA_URL):]
+            # Check if the current profile picture is one of the default carousel images
+            if user.profile.profile_picture.name in default_carousel_images:
+                user.profile.profile_picture = profile_picture_url
+            elif not user.profile.profile_picture:
+                user.profile.profile_picture = profile_picture_url
+
+    # If there are validation errors, return them
+    if errors:
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Save the updated user information
+    user.save()
+    user.profile.save()
+    return Response({'message': 'Account updated successfully'}, status=status.HTTP_200_OK)

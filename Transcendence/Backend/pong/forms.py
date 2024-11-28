@@ -21,4 +21,18 @@ class RegistrationForm(UserCreationForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['nickname', 'wins', 'losses']
+        fields = ['nickname', 'wins', 'losses', 'profile_picture']
+        
+    def save(self, commit=True):
+        user = super(ProfileForm, self).save(commit=False)
+        if self.cleaned_data['profile_picture']:
+            user.profile_picture = self.cleaned_data['profile_picture']
+        if commit:
+            user.save()
+        return user
+
+class AnonymizationRequestForm(forms.Form):
+    confirm = forms.BooleanField(label="I confirm that I want to anonymize my data")
+
+class DeletionRequestForm(forms.Form):
+    confirm = forms.BooleanField(label="I confirm that I want to delete my account")

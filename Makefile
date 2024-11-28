@@ -15,4 +15,4 @@ clean:
 	cd Transcendence/ && docker-compose -f docker-compose.yml down -v
 
 
-re: stop clean build
+re: stop clean all

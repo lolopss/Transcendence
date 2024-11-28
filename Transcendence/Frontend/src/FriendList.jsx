@@ -86,7 +86,6 @@ const FriendList = () => {
                     <li key={friend.username} onClick={() => handleFriendClick(friend.username)}>
                         <img src={friend.profilePicture} alt={friend.username} className="friend-picture" />
                         <span>{friend.nickname}</span>
-                        <span>{friend.username}</span>
                         <span className={`status ${friend.isOnline ? 'online' : 'offline'}`}></span>
                     </li>
                 ))}

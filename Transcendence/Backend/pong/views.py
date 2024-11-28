@@ -768,7 +768,6 @@ class FriendListView(APIView):
 
         friend_list = [
             {
-                'username': friend.user.username,  # Access username through the user relationship
                 'nickname': friend.nickname,
                 'profilePicture': friend.profile_picture.url,
                 'isOnline': friend.isOnline,

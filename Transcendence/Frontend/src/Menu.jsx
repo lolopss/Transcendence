@@ -221,6 +221,7 @@ function GameMenu() {
         <div>
             <h2>{translations.title}</h2>
             <GameButton usage={translations.start_game} name={translations.start_btn} onClick={() => navigate('/game')} />
+            <GameButton usage={translations.start_game_ai} name={translations.start_btn} onClick={() => navigate('/ai-game')} />
             <GameButton usage={translations.see_options} name={translations.options_btn} />
             <GameButton usage={translations.quit_game} name={translations.quit_btn} />
             <GameButton usage={translations.find_match} name={translations.find_btn} onClick={() => navigate('/matchmaking')} />

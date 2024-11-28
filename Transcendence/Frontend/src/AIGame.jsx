@@ -6,6 +6,9 @@ const height = 400;
 const ratio = width / height;
 let shakeDuration = 10;
 let shakeSpeed = 5;
+let aiInterval = null; // Declare aiInterval globally
+let currentStopInterval = null; // Declare currentStopInterval globally
+let lastAiMoveCall = Date.now(); // Track the last time aiMove was called
 
 class Paddle {
     constructor(x, y, width, height, color) {
@@ -37,7 +40,7 @@ class Ball {
     }
 }
 
-function Game() {
+function AIGame() {
     const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const pongCanvas = useRef(null);
@@ -78,7 +81,6 @@ function Game() {
             }
 
             const data = await response.json();
-            console.log(data.message);
         } catch (error) {
             console.error('Error updating goals:', error);
         }
@@ -135,20 +137,11 @@ function Game() {
             if (event.key === 's') {
                 player1.paddle.dy = 5;
             }
-            if (event.key === 'ArrowUp') {
-                player2.paddle.dy = -5;
-            }
-            if (event.key === 'ArrowDown') {
-                player2.paddle.dy = 5;
-            }
         });
 
         document.addEventListener('keyup', (event) => {
             if (event.key === 'w' || event.key === 's') {
                 player1.paddle.dy = 0;
-            }
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                player2.paddle.dy = 0;
             }
         });
 
@@ -206,27 +199,42 @@ function Game() {
             ball.speed = ball.initialSpeed;
             ball.dx = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
             ball.dy = (Math.random() * 2 - 1) * ball.speed;
+
+            // Clear existing AI interval
+            if (currentStopInterval) {
+                clearInterval(currentStopInterval);
+                currentStopInterval = null;
+            }
+
+            // Clear existing AI move interval
+            clearInterval(aiInterval);
+            aiInterval = setInterval(() => {
+                aiMove();
+            }, 1000);
         }
 
         const ballMovement = () => {
             ball.x += ball.dx;
             ball.y += ball.dy;
-
             // Bounce off top and bottom edges
-            if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+            if (ball.y + ball.size > canvas.height) {
+                ball.y = canvas.height - ball.size - 3; // Adjust position to prevent sticking
+                ball.dy *= -1;
+            } else if (ball.y - ball.size < 0) {
+                ball.y = ball.size + 3; // Adjust position to prevent sticking
                 ball.dy *= -1;
             }
 
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
-                updateGoalsInDatabase(0, 1, paddleHitCount, paddleHitCount); // Increment goals taken for player 1
+                updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
-                updateGoalsInDatabase(1, 0, paddleHitCount, 0); // Increment goals for player 1
+                updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
@@ -234,6 +242,7 @@ function Game() {
         };
 
         const ballToPaddleCheck = (playerN) => {
+
             let paddle, ballHitY;
             if (playerN === 1) {
                 paddle = player1.paddle;
@@ -251,6 +260,8 @@ function Game() {
                 }
             }
         }
+
+        let lastAiMoveCall = Date.now(); // Track the last time aiMove was called
 
         const handlePaddleHit = (paddleY) => {
             // Increase ball speed and adjust direction based on paddle hit location
@@ -274,7 +285,26 @@ function Game() {
             if (paddleHitCount % 2 === 0 && limitHitbox > 15) {
                 limitHitbox--; // Reduce limitHitbox after every two paddle hits
             }
-        }
+
+            if (ball.dx > 0) {
+                const now = Date.now();
+                const timeSinceLastCall = now - lastAiMoveCall;
+
+                if (timeSinceLastCall >= 1000) {
+                    clearInterval(aiInterval);
+                    aiMove();
+                    aiInterval = 1000;
+                    lastAiMoveCall = now;
+                } else {
+                    clearInterval(aiInterval);
+                    setTimeout(() => {
+                        aiMove();
+                        lastAiMoveCall = Date.now();
+                        aiInterval = 1000;
+                    }, 1000 - timeSinceLastCall);
+                }
+            }
+        };
 
         const shakeScreen = () => {
             if (shakeDuration > 0) {
@@ -294,21 +324,124 @@ function Game() {
             }
         }
 
+        const predictBallPosition = () => {
+            let predictedY = ball.y;
+            let predictedDy = ball.dy;
+            let predictedX = ball.x;
+            let predictedDx = ball.dx;
+
+            // Predict the ball's position considering bounces
+            while (predictedX < canvas.width - limitHitbox) {
+                predictedY += predictedDy;
+                predictedX += predictedDx;
+
+                // Bounce off top and bottom edges
+                if (predictedY + ball.size > canvas.height - 5|| predictedY - ball.size < 5) {
+                    predictedDy *= -1;
+                }
+            }
+
+            return predictedY;
+        };
+
+        let currentStopInterval = null; // Variable to keep track of the current interval
+
+        const aiMove = () => {
+            const now = Date.now();
+
+            const speed = 5; // Paddle speed
+            const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
+
+            if (ball.dx < 0) {
+                const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
+                console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // Ball is moving towards the left, move paddle to the middle of the board
+                lastAiMoveCall = now; // Update the last call time
+                const middleY = canvas.height / 2;
+                const distance = middleY - paddleCenterY;
+
+                if (Math.abs(distance) > 30) {
+                    if (distance < 0) {
+                        player2.paddle.dy = -speed; // Move up with a speed of 5
+                    } else if (distance > 0) {
+                        player2.paddle.dy = speed; // Move down with a speed of 5
+                    }
+                } else {
+                    player2.paddle.dy = 0; // Stop if already aligned
+                }
+                // Calculate the time it will take to reach the middle position with a random offset
+                const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);
+                // Clear any existing interval
+                if (currentStopInterval) {
+                    clearInterval(currentStopInterval);
+                }
+
+                // Set an interval to stop the paddle's movement after the calculated time
+                currentStopInterval = setInterval(() => {
+                    player2.paddle.dy = 0;
+                    clearInterval(currentStopInterval);
+                    currentStopInterval = null;
+                    clearInterval(aiInterval);
+                }, timeToReach);
+
+            } else {
+                const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
+                console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // Ball is moving towards the right, predict the ball's position
+                lastAiMoveCall = now; // Update the last call time
+                const targetY = predictBallPosition(); // Get the predicted position of the ball
+                const distance = targetY - paddleCenterY;
+
+                if (Math.abs(distance) > 30) {
+                    if (distance < 0) {
+                        player2.paddle.dy = -speed; // Move up with a speed of 5
+                    } else if (distance > 0) {
+                        player2.paddle.dy = speed; // Move down with a speed of 5
+                    }
+                } else {
+                    player2.paddle.dy = 0; // Stop if already aligned
+                }
+
+                // Calculate the time it will take to reach the target position
+                const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);// Convert to milliseconds
+
+                // Clear any existing interval
+                if (currentStopInterval) {
+                    clearInterval(currentStopInterval);
+                }
+
+                // Set an interval to stop the paddle's movement after the calculated time
+                currentStopInterval = setInterval(() => {
+                    player2.paddle.dy = 0;
+                    clearInterval(currentStopInterval);
+                    currentStopInterval = null;
+                    clearInterval(aiInterval);
+                    aiInterval = setInterval(() => {
+                        aiMove();
+                    }, 1000);
+                }, timeToReach * 1.10);
+            }
+        };
+
+        aiInterval = setInterval(() => {
+            aiMove();
+        }, 1000);
+
         const update = () => {
             playerDirection(player1);
             ballMovement();
+
             ballToPaddleCheck(1);
             ballToPaddleCheck(2);
+
             playerDirection(player2);
+
             //updatePaddleColors();
             shakeScreen();
         }
-
         const gameLoop = () => {
-            // console.log('in game loop');
             update();
             draw();
-
             if (isReady)
                 requestAnimationFrame(gameLoop);
             else
@@ -317,7 +450,11 @@ function Game() {
         if (isReady)
             gameLoop();
 
+        return () => {
+            clearInterval(aiInterval);
+        };
     }, [isReady]);
+
     window.addEventListener('resize', handleResize);
 
     return (
@@ -345,4 +482,4 @@ function Game() {
     )
 }
 
-export default Game
+export default AIGame

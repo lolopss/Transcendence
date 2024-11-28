@@ -339,6 +339,28 @@ class Verify2FA(APIView):
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+def update_goals(request):
+    user = request.user
+    if not user.is_authenticated:
+        return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    profile = user.profile
+    data = request.data
+
+    if 'goals' in data:
+        profile.goals += data['goals']
+    if 'goals_taken' in data:
+        profile.goals_taken += data['goals_taken']
+    if 'longuest_exchange' in data:
+        profile.longuest_exchange = max(profile.longuest_exchange, data['longuest_exchange'])
+    # Check if ace is more than 0, if so, increment the ace count
+    if 'ace' in data and data['ace'] > 0:
+        profile.ace += 1
+
+    profile.save()
+    return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def some_protected_view(request):

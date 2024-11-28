@@ -16,6 +16,7 @@ urlpatterns = [
     path('api/toggle-2fa/', Toggle2FA.as_view(), name='toggle-2fa'),
     path('api/verify-2fa/', Verify2FA.as_view(), name='verify-2fa'),
     path('api/translations/<str:language_code>/', GetTranslations.as_view(), name='get-translations'),
+    path('api/update-goals/', update_goals, name='update-goals'),
     path('pong/', pong, name='pong'),
     path('profile/', profile_view, name='profile'),
     path('api/edit-account/', edit_account, name='edit-account'),

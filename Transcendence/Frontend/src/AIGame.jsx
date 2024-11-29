@@ -8,7 +8,6 @@ let shakeDuration = 10;
 let shakeSpeed = 5;
 let aiInterval = null; // Declare aiInterval globally
 let currentStopInterval = null; // Declare currentStopInterval globally
-let lastAiMoveCall = Date.now(); // Track the last time aiMove was called
 
 class Paddle {
     constructor(x, y, width, height, color) {
@@ -40,9 +39,15 @@ class Ball {
     }
 }
 
+const restartGame = () => {
+    window.location.reload();
+};
+
 function AIGame() {
-    const [isStarted, setIsStarted] = useState(false);
+    // const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
+    const [isGameOver, setIsGameOver] = useState(false);
+    const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
@@ -50,20 +55,28 @@ function AIGame() {
     const startGame = () => {
         console.log('yes');
     }
+
     useEffect(() => {
-        if (isStarted)
-        {
-            console.log(`Animation running -> ${isStarted}`);
+        console.log('Starting game...');
+        if (pongCanvas.current) {
             pongCanvas.current.classList.add('is-animated');
-            pongCanvas.current.addEventListener('animationend', () => {
+            const handleAnimationEnd = () => {
                 startGame();
                 setIsReady(true);
-            })
+            };
+            pongCanvas.current.addEventListener('animationend', handleAnimationEnd);
+
+            // Cleanup function
+            return () => {
+                console.log("Cleaning up ...");
+                if (pongCanvas.current) {
+                    pongCanvas.current.removeEventListener('animationend', handleAnimationEnd);
+                }
+                clearInterval(aiInterval);
+                clearInterval(currentStopInterval);
+            };
         }
-        else
-            setIsReady(false);
-    }, [isStarted]);
-    console.log(`is started2 -> ${isStarted}`);
+    }, []);
 
     const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
         try {
@@ -177,11 +190,10 @@ function AIGame() {
 
         const draw = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
-
             drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
             drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
             drawBall(ball.x, ball.y, ball.size, 'white');
-            drawMiddleBar(middleBar.x, middleBar.y, middleBar.width, middleBar.height, 'white')
+            drawMiddleBar(middleBar.x, middleBar.y, middleBar.width, middleBar.height, 'white');
             drawPoints(textPoint.x, textPoint.y);
         }
 
@@ -196,6 +208,10 @@ function AIGame() {
         const resetBall = () => {
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
+            // Check if the game is over, if it is return.
+            if (player1.point >= 5 || player2.point >= 5) {
+                return;
+            }
             ball.speed = ball.initialSpeed;
             ball.dx = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
             ball.dy = (Math.random() * 2 - 1) * ball.speed;
@@ -214,31 +230,37 @@ function AIGame() {
         }
 
         const ballMovement = () => {
-            ball.x += ball.dx;
-            ball.y += ball.dy;
-            // Bounce off top and bottom edges
-            if (ball.y + ball.size > canvas.height) {
-                ball.y = canvas.height - ball.size - 3; // Adjust position to prevent sticking
-                ball.dy *= -1;
-            } else if (ball.y - ball.size < 0) {
-                ball.y = ball.size + 3; // Adjust position to prevent sticking
-                ball.dy *= -1;
-            }
+                ball.x += ball.dx;
+                ball.y += ball.dy;
+                // Bounce off top and bottom edges
+                if (ball.y + ball.size > canvas.height) {
+                    ball.y = canvas.height - ball.size - 3; // Adjust position to prevent sticking
+                    ball.dy *= -1;
+                } else if (ball.y - ball.size < 0) {
+                    ball.y = ball.size + 3; // Adjust position to prevent sticking
+                    ball.dy *= -1;
+                }
 
-            // Check if the ball passes the left or right limit hitbox
-            if (ball.x < limitHitbox) {
-                player2.point++;
-                updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
-                paddleHitCount = 0;
-                limitHitbox = 25;
-                resetBall();
-            } else if (ball.x > canvas.width - limitHitbox) {
-                player1.point++;
-                updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
-                paddleHitCount = 0;
-                limitHitbox = 25;
-                resetBall();
-            }
+                // Check if the ball passes the left or right limit hitbox
+                if (ball.x < limitHitbox) {
+                    player2.point++;
+                    updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
+                    paddleHitCount = 0;
+                    limitHitbox = 25;
+                    resetBall();
+                } else if (ball.x > canvas.width - limitHitbox) {
+                    player1.point++;
+                    updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
+                    paddleHitCount = 0;
+                    limitHitbox = 25;
+                    resetBall();
+                }
+
+                if (player1.point >= 5) {
+                    stopGame('Player 1');
+                } else if (player2.point >= 5) {
+                    stopGame('Player 2');
+                }
         };
 
         const ballToPaddleCheck = (playerN) => {
@@ -423,6 +445,15 @@ function AIGame() {
             }
         };
 
+        const stopGame = (winningPlayer) => {
+            console.log('Game Finished');
+            clearInterval(aiInterval);
+            clearInterval(currentStopInterval);
+            setIsReady(false); // Stop the game loop
+            setIsGameOver(true);
+            setWinner(winningPlayer);
+        };
+
         aiInterval = setInterval(() => {
             aiMove();
         }, 1000);
@@ -439,47 +470,63 @@ function AIGame() {
             //updatePaddleColors();
             shakeScreen();
         }
+
         const gameLoop = () => {
-            update();
-            draw();
-            if (isReady)
-                requestAnimationFrame(gameLoop);
-            else
-                return ;
+        if (player1.point >= 5 || player2.point >= 5) {
+            return;
+        }
+        update();
+        draw();
+        if (isReady) {
+            requestAnimationFrame(gameLoop);
+        }
         }
         if (isReady)
             gameLoop();
 
         return () => {
+            console.log("Cleaning up 2...");
             clearInterval(aiInterval);
+            clearInterval(currentStopInterval);
         };
     }, [isReady]);
 
     window.addEventListener('resize', handleResize);
 
     return (
-        <>
-            {isStarted ?
-                (
-                    <div>
-                        <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
-                        <div>
-                            <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-                        </div>
-                    </div>
-                )
-                :
-                (<div>
-                    <h1>
-                        Game Menu
-                    </h1>
-                    <div>
-                        <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-                    </div>
-                </div>)
-            }
-        </>
-    )
+        <div>
+            <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+            {isGameOver && (
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                    <h1>{winner} won!</h1>
+                    <button onClick={restartGame}>Restart Game</button>
+                </div>
+            )}
+        </div>
+    );
+    // return (
+    //     <>
+    //         {isStarted ?
+    //             (
+    //                 <div>
+    //                     <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+    //                     <div>
+    //                         <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
+    //                     </div>
+    //                 </div>
+    //             )
+    //             :
+    //             (<div>
+    //                 <h1>
+    //                     Game Menu
+    //                 </h1>
+    //                 <div>
+    //                     <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
+    //                 </div>
+    //             </div>)
+    //         }
+    //     </>
+    // )
 }
 
 export default AIGame

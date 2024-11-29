@@ -37,8 +37,14 @@ class Ball {
     }
 }
 
+const restartGame = () => {
+    window.location.reload();
+};
+
 function Game() {
-    const [isStarted, setIsStarted] = useState(false);
+    // const [isStarted, setIsStarted] = useState(false);
+    const [isGameOver, setIsGameOver] = useState(false);
+    const [winner, setWinner] = useState('');
     const [isReady, setIsReady] = useState(false);
     const pongCanvas = useRef(null);
     let limitHitbox = 25;       // Starting limitHitbox value
@@ -47,20 +53,17 @@ function Game() {
     const startGame = () => {
         console.log('yes');
     }
+
     useEffect(() => {
-        if (isStarted)
-        {
-            console.log(`Animation running -> ${isStarted}`);
-            pongCanvas.current.classList.add('is-animated');
-            pongCanvas.current.addEventListener('animationend', () => {
-                startGame();
-                setIsReady(true);
-            })
-        }
-        else
-            setIsReady(false);
-    }, [isStarted]);
-    console.log(`is started2 -> ${isStarted}`);
+        console.log('Starting game...');
+        pongCanvas.current.classList.add('is-animated');
+        pongCanvas.current.addEventListener('animationend', () => {
+            startGame();
+            setIsReady(true);
+        });
+    }, []);
+
+    console.log(`is ready -> ${isReady}`);
 
     const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
         try {
@@ -184,7 +187,6 @@ function Game() {
 
         const draw = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
-
             drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
             drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
             drawBall(ball.x, ball.y, ball.size, 'white');
@@ -203,6 +205,9 @@ function Game() {
         const resetBall = () => {
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
+            if (player1.point >= 5 || player2.point >= 5) {
+                return;
+            }
             ball.speed = ball.initialSpeed;
             ball.dx = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
             ball.dy = (Math.random() * 2 - 1) * ball.speed;
@@ -211,25 +216,34 @@ function Game() {
         const ballMovement = () => {
             ball.x += ball.dx;
             ball.y += ball.dy;
-
             // Bounce off top and bottom edges
-            if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+            if (ball.y + ball.size > canvas.height) {
+                ball.y = canvas.height - ball.size - 3; // Adjust position to prevent sticking
+                ball.dy *= -1;
+            } else if (ball.y - ball.size < 0) {
+                ball.y = ball.size + 3; // Adjust position to prevent sticking
                 ball.dy *= -1;
             }
 
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
-                updateGoalsInDatabase(0, 1, paddleHitCount, paddleHitCount); // Increment goals taken for player 1
+                updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
-                updateGoalsInDatabase(1, 0, paddleHitCount, 0); // Increment goals for player 1
+                updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
+            }
+
+            if (player1.point >= 5) {
+                stopGame('Player 1');
+            } else if (player2.point >= 5) {
+                stopGame('Player 2');
             }
         };
 
@@ -304,8 +318,17 @@ function Game() {
             shakeScreen();
         }
 
+        const stopGame = (winningPlayer) => {
+            console.log('Game Finished');
+            setIsReady(false); // Stop the game loop
+            setIsGameOver(true);
+            setWinner(winningPlayer);
+        };
+
         const gameLoop = () => {
-            // console.log('in game loop');
+        if (player1.point >= 5 || player2.point >= 5) {
+            return;
+        }
             update();
             draw();
 
@@ -321,28 +344,39 @@ function Game() {
     window.addEventListener('resize', handleResize);
 
     return (
-        <>
-            {isStarted ?
-                (
-                    <div>
-                        <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
-                        <div>
-                            <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-                        </div>
-                    </div>
-                )
-                :
-                (<div>
-                    <h1>
-                        Game Menu
-                    </h1>
-                    <div>
-                        <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-                    </div>
-                </div>)
-            }
-        </>
-    )
+        <div>
+            <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+            {isGameOver && (
+                <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                    <h1>{winner} won!</h1>
+                    <button onClick={restartGame}>Restart Game</button>
+                </div>
+            )}
+        </div>
+    );
+    // return (
+    //     <>
+    //         {isStarted ?
+    //             (
+    //                 <div>
+    //                     <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+    //                     <div>
+    //                         <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
+    //                     </div>
+    //                 </div>
+    //             )
+    //             :
+    //             (<div>
+    //                 <h1>
+    //                     Game Menu
+    //                 </h1>
+    //                 <div>
+    //                     <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
+    //                 </div>
+    //             </div>)
+    //         }
+    //     </>
+    // )
 }
 
 export default Game

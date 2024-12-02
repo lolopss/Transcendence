@@ -41,8 +41,8 @@ const restartGame = () => {
     window.location.reload();
 };
 
-function Game() {
-    const [isStarted, setIsStarted] = useState(false);
+function Multiplayer() {
+    // const [isStarted, setIsStarted] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
     const [winner, setWinner] = useState('');
     const [isReady, setIsReady] = useState(false);
@@ -119,41 +119,29 @@ function Game() {
             , 2
             , canvas.height
             , 'white');
-        let player1 = new Player(new Paddle(15
-            , canvas.height / 2 - paddle.height / 2
-            , paddle.width
-            , paddle.height
-            , 'orange'));
-        let player2 = new Player(new Paddle(canvas.width - paddle.width - 15
-            , canvas.height / 2 - paddle.height / 2
-            , paddle.width
-            , paddle.height
-            , 'violet'));
-        let ball = new Ball(10, 4, 6);
+			let player1 = new Player(new Paddle(15, canvas.height / 4 - paddle.height / 2, paddle.width, paddle.height, 'orange'));
+            let player2 = new Player(new Paddle(15, (3 * canvas.height) / 4 - paddle.height / 2, paddle.width, paddle.height, 'red'));
+            let player3 = new Player(new Paddle(canvas.width - paddle.width - 15, canvas.height / 4 - paddle.height / 2, paddle.width, paddle.height, 'violet'));
+            let player4 = new Player(new Paddle(canvas.width - paddle.width - 15, (3 * canvas.height) / 4 - paddle.height / 2, paddle.width, paddle.height, 'blue'));
+            let ball = new Ball(10, 4, 6);
 
         document.addEventListener('keydown', (event) => {
-            if (event.key === 'w') {
-                player1.paddle.dy = -5;
-            }
-            if (event.key === 's') {
-                player1.paddle.dy = 5;
-            }
-            if (event.key === 'ArrowUp') {
-                player2.paddle.dy = -5;
-            }
-            if (event.key === 'ArrowDown') {
-                player2.paddle.dy = 5;
-            }
-        });
+			if (event.key === 'w') player1.paddle.dy = -5;
+			if (event.key === 's') player1.paddle.dy = 5;
+			if (event.key === 'o') player2.paddle.dy = -5;
+			if (event.key === 'l') player2.paddle.dy = 5;
+			if (event.key === 'ArrowUp') player3.paddle.dy = -5;
+			if (event.key === 'ArrowDown') player3.paddle.dy = 5;
+			if (event.key === '8') player4.paddle.dy = -5;
+			if (event.key === '5') player4.paddle.dy = 5;
+		});
 
-        document.addEventListener('keyup', (event) => {
-            if (event.key === 'w' || event.key === 's') {
-                player1.paddle.dy = 0;
-            }
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                player2.paddle.dy = 0;
-            }
-        });
+		document.addEventListener('keyup', (event) => {
+			if (event.key === 'w' || event.key === 's') player1.paddle.dy = 0;
+			if (event.key === 'o' || event.key === 'l') player2.paddle.dy = 0;
+			if (event.key === 'ArrowUp' || event.key === 'ArrowDown') player3.paddle.dy = 0;
+			if (event.key === '8' || event.key === '5') player4.paddle.dy = 0;
+		});
 
         const drawRect = (x, y, width, height, color) => {
             context.fillStyle = color;
@@ -186,21 +174,49 @@ function Game() {
         }
 
         const draw = () => {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
-            drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
-            drawBall(ball.x, ball.y, ball.size, 'white');
-            drawMiddleBar(middleBar.x, middleBar.y, middleBar.width, middleBar.height, 'white')
-            drawPoints(textPoint.x, textPoint.y);
-        }
+			context.clearRect(0, 0, canvas.width, canvas.height);
+			drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
+			drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
+			drawRect(player3.paddle.x, player3.paddle.y, player3.paddle.width, player3.paddle.height, player3.paddle.color);
+			drawRect(player4.paddle.x, player4.paddle.y, player4.paddle.width, player4.paddle.height, player4.paddle.color);
+			drawBall(ball.x, ball.y, ball.size, 'white');
+			drawMiddleBar(middleBar.x, middleBar.y, middleBar.width, middleBar.height, 'white');
+			drawPoints(textPoint.x, textPoint.y);
 
-        const playerDirection = (player) => {
-            player.paddle.y += player.paddle.dy;
-            if (player.paddle.y < 0)
-                player.paddle.y = 0;
-            if (player.paddle.y + paddle.height > canvas.height)
-                player.paddle.y = canvas.height - paddle.height;
-        }
+            // Draw the middle line
+            context.beginPath();
+            context.setLineDash([5, 15]); // Dash pattern: 5px dash, 15px gap
+            context.moveTo(0, canvas.height / 2);
+            context.lineTo(canvas.width, canvas.height / 2);
+            context.strokeStyle = 'white';
+            context.lineWidth = 2;
+            context.stroke();
+            context.setLineDash([]);
+		};
+
+		// add the same logic for player 3 and player 4
+        const playerDirection = (playerN1, playerN2) => {
+            // Calculate the new positions
+            const newY1 = playerN1.paddle.y + playerN1.paddle.dy;
+            const newY2 = playerN2.paddle.y + playerN2.paddle.dy;
+
+            // Ensure paddles stay within canvas bounds
+            if (newY1 < 0) {
+                playerN1.paddle.y = 0;
+            } else if (newY1 + playerN1.paddle.height > canvas.height / 2) {
+                playerN1.paddle.y = canvas.height / 2 - playerN1.paddle.height;
+            } else {
+                playerN1.paddle.y = newY1;
+            }
+
+            if (newY2 < canvas.height / 2) {
+                playerN2.paddle.y = canvas.height / 2;
+            } else if (newY2 + playerN2.paddle.height > canvas.height) {
+                playerN2.paddle.y = canvas.height - playerN2.paddle.height;
+            } else {
+                playerN2.paddle.y = newY2;
+            }
+        };
 
         const resetBall = () => {
             ball.x = canvas.width / 2;
@@ -241,14 +257,17 @@ function Game() {
             }
 
             if (player1.point >= 5) {
-                stopGame('Player 1');
+                stopGame('Left players');
             } else if (player2.point >= 5) {
-                stopGame('Player 2');
+                stopGame('Right players');
             }
         };
 
         const ballToPaddleCheck = (playerN) => {
+			// Add the same logic for player 3 and player 4
             let paddle, ballHitY;
+
+            // Log which player it hits
             if (playerN === 1) {
                 paddle = player1.paddle;
                 ballHitY = ball.y - paddle.y;
@@ -260,11 +279,25 @@ function Game() {
                 paddle = player2.paddle;
                 ballHitY = ball.y - paddle.y;
 
-                if (ball.x + ball.size > paddle.x && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
+                if (ball.x - ball.size < paddle.x + paddle.width && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
                     handlePaddleHit(paddle.y);
                 }
-            }
+            } else if (playerN === 3) {
+				paddle = player3.paddle;
+				ballHitY = ball.y - paddle.y;
+
+				if (ball.x + ball.size > paddle.x && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
+					handlePaddleHit(paddle.y);
+				}
+			} else if (playerN === 4) {
+				paddle = player4.paddle;
+				ballHitY = ball.y - paddle.y;
+
+				if (ball.x + ball.size > paddle.x && ball.y > paddle.y && ball.y < paddle.y + paddle.height) {
+					handlePaddleHit(paddle.y);
+				}
         }
+	};
 
         const handlePaddleHit = (paddleY) => {
             // Increase ball speed and adjust direction based on paddle hit location
@@ -309,14 +342,15 @@ function Game() {
         }
 
         const update = () => {
-            playerDirection(player1);
-            ballMovement();
-            ballToPaddleCheck(1);
-            ballToPaddleCheck(2);
-            playerDirection(player2);
-            //updatePaddleColors();
-            shakeScreen();
-        }
+			playerDirection(player1, player2);
+			playerDirection(player3, player4);
+			ballMovement();
+			ballToPaddleCheck(1);
+			ballToPaddleCheck(2);
+			ballToPaddleCheck(3);
+			ballToPaddleCheck(4);
+			shakeScreen();
+		};
 
         const stopGame = (winningPlayer) => {
             console.log('Game Finished');
@@ -379,4 +413,4 @@ function Game() {
     // )
 }
 
-export default Game
+export default Multiplayer

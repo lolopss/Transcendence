@@ -2,6 +2,7 @@
 	"title": "LE PONG",
 	"start_game": "Commencer une partie",
 	"start_game_ai": "Commencer une partie contre l'IA",
+	"start_multiplayer": "Commencer une partie avec 4 joueurs",
 	"start_btn": "Jouer",
 	"see_options": "Voir les options",
 	"options_btn": "Options",

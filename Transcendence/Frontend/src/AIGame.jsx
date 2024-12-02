@@ -374,12 +374,8 @@ function AIGame() {
             const speed = 5; // Paddle speed
             const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
 
-            // log the ball's speed
-            console.log(`Ball speed: ${ball.dx.toFixed(2)}`);
-
-            if (ball.dx < 0 ) {
-                // if absolute speed of the ball is more than 15, do not go to the middle
-                if (Math.abs(ball.dx) < 12) {
+            if (ball.dx < 0) {
+                if (ball.dy > 15) return; // Prevent the AI from moving to the middle if the ball is moving too fast
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
                 console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the left, move paddle to the middle of the board

@@ -315,14 +315,14 @@ function AIGame() {
                 if (timeSinceLastCall >= 1000) {
                     clearInterval(aiInterval);
                     aiMove();
-                    aiInterval = 1000;
                     lastAiMoveCall = now;
                 } else {
                     clearInterval(aiInterval);
+                    // wait for 1000 - timeSinceLastCall before calling aiMove
+                    console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
                     setTimeout(() => {
                         aiMove();
-                        lastAiMoveCall = Date.now();
-                        aiInterval = 1000;
+                        lastAiMoveCall = now;
                     }, 1000 - timeSinceLastCall);
                 }
             }
@@ -394,19 +394,20 @@ function AIGame() {
                 }
                 // Calculate the time it will take to reach the middle position with a random offset
                 const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);
+
                 // Clear any existing interval
                 if (currentStopInterval) {
                     clearInterval(currentStopInterval);
                 }
 
+                clearInterval(aiInterval);
                 // Set an interval to stop the paddle's movement after the calculated time
                 currentStopInterval = setInterval(() => {
                     player2.paddle.dy = 0;
                     clearInterval(currentStopInterval);
                     currentStopInterval = null;
-                    clearInterval(aiInterval);
                 }, timeToReach);
-
+                }
             } else {
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
                 console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
@@ -442,6 +443,7 @@ function AIGame() {
                     aiInterval = setInterval(() => {
                         aiMove();
                     }, 1000);
+                    lastAiMoveCall = now;
                 }, timeToReach * 1.10);
             }
         };

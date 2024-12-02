@@ -18,15 +18,14 @@ from .models import Profile, GameServerModel, WaitingPlayerModel
 from django.db.models import Q
 from .serializers import UserRegisterSerializer, UserLoginSerializer
 import os
-import ssl
-from .utils import custom_validation, valid_email, valid_password, create_user_token, ManageGameQueue
+from .utils import custom_validation, valid_email, valid_password, create_user_token, ManageGameQueue, check_inactive_users
 import json
 import urllib.parse
 import urllib.request
 import requests
 import logging
-import random  # For simulating matchmaking
 import pyotp  # For generating 2FA tokens
+
 
 UserModel = get_user_model()
 API_URL = 'https://api.intra.42.fr'
@@ -228,7 +227,8 @@ class UserLogin(APIView):
 
         return Response({
             "access": access_token,
-            "refresh": refresh_token
+            "refresh": refresh_token,
+            "isOnline": user.profile.isOnline
         }, status=status.HTTP_200_OK)
 
 # Logout user and update online status
@@ -570,18 +570,41 @@ class ExitQueue(APIView):
 class UserDetails(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user  # Get the currently authenticated user
+    def get(self, request, username=None):
+        if username:
+            try:
+                user = User.objects.get(username=username)  # Get the user by username
+            except User.DoesNotExist:
+                return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            user = request.user  # Get the currently authenticated user
 
         # Assuming the user has a 'nickname' field in the profile model
         nickname = user.profile.nickname if hasattr(user, 'profile') else None
-
         # Generate a provisioning URI for Google Authenticator if 2FA is enabled
         provisioning_uri = None
         if user.profile.is_2fa_enabled:
             totp = pyotp.TOTP(user.profile.two_fa_secret)
             provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="Transcendence")
         profile_picture_url = user.profile.profile_picture.url if user.profile.profile_picture else '/media/profile_pictures/pepe.png'
+        
+        # For match history
+        matches_as_player1 = Match.objects.filter(player1=user)
+        matches_as_player2 = Match.objects.filter(player2=user)
+        match_history = list(matches_as_player1) + list(matches_as_player2)
+        match_history.sort(key=lambda x: x.date, reverse=True)
+        match_history_data = [
+            {
+                'player1': match.player1.username,
+                'player2': match.player2.username,
+                'winner': match.winner.username,
+                'date': match.date,
+                'score_player1': match.score_player1,
+                'score_player2': match.score_player2,
+            }
+            for match in match_history
+        ]
+        
         # Return the user details
         return Response({
             'username': user.username,
@@ -592,8 +615,8 @@ class UserDetails(APIView):
             'provisioning_uri': provisioning_uri,
             'language': user.profile.language,
             'profile_picture': profile_picture_url,
-            'connected_from_42_api': user.profile.connected_from_42_api
-            # Note: Never send the hashed password to the frontend!
+            'connected_from_42_api': user.profile.connected_from_42_api,
+            'match_history': match_history_data,
         })
 
 class DeleteAccount(APIView):
@@ -627,16 +650,16 @@ def edit_account(request):
     data = request.data
     # Initialize a dictionary to collect errors
     errors = {}
-    # Validate and update the username
-    username = data.get('username')
-    # Check if the user's email ends with '@student.42lehavre.fr'   
-    if User.objects.exclude(pk=user.pk).filter(username=username).exists():
+    # Check if the user is connected with 42 API
+    if not user.profile.connected_from_42_api:
+        # Validate and update the username
+        username = data.get('username')
         if username:
-            if not user.email.endswith('@student.42lehavre.fr'):
-
+            if User.objects.exclude(pk=user.pk).filter(username=username).exists():
                 errors['username'] = 'This username is already taken.'
             else:
                 user.username = username
+
         # Validate and update the email
         email = data.get('email')
         if email:
@@ -678,3 +701,79 @@ def edit_account(request):
     user.save()
     user.profile.save()
     return Response({'message': 'Account updated successfully'}, status=status.HTTP_200_OK)
+
+
+# views.py
+from django.contrib.auth.models import User
+from .models import Match
+
+def end_match(request):
+    player1 = User.objects.get(username='player1_username')
+    player2 = User.objects.get(username='player2_username')
+    score_player1 = 10  # Example score
+    score_player2 = 8   # Example score
+
+    winner = player1 if score_player1 > score_player2 else player2
+
+    match = Match.objects.create(
+        player1=player1,
+        player2=player2,
+        winner=winner,
+        score_player1=score_player1,
+        score_player2=score_player2
+    )
+
+    return Response(f"Match {match.id} created successfully")
+
+
+#Friend gestion
+
+class AddFriendView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        username = request.data.get('username')
+        if not username:
+            return Response({'error': 'Username is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            friend = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        if friend == request.user:
+            return Response({'error': 'You cannot add yourself as a friend'}, status=status.HTTP_400_BAD_REQUEST)
+
+        request.user.profile.friends.add(friend.profile)
+        return Response({'message': 'Friend added successfully'}, status=status.HTTP_200_OK)
+
+from django.utils import timezone
+
+class FriendListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Update last_activity and isOnline fields
+        user = request.user
+        now = timezone.now()
+        user.profile.last_activity = now
+        user.profile.isOnline = True
+        user.profile.save()
+        
+        # Check for inactive users
+        check_inactive_users()
+
+        # Get the friend list for the current user
+        friends = user.profile.friends.all()  # Assuming you have a friends relationship
+
+        friend_list = [
+            {
+                'nickname': friend.nickname,
+                'profilePicture': friend.profile_picture.url,
+                'isOnline': friend.isOnline,
+                'last_activity': friend.last_activity,
+            }
+            for friend in friends
+        ]
+
+        return Response(friend_list)

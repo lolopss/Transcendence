@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import Game from './Game';
+import Multiplayer from './Multiplayer';
 import AIGame from './AIGame';
 import Menu from './Menu';
 import Matchmaking from './Matchmaking';
@@ -51,6 +52,7 @@ const App = () => {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify-2fa" element={<Verify2FA />} />
       <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
+      <Route path="/multiplayer" element={<ProtectedRoute><Multiplayer /></ProtectedRoute>} />
       <Route path="/ai-game" element={<ProtectedRoute><AIGame /></ProtectedRoute>} />
       <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
       <Route path="/edit-account" element={<EditAccount />} />

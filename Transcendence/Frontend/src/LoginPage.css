@@ -120,7 +120,7 @@ header {
 }
 
 .wrapper.active {
-    height: 520px;
+    height: 675px;
 }
 
 .wrapper .form-box {
@@ -333,4 +333,19 @@ header {
 
 .login-register a:hover, .login-42 a:hover {
     text-decoration: underline 2px orange;
+}
+
+.error {
+    position: absolute;
+    color: red;
+    z-index: 100;
+    background: fixed;
+    background: #404040;
+    border: solid white 2px;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    transform: translateY(-50%);
+    width: max-content;
+    padding: 20px 35px;
 }

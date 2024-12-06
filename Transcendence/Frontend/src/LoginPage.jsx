@@ -30,6 +30,8 @@ const LoginPage = () => {
   }, [navigate]);
 
   const handleLogin = async () => {
+    localStorage.setItem('registerVal', false);
+    navigate('/login');
     try {
         const response = await fetch('/api/login/', {
             method: 'POST',
@@ -88,6 +90,7 @@ const LoginPage = () => {
     const [password2, setPassword2] = useState('');
     const [nickname, setNickname] = useState('');
     const [csrftoken, setCsrfToken] = useState('');
+    const [isRegister, setIsRegister] = useState(false);
 
     useEffect(() => {
         // Get CSRF token from cookies when component mounts
@@ -102,6 +105,8 @@ const LoginPage = () => {
     }, []);
 
     const handleRegister = async () => {
+        localStorage.setItem('registerVal', true);
+        navigate('/login');
         try {
         const response = await fetch('/api/register/', {
             method: 'POST',
@@ -122,6 +127,7 @@ const LoginPage = () => {
 
         if (response.ok) {
             console.log('Registration successful!');
+            localStorage.setItem('registerVal', true);
             navigate('/login'); // Ensure `navigate` is defined or imported if using react-router
         } else {
             console.error(data);
@@ -136,7 +142,15 @@ const LoginPage = () => {
   /* ------------------- Frontend ------------------- */
 
   const [isWrapperActive, setIsWrapperActive] = useState(false);
-  const [isPopupActive, setIsPopupActive] = useState(false);
+  const [isPopupActive, setIsPopupActive] = useState(true);
+
+  useEffect(()=>{
+    const regVal = localStorage.getItem('registerVal'); 
+    if (regVal) {
+        setIsRegister(regVal === 'true');
+        localStorage.setItem('registerVal', false);
+    }
+  },[]);
 
   const handleRegisterClick = ()=> {
       setIsWrapperActive(true);
@@ -167,6 +181,7 @@ const LoginPage = () => {
 
         <div className="overlay"></div>
 
+        {isRegister && <p className='wellRegistered'>Registration successful!</p>}
         {error && <p className='error'>{error}</p>}
 
         <div className={`wrapper ${isPopupActive ? 'active-popup' : ''} ${isWrapperActive ? 'active' : ''}`}>

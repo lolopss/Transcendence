@@ -337,15 +337,30 @@ header {
 
 .error {
     position: absolute;
+    text-align: center;
+    letter-spacing: 1px;
+    font-weight: 600;
     color: red;
     z-index: 100;
     background: fixed;
-    background: #404040;
+    background: #101010;
     border: solid white 2px;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%);
-    transform: translateY(-50%);
     width: max-content;
     padding: 20px 35px;
+    bottom: 10px;
+}
+
+.wellRegistered {
+    position: absolute;
+    text-align: center;
+    letter-spacing: 1px;
+    font-weight: 600;
+    color: white;
+    z-index: 100;
+    background: fixed;
+    background: #101010;
+    border: solid white 2px;
+    width: max-content;
+    padding: 20px 35px;
+    top: 100px;
 }

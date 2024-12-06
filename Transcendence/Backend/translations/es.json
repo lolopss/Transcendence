@@ -1,0 +1,24 @@
+{
+	"title": "EL PONG",
+	"start_game": "Iniciar el juego",
+	"start_game_ai": "Iniciar el juego contra la IA",
+	"start_btn": "Iniciar",
+	"see_options": "Ver las opciones",
+	"options_btn": "Opciones",
+	"quit_game": "Salir del juego",
+	"quit_btn": "Salir",
+	"find_match": "Buscar una partida",
+	"find_btn": "Buscar",
+	"logout": "Cerrar sesión",
+	"logout_btn": "Cerrar",
+	"print_details": "Imprimir detalles del usuario",
+	"print_btn": "Imprimir",
+	"toggle_2fa": "Activar/Desactivar 2FA",
+	"scan_qr": "Escanea este código QR con Google Authenticator:",
+	"language_preference": "Preferencia de idioma",
+	"english": "Inglés",
+	"spanish": "Español",
+	"french": "Francés",
+	"delete_account": "Eliminar cuenta"
+
+  }

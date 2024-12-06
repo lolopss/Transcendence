@@ -1,0 +1,24 @@
+{
+	"title": "LE PONG",
+	"start_game": "Commencer une partie",
+	"start_game_ai": "Commencer une partie contre l'IA",
+	"start_btn": "Jouer",
+	"see_options": "Voir les options",
+	"options_btn": "Options",
+	"quit_game": "Quitter le jeu",
+	"quit_btn": "Quitter",
+	"find_match": "Trouver un match",
+	"find_btn": "Recherche",
+	"logout": "Se déconnecter",
+	"logout_btn": "Déconnexion",
+	"print_details": "Imprimer les détails de l'utilisateur",
+	"print_btn": "Imprimer",
+	"toggle_2fa": "Activer/Désactiver 2FA",
+	"scan_qr": "Scannez ce code QR avec Google Authenticator:",
+	"language_preference": "Préférence de langue",
+	"english": "Anglais",
+	"spanish": "Espagnol",
+	"french": "Français",
+	"delete_account": "Delete Account"
+
+  }

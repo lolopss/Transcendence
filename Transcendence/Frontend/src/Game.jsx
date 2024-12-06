@@ -38,7 +38,13 @@ class Ball {
 }
 
 function Game() {
+<<<<<<< Updated upstream
     const [isStarted, setIsStarted] = useState(false);
+=======
+    // const [isStarted, setIsStarted] = useState(false);
+    const [isGameOver, setIsGameOver] = useState(false);
+    const [winner, setWinner] = useState('');
+>>>>>>> Stashed changes
     const [isReady, setIsReady] = useState(false);
     const pongCanvas = useRef(null);
 

@@ -11,3 +11,29 @@
 h2 {
     font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Add this to your CSS file */
+.menu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+  }
+  
+  .menu-items {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .profile-picture {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .profile-picture img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+  }

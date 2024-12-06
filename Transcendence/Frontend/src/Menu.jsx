@@ -1,8 +1,8 @@
-import './Menu.css'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './FriendList.css';
+import './Menu.css';
 
-<<<<<<< Updated upstream
-function GameButton(props) {
-=======
 function GameMenu() {
     const navigate = useNavigate();
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
@@ -258,24 +258,12 @@ function GameMenu() {
 }
 
 function GameButton({ usage, name, onClick }) {
->>>>>>> Stashed changes
     return (
         <div className="GameButton">
-            <p>{props.usage}</p>
-            <button>{props.name}</button>
+            <p>{usage}</p>
+            <button onClick={onClick}>{name}</button>
         </div>
     );
 }
 
-function GameMenu() {
-    return (
-        <div>
-            <h2>THE PONG</h2>
-            <GameButton usage="start the game" name="Start"></GameButton>
-            <GameButton usage="see the option" name="Option"></GameButton>
-            <GameButton usage="quit the game" name="Quit"></GameButton>
-        </div>
-    );
-}
-
-export default GameMenu
+export default GameMenu;

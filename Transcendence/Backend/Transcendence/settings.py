@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path, os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+IS_SEARCHING = False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-du&03o*5z)di#634%jy#11-3!loep#k3(%i%4sepx($6$ocgby
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = ['*',]
 
 # Application definition
 
@@ -39,8 +38,59 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pong',
-    'channels'
+    'channels',
+    'rest_framework',
+    'social_django',
+    # 'django.contrib.sites',  # Required for social-auth
 ]
+#FOR API / LOGIN ...
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    # Disable CSRF check for JWT-based authentication
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}
+
+#Ables print in the console django
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',  # Logs INFO and higher levels (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # Set token expiry as needed
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -50,6 +100,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'pong.middleware.UpdateLastActivityMiddleware',
 ]
 
 ROOT_URLCONF = 'Transcendence.urls'
@@ -71,7 +123,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Transcendence.wsgi.application'
-
+ASGI_APPLICATION = 'Transcendence.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -79,21 +131,38 @@ WSGI_APPLICATION = 'Transcendence.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'database_PONG',
-        'USER': 'logan',
-        'PASSWORD': '1',
-        'HOST': 'DB',  # This should match the service name in your docker-compose
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': 'db',  # This should match the service name in your docker-compose
         'PORT': '5432',
     }
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://localhost:3000',
-    'http://localhost:3000',  # For non-HTTPS connections
+    'https://localhost:8000',
+    'http://localhost:8000',  # For non-HTTPS connections
+]
+
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    'https://localhost:8000',
+    'https://*'
 ]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # default
+]
+
+SOCIAL_AUTH_42_KEY = os.environ.get('CLIENT_ID')
+SOCIAL_AUTH_42_SECRET = os.environ.get('CLIENT_SECRET')
+SOCIAL_AUTH_42_REDIRECT_URI = 'https://localhost:8000/register42'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

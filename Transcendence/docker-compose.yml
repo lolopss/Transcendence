@@ -25,11 +25,18 @@ services:
     networks:
       - main
     healthcheck:
-      test: ["CMD-SHELL", "curl localhost:3000 || exit 1"]
+      test: ["CMD-SHELL", "curl localhost:8000 || exit 1"]
       interval: 3s
       timeout: 10s
       retries: 3
     env_file: .env
+    volumes:
+      - static_volume:/app/back-end/staticfiles  # Sync static files
+    command: >
+      sh -c "python manage.py migrate &&
+            python /app/back-end/create_superuser.py ||
+            true &&
+            python manage.py runserver 0.0.0.0:8000"
 
   nginx:
     container_name: nginx
@@ -42,14 +49,15 @@ services:
       args:
         - NGINX_PROTOCOL=https
     ports:
-      - '3000:3000'
+      - '8000:8000'
     restart: always
     networks:
       - main
     volumes:
       - /var/www/html
+      - static_volume:/static
     healthcheck:
-      test: ["CMD-SHELL", "curl -kf https://localhost:3000/ || exit 1"]
+      test: ["CMD-SHELL", "curl -kf https://localhost:8000/ || exit 1"]
       interval: 3s
       timeout: 10s
       retries: 3
@@ -59,3 +67,6 @@ networks:
   main:
     name: main
     driver: bridge
+
+volumes:
+  static_volume:

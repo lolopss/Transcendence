@@ -1,0 +1,9 @@
+<!-- Transcendence/Backend/pong/templates/pong/anonymization_success.html -->
+
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Account Anonymized</h1>
+  <p>Your account has been anonymized and cannot be accessed. If you wish to use our service again, please create a new account.</p>
+  <a href="{% url 'register' %}">Create New Account</a>
+{% endblock %}

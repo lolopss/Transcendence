@@ -1,0 +1,20 @@
+.image-carousel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.image-carousel img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+
+.image-carousel button {
+    background-color: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+}

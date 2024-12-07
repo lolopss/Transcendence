@@ -30,8 +30,8 @@ const LoginPage = () => {
   }, [navigate]);
 
   const handleLogin = async () => {
-    localStorage.setItem('registerVal', false);
-    navigate('/login');
+    //localStorage.setItem('registerVal', false);
+    navigate('/menu');
     try {
         const response = await fetch('/api/login/', {
             method: 'POST',
@@ -50,6 +50,7 @@ const LoginPage = () => {
             } else {
                 localStorage.setItem('authToken', data.access);
                 localStorage.setItem('refreshToken', data.refresh);
+                localStorage.setItem('registerVal', false);
                 navigate('/menu');
             }
         } else {
@@ -105,8 +106,8 @@ const LoginPage = () => {
     }, []);
 
     const handleRegister = async () => {
-        localStorage.setItem('registerVal', true);
-        navigate('/login');
+        //localStorage.setItem('registerVal', true);
+        //navigate('/login');
         try {
         const response = await fetch('/api/register/', {
             method: 'POST',
@@ -145,15 +146,17 @@ const LoginPage = () => {
   const [isPopupActive, setIsPopupActive] = useState(true);
 
   useEffect(()=>{
-    const regVal = localStorage.getItem('registerVal'); 
+    const regVal = localStorage.getItem('registerVal');
+    console.log(`regVal = ${regVal}`);
     if (regVal) {
         setIsRegister(regVal === 'true');
-        localStorage.setItem('registerVal', false);
     }
   },[]);
 
   const handleRegisterClick = ()=> {
       setIsWrapperActive(true);
+      setIsRegister(false);
+      localStorage.setItem('registerVal', false);
   }
 
   const handleLoginClick = ()=> {

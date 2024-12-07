@@ -66,12 +66,12 @@ const App = () => {
       {showFriendList && <FriendList />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        {/*<Route path="/register" element={<RegisterPage />} />*/}
         <Route path="/verify-2fa" element={<Verify2FA />} />
         <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
         <Route path="/menu" element={/*<ProtectedRoute>*/<Menu />/*</ProtectedRoute>*/} />
         <Route path="/edit-account" element={<EditAccount />} />
-        <Route path="/matchmaking" element={<ProtectedRoute><Matchmaking /></ProtectedRoute>} />
+        {/*<Route path="/matchmaking" element={<ProtectedRoute><Matchmaking /></ProtectedRoute>} />*/}
         <Route path="/register42" element={<OAuthCallback />} /> {/* OAuth callback route */}
         <Route path="/profile/:username" element={<ProtectedRoute><FriendProfile /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/login" />} />

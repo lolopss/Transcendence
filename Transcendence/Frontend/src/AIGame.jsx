@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './Game.css'
 
+
 const width = 800;
 const height = 400;
 const ratio = width / height;
@@ -21,7 +22,9 @@ class Paddle {
 }
 
 class Player {
-    constructor(paddle) {
+    constructor(id, nickname, paddle) {
+        this.id = id;
+        this.nickname = nickname;
         this.paddle = paddle;
         this.point = 0;
     }
@@ -43,7 +46,15 @@ const restartGame = () => {
     window.location.reload();
 };
 
-function AIGame() {
+function AIGame({ 
+    player1Id = 1, 
+    player1Nickname = 'Player1', 
+    player2Id = 2, 
+    player2Nickname = 'AI', 
+    // onGameEnd = () => {} 
+}) {
+    const [nickname, setNickname] = useState('User');
+    const [profilePicture, setProfilePicture] = useState('/default-profile.png');
     // const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
@@ -52,8 +63,32 @@ function AIGame() {
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
 
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await fetch('/api/user-details/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
+                if (response.ok) {
+                    const userDetails = await response.json();
+                    setNickname(userDetails.nickname);
+                    setProfilePicture(userDetails.profile_picture);
+                } else {
+                    console.error('Failed to fetch user details');
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+        fetchUserProfile();
+    }, []);
+
     const startGame = () => {
         console.log('yes');
+        startTime = new Date();
     }
 
     useEffect(() => {
@@ -77,25 +112,33 @@ function AIGame() {
             };
         }
     }, []);
-
-    const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
+    
+    const saveMatch = async (player1, player2, winner, duration) => {
         try {
-            const response = await fetch('/api/update-goals/', {
+            const response = await fetch('/api/save-match-result/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assuming you use token-based authentication
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                 },
-                body: JSON.stringify({ goals, goals_taken, longuest_exchange, ace }),
+                body: JSON.stringify({
+                    player1_nickname: player1.nickname,
+                    player2_nickname: player2.nickname,
+                    winner_nickname: winner.nickname,
+                    score_player1: player1.point,
+                    score_player2: player2.point,
+                    duration: duration,
+                }),
             });
-
+    
             if (!response.ok) {
-                throw new Error('Failed to update goals');
+                throw new Error('Failed to save match');
             }
-
+    
             const data = await response.json();
+            console.log(data.message);
         } catch (error) {
-            console.error('Error updating goals:', error);
+            console.error('Error saving match:', error);
         }
     };
 
@@ -131,16 +174,10 @@ function AIGame() {
             , 2
             , canvas.height
             , 'white');
-        let player1 = new Player(new Paddle(15
-            , canvas.height / 2 - paddle.height / 2
-            , paddle.width
-            , paddle.height
-            , 'orange'));
-        let player2 = new Player(new Paddle(canvas.width - paddle.width - 15
-            , canvas.height / 2 - paddle.height / 2
-            , paddle.width
-            , paddle.height
-            , 'violet'));
+        const player1 = new Player(player1Id, player1Nickname, new Paddle(15, canvas.height / 2 - paddle.height / 2, paddle.width, paddle.height, 'orange'));
+        const player2 = new Player(player2Id, player2Nickname, new Paddle(canvas.width - paddle.width - 15, canvas.height / 2 - paddle.height / 2, paddle.width, paddle.height, 'violet'));
+        // let player1 = new Player(new Paddle(15, canvas.height / 2 - paddle.height / 2, paddle.width, paddle.height, 'orange'));
+        // let player2 = new Player(new Paddle(canvas.width - paddle.width - 15, canvas.height / 2 - paddle.height / 2, paddle.width, paddle.height, 'violet'));
         let ball = new Ball(10, 4, 6);
 
         document.addEventListener('keydown', (event) => {
@@ -244,13 +281,11 @@ function AIGame() {
                 // Check if the ball passes the left or right limit hitbox
                 if (ball.x < limitHitbox) {
                     player2.point++;
-                    updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
                     paddleHitCount = 0;
                     limitHitbox = 25;
                     resetBall();
                 } else if (ball.x > canvas.width - limitHitbox) {
                     player1.point++;
-                    updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
                     paddleHitCount = 0;
                     limitHitbox = 25;
                     resetBall();
@@ -479,22 +514,32 @@ function AIGame() {
         }
 
         const gameLoop = () => {
-        if (player1.point >= 5 || player2.point >= 5) {
-            return;
-        }
-        update();
-        draw();
-        if (isReady) {
-            requestAnimationFrame(gameLoop);
-        }
-        }
-        if (isReady)
-            gameLoop();
+            if (player1.point >= 5) {
+                if (player1.point === 5)
+                    console.log('duration : ', duration);
+                    duration = (Date.now() - startTime) / 1000; // Calculate duration in seconds
+                    saveMatch(player1, player2, player1, duration);
+                stopGame(player1);
+            } else if (player2.point >= 5){
+                if (player2.point === 5)
+                    duration = (Date.now() - startTime) / 1000; // Calculate duration in seconds
+                    console.log('duration : ', duration);
+                    saveMatch(player1, player2, player2, duration);
+                stopGame(player2);
+            }
+            update();
+            draw();
+            if (isReady) {
+                requestAnimationFrame(gameLoop);
+            }
+            }
+            if (isReady)
+                gameLoop();
 
-        return () => {
-            console.log("Cleaning up 2...");
-            clearInterval(aiInterval);
-            clearInterval(currentStopInterval);
+            return () => {
+                clearInterval(aiInterval);
+                clearInterval(currentStopInterval);
+                // player2.point = 10;
         };
     }, [isReady]);
 

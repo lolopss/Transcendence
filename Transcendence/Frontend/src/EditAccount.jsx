@@ -22,6 +22,7 @@ const EditAccount = () => {
     const [preview, setPreview] = useState(pepeImages[pepeImages.length - 1]); // Default to the last image
     const [currentImageIndex, setCurrentImageIndex] = useState(pepeImages.length - 1);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -35,18 +36,24 @@ const EditAccount = () => {
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setUserDetails((prevDetails) => ({
-                ...prevDetails,
-                profilePicture: file,
-            }));
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-            setIsFileUploaded(true);
+            if (/\.(jpeg|jpg|gif|png)$/i.test(file.name)) {
+                setUserDetails((prevDetails) => ({
+                    ...prevDetails,
+                    profilePicture: file,
+                }));
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreview(reader.result);
+                };
+                reader.readAsDataURL(file);
+                setIsFileUploaded(true);
+                setError(null);
+            } else {
+                setError('Invalid file type. Only images are allowed.');
+            }
+        } else {
+            setError('No file selected.');
         }
-        console.log('Selected file path:', file ? file.name : 'No file selected');
     };
 
     const handleSubmit = async (e) => {
@@ -74,10 +81,10 @@ const EditAccount = () => {
                 navigate('/menu');
             } else {
                 const errorData = await response.json();
-                console.error('Failed to update account:', errorData);
+                setError(`Failed to update account: ${errorData.message || 'Unknown error'}`);
             }
         } catch (error) {
-            console.error('Error updating account:', error);
+            setError(`Error updating account: ${error.message}`);
         }
     };
 
@@ -127,6 +134,7 @@ const EditAccount = () => {
                 </div>
                 <button type="submit">Save Changes</button>
             </form>
+            {error && <div className="error-message">{error}</div>}
         </div>
     );
 };

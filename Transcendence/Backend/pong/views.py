@@ -25,6 +25,7 @@ import urllib.request
 import requests
 import logging
 import pyotp  # For generating 2FA tokens
+from datetime import timedelta
 
 
 UserModel = get_user_model()
@@ -339,27 +340,27 @@ class Verify2FA(APIView):
         else:
             return Response({'error': 'Invalid OTP'}, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-def update_goals(request):
-    user = request.user
-    if not user.is_authenticated:
-        return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+# @api_view(['POST'])
+# def update_goals(request):
+#     user = request.user
+#     if not user.is_authenticated:
+#         return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    profile = user.profile
-    data = request.data
+#     profile = user.profile
+#     data = request.data
 
-    if 'goals' in data:
-        profile.goals += data['goals']
-    if 'goals_taken' in data:
-        profile.goals_taken += data['goals_taken']
-    if 'longuest_exchange' in data:
-        profile.longuest_exchange = max(profile.longuest_exchange, data['longuest_exchange'])
-    # Check if ace is more than 0, if so, increment the ace count
-    if 'ace' in data and data['ace'] > 0:
-        profile.ace += 1
+#     if 'goals' in data:
+#         profile.goals += data['goals']
+#     if 'goals_taken' in data:
+#         profile.goals_taken += data['goals_taken']
+#     if 'longuest_exchange' in data:
+#         profile.longuest_exchange = max(profile.longuest_exchange, data['longuest_exchange'])
+#     # Check if ace is more than 0, if so, increment the ace count
+#     if 'ace' in data and data['ace'] > 0:
+#         profile.ace += 1
 
-    profile.save()
-    return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
+#     profile.save()
+#     return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -590,21 +591,32 @@ class UserDetails(APIView):
         
         # For match history
         matches_as_player1 = Match.objects.filter(player1=user)
-        matches_as_player2 = Match.objects.filter(player2=user)
-        match_history = list(matches_as_player1) + list(matches_as_player2)
+        match_history = list(matches_as_player1)
         match_history.sort(key=lambda x: x.date, reverse=True)
         match_history_data = [
             {
                 'player1': match.player1.username,
-                'player2': match.player2.username,
-                'winner': match.winner.username,
+                'player2': match.player2_nickname,  # Use player2_nickname instead of player2
+                'winner': match.winner_nickname,
                 'date': match.date,
                 'score_player1': match.score_player1,
                 'score_player2': match.score_player2,
+                'duration': match.duration,  # Time spent in seconds
+
             }
             for match in match_history
         ]
-        
+
+        # Calculate stats based on match history
+        wins = sum(1 for match in match_history if match.winner_nickname == nickname)
+        losses = sum(1 for match in match_history if match.winner_nickname != nickname)
+        goals = sum(match.score_player1 for match in match_history)
+        goals_taken = sum(match.score_player2 for match in match_history)
+        longuest_exchange = max((match.score_player1 + match.score_player2) for match in match_history) if match_history else 0
+        ace = sum(1 for match in match_history if match.ace)
+        total_games = wins + losses
+        winrate = (wins / total_games) * 100 if total_games > 0 else 0
+        total_time_spent = sum(match.duration for match in match_history) # Total time spent in seconds
         # Return the user details
         return Response({
             'username': user.username,
@@ -617,7 +629,34 @@ class UserDetails(APIView):
             'profile_picture': profile_picture_url,
             'connected_from_42_api': user.profile.connected_from_42_api,
             'match_history': match_history_data,
+            'wins': wins,
+            'losses': losses,
+            'goals': goals,
+            'goals_taken': goals_taken,
+            'longuest_exchange': longuest_exchange,
+            'ace': ace,
+            'winrate': winrate,
+            'total_time_spent': total_time_spent,
         })
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def update_win_loss(request):
+#     user = request.user
+#     data = request.data
+#     winningPlayer = data.get('winningPlayer')
+
+#     if winningPlayer == 'Player1':
+#         user.profile.wins += 1
+#     elif winningPlayer == 'Player2':
+#         user.profile.losses += 1
+#     else:
+#         return Response({'error': 'Invalid winner'}, status=status.HTTP_400_BAD_REQUEST)
+
+#     user.profile.save()
+
+#     return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
+
 
 class DeleteAccount(APIView):
     permission_classes = [IsAuthenticated]
@@ -707,24 +746,42 @@ def edit_account(request):
 from django.contrib.auth.models import User
 from .models import Match
 
-def end_match(request):
-    player1 = User.objects.get(username='player1_username')
-    player2 = User.objects.get(username='player2_username')
-    score_player1 = 10  # Example score
-    score_player2 = 8   # Example score
+class SaveMatchResult(APIView):
+    permission_classes = [IsAuthenticated]
 
-    winner = player1 if score_player1 > score_player2 else player2
+    def post(self, request):
+        data = request.data
+        player1 = request.user  # Get the authenticated user
+        player1_nickname = player1.profile.nickname  # Get the authenticated user's profile nickname
+        player2_nickname = data.get('player2_nickname', 'PaddleMan')  # Default nickname for player2
+        winner_nickname = data.get('winner_nickname')
+        score_player1 = data.get('score_player1')
+        score_player2 = data.get('score_player2')
+        duration = data.get('duration')
+        
+        if winner_nickname is None or score_player1 is None or score_player2 is None or duration is None:
+            return Response({'error': 'All fields are required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    match = Match.objects.create(
-        player1=player1,
-        player2=player2,
-        winner=winner,
-        score_player1=score_player1,
-        score_player2=score_player2
-    )
+        ace = False
+        if (score_player1 == 5 and score_player2 == 0):
+            ace = True
 
-    return Response(f"Match {match.id} created successfully")
+        # Ensure winner_nickname is player1_nickname if player1 wins
+        if winner_nickname == 'Player1':
+            winner_nickname = player1_nickname
+        elif winner_nickname == 'Player2':
+            winner_nickname = player2_nickname
+        match = Match.objects.create(
+            player1=player1,  # Assign the User instance
+            player2_nickname=player2_nickname,
+            winner_nickname=winner_nickname,
+            score_player1=score_player1,
+            score_player2=score_player2,
+            ace=ace,
+            duration=duration
+        )
 
+        return Response({'message': 'Match result saved successfully', 'match_id': match.id}, status=status.HTTP_201_CREATED)
 
 #Friend gestion
 
@@ -768,6 +825,7 @@ class FriendListView(APIView):
 
         friend_list = [
             {
+                'username': friend.user.username,  # Access username through the user relationship
                 'nickname': friend.nickname,
                 'profilePicture': friend.profile_picture.url,
                 'isOnline': friend.isOnline,

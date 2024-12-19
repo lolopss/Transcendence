@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
-import './Game.css'
+import { useEffect, useRef, useState } from 'react';
+import './Game.css';
 
 const width = 800;
 const height = 400;
 const ratio = width / height;
 let shakeDuration = 10;
 let shakeSpeed = 5;
+let startTime; // Declare startTime globally
+
 
 class Paddle {
     constructor(x, y, width, height, color) {
@@ -19,7 +21,9 @@ class Paddle {
 }
 
 class Player {
-    constructor(paddle) {
+    constructor(id, nickname, paddle) {
+        this.id = id;
+        this.nickname = nickname;
         this.paddle = paddle;
         this.point = 0;
     }
@@ -37,59 +41,72 @@ class Ball {
     }
 }
 
-const restartGame = () => {
-    window.location.reload();
-};
-
-function Game() {
-    // const [isStarted, setIsStarted] = useState(false);
+function Game({ 
+    player1Id = 1, 
+    player1Nickname = 'Player1', 
+    player2Id = 2, 
+    player2Nickname = 'Player2', 
+    onGameEnd = () => {} 
+}) {
+    const [nickname, setNickname] = useState(player1Nickname);
+    const [profilePicture, setProfilePicture] = useState('/default-profile.png');
+    const [isStarted, setIsStarted] = useState(false);
+    const [isReady, setIsReady] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
     const [winner, setWinner] = useState('');
-    const [isReady, setIsReady] = useState(false);
     const pongCanvas = useRef(null);
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
+    let animationFrameId = useRef(null);
+
+    // Define player1 and player2 at the component level
+    const player1 = new Player(player1Id, player1Nickname, new Paddle(15, height / 2 - 50, 10, 100, 'orange'));
+    const player2 = new Player(player2Id, player2Nickname, new Paddle(width - 25, height / 2 - 50, 10, 100, 'violet'));
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const response = await fetch('/api/user-details/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
+                if (response.ok) {
+                    const userDetails = await response.json();
+                    setNickname(userDetails.nickname);
+                    setProfilePicture(userDetails.profile_picture);
+                } else {
+                    console.error('Failed to fetch user details');
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
 
     const startGame = () => {
         console.log('yes');
-    }
-
-    useEffect(() => {
-        console.log('Starting game...');
-        pongCanvas.current.classList.add('is-animated');
-        pongCanvas.current.addEventListener('animationend', () => {
-            startGame();
-            setIsReady(true);
-        });
-    }, []);
-
-    console.log(`is ready -> ${isReady}`);
-
-    const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
-        try {
-            const response = await fetch('/api/update-goals/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assuming you use token-based authentication
-                },
-                body: JSON.stringify({ goals, goals_taken, longuest_exchange, ace }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update goals');
-            }
-
-            const data = await response.json();
-            console.log(data.message);
-        } catch (error) {
-            console.error('Error updating goals:', error);
-        }
+        startTime = new Date();
     };
 
+    useEffect(() => {
+        if (isStarted) {
+            console.log(`Animation running -> ${isStarted}`);
+            pongCanvas.current.classList.add('is-animated');
+            pongCanvas.current.addEventListener('animationend', () => {
+                startGame();
+                setIsReady(true);
+            });
+        } else {
+            setIsReady(false);
+        }
+    }, [isStarted]);
+
     const handleResize = () => {
-        if (!isStarted)
-            return ;
+        if (!isStarted) return;
         const ctx = pongCanvas.current.getContext('2d');
         const windowHeight = window.innerHeight;
         const windowWidth = window.innerWidth;
@@ -104,34 +121,53 @@ function Game() {
         ctx.canvas.width = maxWidth;
     };
 
+    const saveMatch = async (player1, player2, winner, duration) => {
+        try {
+            const response = await fetch('/api/save-match-result/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+                body: JSON.stringify({
+                    player1_nickname: player1.nickname,
+                    player2_nickname: player2.nickname,
+                    winner_nickname: winner.nickname,
+                    score_player1: player1.point,
+                    score_player2: player2.point,
+                    duration: duration,
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to save match');
+            }
+            const data = await response.json();
+            console.log(data.message);
+        } catch (error) {
+            console.error('Error saving match:', error);
+        }
+    };
+
+    const stopGame = (winningPlayer) => {
+        console.log('Game Over');
+        setIsReady(false); // Stop the game loop
+        setIsGameOver(true);
+        setWinner(winningPlayer);
+        onGameEnd(winningPlayer); // Call the onGameEnd prop with the winner
+    };
+
     useEffect(() => {
-        if (!isReady)
-            return ;
+        if (!isReady) return;
         const canvas = pongCanvas.current;
-        if (!canvas)
-            return ;
+        if (!canvas) return;
         const context = canvas.getContext('2d');
 
-        let textPoint = { x: canvas.width / 2, y: 30};
+        let textPoint = { x: canvas.width / 2, y: 30 };
         let paddle = new Paddle(0, 0, 10, 100, 'white');
-        let middleBar = new Paddle(canvas.width / 2 - 2 / 2
-            , 0
-            , 2
-            , canvas.height
-            , 'white');
-        let player1 = new Player(new Paddle(15
-            , canvas.height / 2 - paddle.height / 2
-            , paddle.width
-            , paddle.height
-            , 'orange'));
-        let player2 = new Player(new Paddle(canvas.width - paddle.width - 15
-            , canvas.height / 2 - paddle.height / 2
-            , paddle.width
-            , paddle.height
-            , 'violet'));
+        let middleBar = new Paddle(canvas.width / 2 - 2 / 2, 0, 2, canvas.height, 'white');
         let ball = new Ball(10, 4, 6);
 
-        document.addEventListener('keydown', (event) => {
+        const handleKeyDown = (event) => {
             if (event.key === 'w') {
                 player1.paddle.dy = -5;
             }
@@ -144,16 +180,19 @@ function Game() {
             if (event.key === 'ArrowDown') {
                 player2.paddle.dy = 5;
             }
-        });
+        };
 
-        document.addEventListener('keyup', (event) => {
+        const handleKeyUp = (event) => {
             if (event.key === 'w' || event.key === 's') {
                 player1.paddle.dy = 0;
             }
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
                 player2.paddle.dy = 0;
             }
-        });
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
 
         const drawRect = (x, y, width, height, color) => {
             context.fillStyle = color;
@@ -161,14 +200,14 @@ function Game() {
             context.shadowColor = color;
             context.fillRect(x, y, width, height);
             context.shadowBlur = 0;
-        }
+        };
 
         const drawBall = (x, y, size, color) => {
             context.fillStyle = color;
             context.beginPath();
             context.arc(x, y, size, 0, Math.PI * 2, true);
             context.fill();
-        }
+        };
 
         const drawMiddleBar = (x, y, width, height, color) => {
             context.fillStyle = color;
@@ -176,74 +215,59 @@ function Game() {
             context.shadowColor = color;
             context.fillRect(x, y, width, height);
             context.shadowBlur = 0;
-        }
+        };
 
         const drawPoints = (x, y) => {
             const textSize = context.measureText(player1.point.toString() + "   " + player2.point.toString());
             context.fillStyle = 'white';
             context.font = "25px arial";
             context.fillText(player1.point.toString() + "   " + player2.point.toString(), x - textSize.width / 2, y);
-        }
+        };
 
         const draw = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
             drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
             drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
             drawBall(ball.x, ball.y, ball.size, 'white');
-            drawMiddleBar(middleBar.x, middleBar.y, middleBar.width, middleBar.height, 'white')
+            drawMiddleBar(middleBar.x, middleBar.y, middleBar.width, middleBar.height, 'white');
             drawPoints(textPoint.x, textPoint.y);
-        }
+        };
 
         const playerDirection = (player) => {
             player.paddle.y += player.paddle.dy;
-            if (player.paddle.y < 0)
-                player.paddle.y = 0;
-            if (player.paddle.y + paddle.height > canvas.height)
-                player.paddle.y = canvas.height - paddle.height;
-        }
+            if (player.paddle.y < 0) player.paddle.y = 0;
+            if (player.paddle.y + paddle.height > canvas.height) player.paddle.y = canvas.height - paddle.height;
+        };
 
         const resetBall = () => {
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
-            if (player1.point >= 5 || player2.point >= 5) {
-                return;
-            }
             ball.speed = ball.initialSpeed;
             ball.dx = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
             ball.dy = (Math.random() * 2 - 1) * ball.speed;
-        }
+        };
 
         const ballMovement = () => {
             ball.x += ball.dx;
             ball.y += ball.dy;
             // Bounce off top and bottom edges
-            if (ball.y + ball.size > canvas.height) {
-                ball.y = canvas.height - ball.size - 3; // Adjust position to prevent sticking
-                ball.dy *= -1;
-            } else if (ball.y - ball.size < 0) {
-                ball.y = ball.size + 3; // Adjust position to prevent sticking
+            if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
                 ball.dy *= -1;
             }
 
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
-                updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
+                // updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
-                updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
+                // updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
-            }
-
-            if (player1.point >= 5) {
-                stopGame('Player 1');
-            } else if (player2.point >= 5) {
-                stopGame('Player 2');
             }
         };
 
@@ -264,7 +288,7 @@ function Game() {
                     handlePaddleHit(paddle.y);
                 }
             }
-        }
+        };
 
         const handlePaddleHit = (paddleY) => {
             // Increase ball speed and adjust direction based on paddle hit location
@@ -288,7 +312,7 @@ function Game() {
             if (paddleHitCount % 2 === 0 && limitHitbox > 15) {
                 limitHitbox--; // Reduce limitHitbox after every two paddle hits
             }
-        }
+        };
 
         const shakeScreen = () => {
             if (shakeDuration > 0) {
@@ -300,13 +324,13 @@ function Game() {
             } else {
                 canvas.style.transform = "translate(0, 0)";
             }
-        }
+        };
 
         const triggerImpactEffect = () => {
             if (Math.abs(ball.dx) >= shakeSpeed) {
                 shakeDuration = 5;
             }
-        }
+        };
 
         const update = () => {
             playerDirection(player1);
@@ -314,69 +338,77 @@ function Game() {
             ballToPaddleCheck(1);
             ballToPaddleCheck(2);
             playerDirection(player2);
-            //updatePaddleColors();
             shakeScreen();
-        }
-
-        const stopGame = (winningPlayer) => {
-            console.log('Game Finished');
-            setIsReady(false); // Stop the game loop
-            setIsGameOver(true);
-            setWinner(winningPlayer);
         };
 
         const gameLoop = () => {
-        if (player1.point >= 5 || player2.point >= 5) {
-            return;
-        }
-            update();
-            draw();
+            if (player1.point >= 5) {
+                if (player1.point === 5) {
+                    const endTime = new Date();
+                    const duration = (endTime - startTime) / 1000;
+                    console.log('duration : ', duration);
+                    saveMatch(player1, player2, player1, duration);
+                }
+                stopGame(player1);
+            } else if (player2.point >= 5) {
+                if (player2.point === 5) {
+                    const endTime = new Date();
+                    const duration = (endTime - startTime) / 1000;
+                    console.log('duration : ', duration);
+                    saveMatch(player1, player2, player2, duration);
+                }
+                stopGame(player2);
+            }
+            else {
+                update();
+                draw();
+                if (isReady) animationFrameId.current = requestAnimationFrame(gameLoop);
+            }
+        };
 
-            if (isReady)
-                requestAnimationFrame(gameLoop);
-            else
-                return ;
-        }
-        if (isReady)
-            gameLoop();
+        if (isReady) gameLoop();
 
+        return () => {
+            // Cleanup logic here...
+            document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keyup', handleKeyUp);
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+                animationFrameId.current = null;
+            }
+        };
     }, [isReady]);
-    window.addEventListener('resize', handleResize);
 
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+    
     return (
-        <div>
-            <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
-            {isGameOver && (
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <h1>{winner} won!</h1>
-                    <button onClick={restartGame}>Restart Game</button>
+        <>
+            {isStarted ? (
+                <div>
+                    <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+                    <div>
+                        <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
+                    </div>
+                </div>
+            ) : (
+                <div>
+                    <h1>{nickname} vs {player2Nickname}</h1>
+                    {player2Nickname === 'PaddleMan' && (
+                        <div>
+                            <img src={profilePicture} alt={`${nickname}'s profile`} width="50" height="50" />
+                            <p>{nickname}</p>
+                        </div>
+                    )}
+                    <button onClick={() => setIsStarted(true)}>Start Game</button>
                 </div>
             )}
-        </div>
+        </>
     );
-    // return (
-    //     <>
-    //         {isStarted ?
-    //             (
-    //                 <div>
-    //                     <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
-    //                     <div>
-    //                         <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-    //                     </div>
-    //                 </div>
-    //             )
-    //             :
-    //             (<div>
-    //                 <h1>
-    //                     Game Menu
-    //                 </h1>
-    //                 <div>
-    //                     <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-    //                 </div>
-    //             </div>)
-    //         }
-    //     </>
-    // )
 }
 
-export default Game
+export default Game;

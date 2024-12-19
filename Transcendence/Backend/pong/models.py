@@ -7,7 +7,6 @@ from django.utils import timezone
 class Profile(models.Model):
     # Establish a one-to-one relationship with the Django built-in User model
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-
     nickname = models.CharField(max_length=15)
     wins = models.IntegerField(default=0)  # Track the number of wins
     losses = models.IntegerField(default=0)  # Track the number of losses
@@ -25,6 +24,7 @@ class Profile(models.Model):
     profile_picture = models.ImageField(upload_to='profile_pictures/', default='profile_pictures/pepe.png')
     connected_from_42_api = models.BooleanField(default=False)  # New field
     friends = models.ManyToManyField('self', blank=True)
+    total_time_in_game = models.FloatField(default=0)  # Total time in seconds
 
     @property
     def winrate(self):
@@ -60,11 +60,14 @@ class WaitingPlayerModel(models.Model):
 
 class Match(models.Model):
     player1 = models.ForeignKey(User, related_name='matches_as_player1', on_delete=models.CASCADE)
-    player2 = models.ForeignKey(User, related_name='matches_as_player2', on_delete=models.CASCADE)
-    winner = models.ForeignKey(User, related_name='matches_won', on_delete=models.CASCADE)
+    player2_nickname = models.CharField(max_length=15, default='Unknown')  # Save player2's nickname directly
+    winner_nickname = models.CharField(max_length=15, default='Unknown')  # Save winner's nickname directly
     date = models.DateTimeField(auto_now_add=True)
     score_player1 = models.IntegerField()
     score_player2 = models.IntegerField()
+    ace = models.IntegerField(default='0')
+    duration = models.FloatField(default='0')  # Duration in seconds
+
 
     def __str__(self):
-        return f"Match {self.id} - {self.player1.username} vs {self.player2.username}"
+        return f"Match {self.id} - {self.player1.username} vs {self.player2_nickname}"

@@ -5,11 +5,16 @@ import './Profile.css';
 const FriendProfile = () => {
     const { username } = useParams();
     const [friendDetails, setFriendDetails] = useState({
-        username: '',
         nickname: '',
+        username: '',
+        email: '',
         profilePicture: '',
         wins: 0,
         losses: 0,
+        goals: 0,
+        goals_taken: 0,
+        longuest_exchange: 0,
+        ace: 0,
         winrate: 0,
         matchHistory: [],
     });
@@ -26,15 +31,19 @@ const FriendProfile = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    const winrate = data.wins + data.losses > 0 ? (data.wins / (data.wins + data.losses)) * 100 : 0;
                     setFriendDetails({
-                        username: data.username,
-                        nickname: data.nickname,
-                        profilePicture: data.profile_picture,
-                        wins: data.wins,
-                        losses: data.losses,
-                        winrate: winrate,
-                        matchHistory: data.match_history,
+                        nickname: data.nickname || '',
+                        username: data.username || '',
+                        email: data.email || '',
+                        profilePicture: data.profile_picture || '',
+                        wins: data.wins || 0,
+                        losses: data.losses || 0,
+                        goals: data.goals || 0,
+                        goals_taken: data.goals_taken || 0,
+                        longuest_exchange: data.longuest_exchange || 0,
+                        ace: data.ace || 0,
+                        winrate: data.winrate || 0,
+                        matchHistory: data.match_history || [],
                     });
                     setLoading(false);
                 } else {
@@ -54,15 +63,6 @@ const FriendProfile = () => {
         return <div>Loading...</div>;
     }
 
-
-    // useEffect(() => {
-    //     fetchFriends();
-    //     const interval = setInterval(() => {
-    //         fetchFriends();
-    //     }, 1000);  // Fetch friends every second
-    //     return () => clearInterval(interval);  // Cleanup interval on component unmount
-    // }, []);
-
     return (
         <div className="profile-container">
             <div className="profile-header">
@@ -72,8 +72,13 @@ const FriendProfile = () => {
             </div>
             <div className="profile-stats">
                 <h3>Stats</h3>
+                <p>Total Games: {userDetails.wins + userDetails.losses}</p>
                 <p>Wins: {friendDetails.wins}</p>
                 <p>Losses: {friendDetails.losses}</p>
+                <p>Goals: {friendDetails.goals}</p>
+                <p>Goals Taken: {friendDetails.goals_taken}</p>
+                <p>Longest Exchange: {friendDetails.longuest_exchange}</p>
+                <p>Aces: {friendDetails.ace}</p>
                 <p>Winrate: {friendDetails.winrate.toFixed(2)}%</p>
             </div>
             <div className="match-history">

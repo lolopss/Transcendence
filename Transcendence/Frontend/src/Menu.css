@@ -51,6 +51,53 @@ h2 {
     overflow: hidden;
 }
 
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    padding: 20px 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #101010;
+    z-index: 99;
+}
+
+.logo {
+    font-size: 2rem;
+    color: white;
+    user-select: none;
+}
+
+.navigation a {
+    position: relative;
+    font-size: 1.1rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 40px;
+}
+
+.navigation a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: white;
+    border-radius: 5px;
+    transform-origin: right;
+    transform: scaleX(0);
+    right: 0;
+    bottom: -6px;
+    transition: transform .5s;
+}
+
+.navigation a:hover::after {
+    transform-origin: left;
+    transform: scaleX(1);
+}
+
 .menu-body {
     margin: 0;
     padding: 0;
@@ -62,7 +109,7 @@ h2 {
     overflow: hidden;
 }
 
-.menu-body .menu-overlay {
+/* .menu-body .menu-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -101,14 +148,16 @@ h2 {
     100% {
         opacity: 1;
     }
-}
+} */
 
 .menu-body .centerMenu {
-    background: var(--color-1);
+    /*background: var(--color-1);*/
+    background: transparent;
     height: 100vh;
-    width: 50vw;
-    box-shadow: 10px 0px 5px var(--back-color-2),
-    -10px 0px 5px var(--back-color-2);
+    width: 70vw; /*50vw*/
+    /*box-shadow: 10px 0px 5px var(--back-color-2),
+    -10px 0px 5px var(--back-color-2);*/
+    box-shadow: none;
     transition: .5s;
     display: flex;
     justify-content: center;
@@ -136,7 +185,7 @@ h2 {
     height: 100%;
     top: 30%;
     left: 0;
-    opacity: 1;
+    opacity: 0; /**/
     transition: .25s ease-in-out;
 }
 
@@ -168,22 +217,22 @@ svg path {
         stroke-dashoffset: 0;
     }
 }
-
+/*
 .centerMenu:hover {
     box-shadow: none;
     width: 70vw;
-}
-
+}*/
+/*
 .centerMenu:hover .hoverText {
     opacity: 0;
-}
+}*/
 
 .centerMenu h1 {
     position: absolute;
     top: 10%;
     padding: 10px 10px;
     left: 5%;
-    opacity: 0;
+    opacity: 1; /**/
     height: max-content;
     width: max-content;
     font-size: 7vw;
@@ -194,10 +243,10 @@ svg path {
     backdrop-filter: blur(10px);
     transition: .5s ease-in-out;
 }
-
+/*
 .centerMenu:hover h1 {
     opacity: 1;
-}
+}*/
 
 .centerMenu:has(.btn:hover) h1 {
     color: var(--text-color);
@@ -210,42 +259,42 @@ svg path {
     color: var(--text-color);
     text-shadow: 0 0 0px #fff, 0 0 10px var(--color-2), 0 0 15px var(--color-2), 0 0 20px var(--color-2);
 }
-
+/*
 .centerMenu:hover .btn {
     opacity: 1;
-}
+}*/
 
 .centerMenu .menuButton {
-    height: 100%;
-    width: 100%;
+    /* height: 70%;
+    width: 50%; */
     padding: 0;
     margin-top: 0;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    flex-direction: column;
+    justify-content: space-between;
     transform-style: preserve-3d;
     transform: perspective(1000px);
 }
 
 .menuButton .btn {
-    aspect-ratio: 2/1;
-    display: inline-block;
+    /*aspect-ratio: 2/1;*/
     text-align: center;
     text-decoration: none;
-    margin-right: 25px;
-    font-size: 3vw;
-    opacity: 0;
-    /*width: 200px;*/
-    width: clamp(100px, 80%, 200px);
-    padding: 5px;
+    text-size-adjust: 100%;
+    font-size: 50px;
+    margin-top: 25px;
+    opacity: 1; /**/
+    /*width: 300px;*/
+    height: fit-content;
+    padding: 5px 10px;
     color: var(--text-color);
     overflow: hidden;
-    letter-spacing: 2px;
-    border: none;
+    /*letter-spacing: 2px;*/
     transform: translateZ(50px);
     box-shadow: 0 0 10px white;
-    background: none;
-    backdrop-filter: blur(10px);
+    background: var(--back-color-2);
+    cursor: pointer;
     transition: .2s ease-in-out;
 }
 
@@ -325,7 +374,7 @@ svg path {
     display: block;
 }
 
-.btn:hover span {
+/* .btn:hover span {
     opacity: 0;
 }
 
@@ -399,10 +448,10 @@ svg path {
     100% {
         bottom: 100%;
     }
-}
+} */
 
-#border:nth-child(1) {
-    z-index: 2;
+.border:nth-child(1) {
+    z-index: 5;
     position: absolute;
     top: 0;
     left: 0;
@@ -412,8 +461,8 @@ svg path {
     transition: .5s;
 }
 
-#border:nth-child(2) {
-    z-index: 2;
+.border:nth-child(2) {
+    z-index: 5;
     position: absolute;
     top: 0;
     right: 0;
@@ -423,7 +472,7 @@ svg path {
     transition: .5s;
 }
 
-.menu-body:has(.centerMenu:hover) #border:nth-child(1) {
+.menu-body:has(.centerMenu:hover) .border:nth-child(1) {
     width: 5%;
     box-shadow: 0 0 10px var(--color-2),
                 0 0 20px var(--color-2),
@@ -431,7 +480,7 @@ svg path {
                 0 0 60px var(--color-2);
 }
 
-.menu-body:has(.centerMenu:hover) #border:nth-child(2) {
+.menu-body:has(.centerMenu:hover) .border:nth-child(2) {
     width: 5%;
     box-shadow: 0 0 10px var(--color-1),
                 0 0 20px var(--color-1),

@@ -176,7 +176,7 @@ const LoginPage = () => {
         <header>
             <h2 className="logo">Logo</h2>
             <nav className="navigation">
-                <a href="#">Home</a>
+                <a href="#">Account</a>
                 <a href="#">About</a>
                 <button className="btnLogin-popup" onClick={handleBtnPopupClick}>Login</button>
             </nav>

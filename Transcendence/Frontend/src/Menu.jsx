@@ -256,13 +256,27 @@ function GameMenu() {
             menu.current.style.boxShadow='';
         })
 
-        buttonStart.current.addEventListener('mouseover', () => {
-            borderAnim.current.style.opacity=1;
-            borderAnim.current.classList.add('border-is-animate');
-            borderAnim2.current.style.opacity=1;
-            borderAnim2.current.classList.add('border2-is-animate');
-        })
+        // buttonStart.current.addEventListener('mouseover', () => {
+        //     borderAnim.current.style.opacity=1;
+        //     borderAnim.current.classList.add('border-is-animate');
+        //     borderAnim2.current.style.opacity=1;
+        //     borderAnim2.current.classList.add('border2-is-animate');
+        // })
         buttonStart.current.addEventListener('mouseout', () => {
+            borderAnim.current.style.opacity=0;
+            borderAnim.current.classList.remove('border-is-animate');
+            borderAnim2.current.style.opacity=0;
+            borderAnim2.current.classList.remove('border2-is-animate');
+        })
+
+        buttonOptions.current.addEventListener('mouseout', () => {
+            borderAnim.current.style.opacity=0;
+            borderAnim.current.classList.remove('border-is-animate');
+            borderAnim2.current.style.opacity=0;
+            borderAnim2.current.classList.remove('border2-is-animate');
+        })
+
+        buttonProfile.current.addEventListener('mouseout', () => {
             borderAnim.current.style.opacity=0;
             borderAnim.current.classList.remove('border-is-animate');
             borderAnim2.current.style.opacity=0;
@@ -273,18 +287,30 @@ function GameMenu() {
             body.current.style.backgroundImage="url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')";
             body.current.style.backgroundSize="cover";
             body.current.style.boxShadow="inset 0 0 50px black,inset 0 0 100px black,inset 0 0 150px black,inset 0 0 270px black,inset 0 0 400px black";
+            borderAnim.current.style.opacity=1;
+            borderAnim.current.classList.add('border-is-animate');
+            borderAnim2.current.style.opacity=1;
+            borderAnim2.current.classList.add('border2-is-animate');
         })
 
         buttonOptions.current.addEventListener('mouseover', () => {
             body.current.style.backgroundImage="url('../Icons/04-1920x1080-93bc8f9277c05c92d97d689c2088150f.png')";
             body.current.style.backgroundSize="cover";
             body.current.style.boxShadow="inset 0 0 50px black,inset 0 0 100px black,inset 0 0 150px black,inset 0 0 270px black,inset 0 0 400px black";
+            borderAnim.current.style.opacity=1;
+            borderAnim.current.classList.add('border-is-animate');
+            borderAnim2.current.style.opacity=1;
+            borderAnim2.current.classList.add('border2-is-animate');
         })
 
         buttonProfile.current.addEventListener('mouseover', () => {
             body.current.style.backgroundImage="url('../Icons/Capture d’écran du 2024-11-18 15-42-04.png')";
             body.current.style.backgroundSize="cover";
             body.current.style.boxShadow="inset 0 0 50px black,inset 0 0 100px black,inset 0 0 150px black,inset 0 0 270px black,inset 0 0 400px black";
+            borderAnim.current.style.opacity=1;
+            borderAnim.current.classList.add('border-is-animate');
+            borderAnim2.current.style.opacity=1;
+            borderAnim2.current.classList.add('border2-is-animate');
         })
     },[]);
 
@@ -329,8 +355,17 @@ function GameMenu() {
         // </div>
 
         <div className='menu-body' ref={body}>
-            <span id="border"></span>
-            <span id="border"></span>
+            {/* <header>
+                <h2 className="logo">Logo</h2>
+                <nav className="navigation">
+                    <a href="#">Account</a>
+                    <a href="#">About</a>
+                    <button className="btnLogin-popup" onClick={handleBtnPopupClick}>Login</button>
+                </nav>
+            </header> */}
+
+            <span className="border"></span>
+            <span className="border"></span>
             <span id="borderAnim" ref={borderAnim}></span>
             <span id="borderAnim2" ref={borderAnim2}></span>
             <div className="menu-overlay" ref={overlay}></div>
@@ -343,24 +378,12 @@ function GameMenu() {
                 <h1>The Pong</h1>
                 <div className="menuButton">
                     <button className="btn" ref={buttonStart}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
                         Start
                     </button>
                     <button className="btn" ref={buttonOptions}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
                         Options
                     </button>
                     <button className="btn" ref={buttonProfile}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
                         Profile
                     </button>
                 </div>
@@ -374,7 +397,7 @@ function GameMenu() {
 
 function GameButton({ usage, name, onClick }) {
     return (
-        <div className="GameButton">
+        <div className="btn">
             <p>{usage}</p>
             <button onClick={onClick}>{name}</button>
         </div>

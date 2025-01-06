@@ -60,6 +60,7 @@ class WaitingPlayerModel(models.Model):
 
 class Match(models.Model):
     player1 = models.ForeignKey(User, related_name='matches_as_player1', on_delete=models.CASCADE)
+    player1_nickname = models.CharField(max_length=15, default='Unknown')  # Save player1's nickname directly
     player2_nickname = models.CharField(max_length=15, default='Unknown')  # Save player2's nickname directly
     winner_nickname = models.CharField(max_length=15, default='Unknown')  # Save winner's nickname directly
     date = models.DateTimeField(auto_now_add=True)

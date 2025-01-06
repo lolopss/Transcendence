@@ -346,7 +346,6 @@ function Game({
                 if (player1.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    console.log('duration : ', duration);
                     saveMatch(player1, player2, player1, duration);
                 }
                 stopGame(player1);
@@ -354,7 +353,6 @@ function Game({
                 if (player2.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    console.log('duration : ', duration);
                     saveMatch(player1, player2, player2, duration);
                 }
                 stopGame(player2);

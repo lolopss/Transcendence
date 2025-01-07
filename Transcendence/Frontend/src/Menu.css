@@ -230,8 +230,9 @@ svg path {
 .centerMenu h1 {
     position: absolute;
     top: 10%;
-    padding: 25px 25px;
-    left: 5%;
+    padding: 25px 40px 25px 40px;
+    /* left: 5%; */
+    letter-spacing: 4px;
     opacity: 1;
     text-align: center;
     text-decoration: none;

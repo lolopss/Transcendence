@@ -1,4 +1,4 @@
-#gameCanvas {
+/* #gameCanvas {
     background-color: black;
 }
 
@@ -14,4 +14,188 @@
     to {
         transform: translateY(0vh);
     }
+} */
+
+/*.gameContainer {
+    background-color: blueviolet;
+    position: relative;
+}*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.gameContainer {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-width: 100vw;
+    background-color: rgb(48, 25, 48);
+}
+
+.animateCanvas {
+    background-color: black;
+    aspect-ratio: 2/1;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+}
+
+.gameCanvas {
+    background-color: black;
+    aspect-ratio: 2/1;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+}
+
+.canvasContainer {
+    margin: auto;
+    aspect-ratio: 2/1;
+    width: clamp(400px, 80%, 800px);
+    position: relative;
+    z-index: 2;
+}
+
+@property --angle {
+    syntax: "<angle>";
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.canvasContainer::after, .canvasContainer::before {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: conic-gradient(from var(--angle), transparent 70%,
+        rgb(255, 179, 0), rgb(192, 23, 186), rgb(192, 23, 186), rgb(255, 179, 0));
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: 1;
+    padding: 3px;
+    animation: 3s spin linear infinite;
+}
+
+.canvasContainer::before {
+    filter: blur(1.5rem);
+    opacity: 0.5;
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+    to {
+        --angle: 360deg;
+    }
+}
+
+.is-animated {
+    animation: pongEntrance 2s 1 ease-in-out;
+}
+
+@keyframes pongEntrance {
+    from {
+        transform: translateY(100vh);
+    }
+    to {
+        transform: translateY(0vh);
+    }
+}
+
+.screenContainer {
+    margin: auto;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+}
+
+.endScreen {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    border: 3px solid white;
+    box-shadow: 0 0 5px white,
+                0 0 10px white,
+                0 0 20px white,
+                inset 0 0 5px white,
+                inset 0 0 10px black,
+                inset 0 0 20px white;
+    width: 300px;
+    height: fit-content;
+    padding: 100px 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: .2s;
+    user-select: none;
+}
+
+.endScreen:has(.gamebtn:hover) {
+    box-shadow: 0 0 5px rgb(255, 150, 0),
+                0 0 10px rgb(255, 150, 0),
+                0 0 20px rgb(255, 150, 0),
+                inset 0 0 5px black,
+                inset 0 0 10px black,
+                inset 0 0 20px black;
+    border: solid 3px rgb(255, 150, 0);
+}
+
+.endScreen .winnerName {
+    text-size-adjust: 100%;
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 50px;
+}
+
+.endScreen .gamebtn {
+    /*aspect-ratio: 2/1;*/
+    text-align: center;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 20px;
+    margin-top: 25px;
+    opacity: 1;
+    height: fit-content;
+    min-width: 150px;
+    padding: 5px 10px;
+    border: 2px solid white;
+    color: white;
+    overflow: hidden;
+    /* box-shadow: 0 0 10px white,
+                0 0 20px white; */
+    background: rgb(25, 25, 25);
+    cursor: pointer;
+    user-select: none;
+    transition: .2s ease-in-out;
+}
+
+.endScreen .gamebtn:hover {
+    transform: translateZ(100px) scale(1.2);
+    box-shadow: 0 0 10px rgb(255, 150, 0),
+                0 0 50px rgb(255, 150, 0),
+                0 0 100px rgb(255, 150, 0);
+    background: rgb(255, 150, 0);
+    border: solid 2px orange;
+    font-weight: bold;
 }

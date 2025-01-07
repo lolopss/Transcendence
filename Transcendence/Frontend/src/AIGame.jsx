@@ -9,6 +9,7 @@ let shakeDuration = 10;
 let shakeSpeed = 5;
 let aiInterval = null; // Declare aiInterval globally
 let currentStopInterval = null; // Declare currentStopInterval globally
+let startTime = null;
 
 class Paddle {
     constructor(x, y, width, height, color) {
@@ -51,17 +52,18 @@ function AIGame({
     player1Nickname = 'Player1', 
     player2Id = 2, 
     player2Nickname = 'AI', 
-    // onGameEnd = () => {} 
+    onGameEnd = () => {} 
 }) {
     const [nickname, setNickname] = useState('User');
     const [profilePicture, setProfilePicture] = useState('/default-profile.png');
-    // const [isStarted, setIsStarted] = useState(false);
+    const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
     const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
+    let animationFrameId = useRef(null);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -142,9 +144,31 @@ function AIGame({
         }
     };
 
+    useEffect(() => {
+        if (isStarted) {
+            console.log(`Animation running -> ${isStarted}`);
+            pongCanvas.current.classList.add('is-animated');
+            pongCanvas.current.addEventListener('animationend', () => {
+                startGame();
+                setIsReady(true);
+            });
+        } else {
+            setIsReady(false);
+        }
+    }, [isStarted]);
+
+    const stopGame = (winningPlayer) => {
+        console.log('Game Over');
+        clearInterval(aiInterval);
+        clearInterval(currentStopInterval);
+        setIsReady(false); // Stop the game loop
+        setIsGameOver(true);
+        setWinner(winningPlayer.nickname);
+        onGameEnd(winningPlayer.nickname); // Call the onGameEnd prop with the winner
+    };
+
     const handleResize = () => {
-        if (!isStarted)
-            return ;
+        if (!isStarted) return;
         const ctx = pongCanvas.current.getContext('2d');
         const windowHeight = window.innerHeight;
         const windowWidth = window.innerWidth;
@@ -291,11 +315,11 @@ function AIGame({
                     resetBall();
                 }
 
-                if (player1.point >= 5) {
-                    stopGame('Player 1');
-                } else if (player2.point >= 5) {
-                    stopGame('Player 2');
-                }
+                // if (player1.point >= 5) {
+                //     stopGame('Player 1');
+                // } else if (player2.point >= 5) {
+                //     stopGame('Player 2');
+                // }
         };
 
         const ballToPaddleCheck = (playerN) => {
@@ -443,7 +467,7 @@ function AIGame({
                     currentStopInterval = null;
                 }, timeToReach);
                 }
-            } else {
+                else {
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
                 console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the right, predict the ball's position
@@ -483,15 +507,6 @@ function AIGame({
             }
         };
 
-        const stopGame = (winningPlayer) => {
-            console.log('Game Finished');
-            clearInterval(aiInterval);
-            clearInterval(currentStopInterval);
-            setIsReady(false); // Stop the game loop
-            setIsGameOver(true);
-            setWinner(winningPlayer);
-        };
-
         aiInterval = setInterval(() => {
             aiMove();
         }, 1000);
@@ -505,38 +520,45 @@ function AIGame({
 
             playerDirection(player2);
 
-            //updatePaddleColors();
             shakeScreen();
         }
 
         const gameLoop = () => {
             if (player1.point >= 5) {
-                if (player1.point === 5)
-                    console.log('duration : ', duration);
-                    duration = (Date.now() - startTime) / 1000; // Calculate duration in seconds
+                if (player1.point === 5) {
+                    const endTime = new Date();
+                    const duration = (endTime - startTime) / 1000;
                     saveMatch(player1, player2, player1, duration);
+                }
                 stopGame(player1);
             } else if (player2.point >= 5){
-                if (player2.point === 5)
-                    duration = (Date.now() - startTime) / 1000; // Calculate duration in seconds
-                    console.log('duration : ', duration);
+                if (player2.point === 5) {
+                    const endTime = new Date();
+                    const duration = (endTime - startTime) / 1000;
                     saveMatch(player1, player2, player2, duration);
+                }
                 stopGame(player2);
             }
-            update();
-            draw();
-            if (isReady) {
-                requestAnimationFrame(gameLoop);
+            else {
+                update();
+                draw();
+                if (isReady) animationFrameId.current = requestAnimationFrame(gameLoop);
             }
-            }
-            if (isReady)
-                gameLoop();
+            // if (isReady) {
+            //     requestAnimationFrame(gameLoop);
+            // }
+            };
+
+            if (isReady) gameLoop();
 
             return () => {
-                clearInterval(aiInterval);
-                clearInterval(currentStopInterval);
-                // player2.point = 10;
-        };
+                // document.removeEventListener('keydown', handleKeyDown);
+                // document.removeEventListener('keyup', handleKeyUp);
+                if (animationFrameId.current) {
+                    cancelAnimationFrame(animationFrameId.current);
+                    animationFrameId.current = null;
+                }
+            };
     }, [isReady]);
 
     window.addEventListener('resize', handleResize);

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import './Game.css';
 
 const width = 800;
@@ -57,6 +58,8 @@ function Game({
     const [isGameOver, setIsGameOver] = useState(false);
     const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
+    const canvasContainer = useRef(null);
+    const navigate = useNavigate();
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
     let animationFrameId = useRef(null);
@@ -97,8 +100,8 @@ function Game({
     useEffect(() => {
         if (isStarted) {
             console.log(`Animation running -> ${isStarted}`);
-            pongCanvas.current.classList.add('is-animated');
-            pongCanvas.current.addEventListener('animationend', () => {
+            canvasContainer.current.classList.add('is-animated');
+            canvasContainer.current.addEventListener('animationend', () => {
                 startGame();
                 setIsReady(true);
             });
@@ -380,7 +383,6 @@ function Game({
                 if (player1.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    console.log('duration : ', duration);
                     saveMatch(player1, player2, player1, duration);
                 }
                 stopGame(player1);
@@ -388,7 +390,6 @@ function Game({
                 if (player2.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    console.log('duration : ', duration);
                     saveMatch(player1, player2, player2, duration);
                 }
                 stopGame(player2);

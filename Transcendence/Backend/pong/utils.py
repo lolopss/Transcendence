@@ -102,3 +102,34 @@ def check_inactive_users():
     for user in inactive_users:
         user.profile.isOnline = False
         user.profile.save()
+
+from .models import Profile, Match
+
+def update_user_profile(user):
+    profile = user.profile
+
+    # Fetch match history
+    matches_as_player1 = Match.objects.filter(player1=user)
+    match_history = list(matches_as_player1)
+    match_history.sort(key=lambda x: x.date, reverse=True)
+
+    # Calculate stats based on match history
+    wins = sum(1 for match in match_history if match.score_player1 > match.score_player2)
+    losses = sum(1 for match in match_history if match.score_player1 < match.score_player2)
+    goals = sum(match.score_player1 for match in match_history)
+    goals_taken = sum(match.score_player2 for match in match_history)
+    longest_exchange = max((match.score_player1 + match.score_player2) for match in match_history) if match_history else 0
+    ace = sum(1 for match in match_history if match.ace)
+    total_time_spent = sum(match.duration for match in match_history)  # Total time spent in seconds
+
+    # Update profile fields
+    profile.wins = wins
+    profile.losses = losses
+    profile.goals = goals
+    profile.goals_taken = goals_taken
+    profile.longuest_exchange = longest_exchange
+    profile.ace = ace
+    profile.total_time_in_game = total_time_spent
+
+    # Save the updated profile
+    profile.save()

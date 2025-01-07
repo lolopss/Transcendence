@@ -18,7 +18,7 @@ from .models import Profile, GameServerModel, WaitingPlayerModel
 from django.db.models import Q
 from .serializers import UserRegisterSerializer, UserLoginSerializer
 import os
-from .utils import custom_validation, valid_email, valid_password, create_user_token, ManageGameQueue, check_inactive_users
+from .utils import custom_validation, valid_email, valid_password, create_user_token, ManageGameQueue, check_inactive_users, update_user_profile
 import json
 import urllib.parse
 import urllib.request
@@ -579,6 +579,9 @@ class UserDetails(APIView):
                 return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         else:
             user = request.user  # Get the currently authenticated user
+
+        # Update the user profile
+        update_user_profile(user)
 
         # Assuming the user has a 'nickname' field in the profile model
         nickname = user.profile.nickname if hasattr(user, 'profile') else None

@@ -351,11 +351,18 @@ function GameMenu() {
                 </div>
                 <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>The Pong</h1>
                 <div className="menuButton">
-                    <GameButton name="Start" onClick={() => navigate('/game')} refbtn={buttonStart}/>
+                    {/* <GameButton name="Start" onClick={() => navigate('/game')} refbtn={buttonStart}/>
                     <GameButton name="Options" onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
                     <GameButton name="Profile" onClick={() => navigate('/profile')} refbtn={buttonProfile}/>
-                    <GameButton name="Logout" onClick={handleLogout} refbtn={buttonLogout}/>
+                    <GameButton name="Logout" onClick={handleLogout} refbtn={buttonLogout}/> */}
+                    <GameButton name={translations.start_btn} onClick={() => navigate('/game')} refbtn={buttonStart}/>
+                    <GameButton name={translations.options_btn} onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
+                    <GameButton name={translations.profile} onClick={() => navigate('/profile')} refbtn={buttonProfile}/>
+                    <GameButton name={translations.logout_btn} onClick={handleLogout} refbtn={buttonLogout}/>
                 </div>
+            </div>
+            <div className="profile-picture" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
+                {profilePicture && <img src={profilePicture} alt="Profile" />}
             </div>
         </div>
     );

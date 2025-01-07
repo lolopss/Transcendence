@@ -78,38 +78,40 @@ const FriendProfile = () => {
     }
 
     return (
-        <div className="profile-container">
-            <div className="profile-header">
-                <img src={friendDetails.profilePicture} alt="Profile" className="profile-picture" />
-                <h1>{friendDetails.nickname}</h1>
-                <h2>@{friendDetails.username}</h2>
-            </div>
-            <div className="profile-stats">
-                <h3>Stats</h3>
-                <p>Total Games: {friendDetails.wins + friendDetails.losses}</p>
-                <p>Wins: {friendDetails.wins}</p>
-                <p>Losses: {friendDetails.losses}</p>
-                <p>Goals: {friendDetails.goals}</p>
-                <p>Goals Taken: {friendDetails.goals_taken}</p>
-                <p>Longest Exchange: {friendDetails.longest_exchange}</p>
-                <p>Aces: {friendDetails.ace}</p>
-                <p>Winrate: {friendDetails.winrate.toFixed(2)}%</p>
-                <p>Total Time Spent: {formatTime(friendDetails.total_time_spent)}</p>
-            </div>
-            <div className="match-history">
-                <h3>Match History</h3>
-                <ul>
-                    {friendDetails.matchHistory.map((match, index) => (
-                        <li key={index} className="match-entry">
-                            <div className="match-date">{formatDate(match.date)}</div>
-                            <div className="match-details">
-                                <span className="match-players">{match.player1} vs {match.player2}</span>
-                                <span className="match-score">({match.score_player1} - {match.score_player2})</span>
-                                <span className="match-winner">Winner: {match.winner}</span>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+        <div className="profile-body">
+            <div className="profile-container">
+                <div className="profile-header">
+                    <img src={friendDetails.profilePicture} alt="Profile" className="profile-picture" />
+                    <h1>{friendDetails.nickname}</h1>
+                    <h2>@{friendDetails.username}</h2>
+                </div>
+                <div className="profile-stats">
+                    <h3>Stats</h3>
+                    <p>Total Games: {friendDetails.wins + friendDetails.losses}</p>
+                    <p>Wins: {friendDetails.wins}</p>
+                    <p>Losses: {friendDetails.losses}</p>
+                    <p>Goals: {friendDetails.goals}</p>
+                    <p>Goals Taken: {friendDetails.goals_taken}</p>
+                    <p>Longest Exchange: {friendDetails.longest_exchange}</p>
+                    <p>Aces: {friendDetails.ace}</p>
+                    <p>Winrate: {friendDetails.winrate.toFixed(2)}%</p>
+                    <p>Total Time Spent: {formatTime(friendDetails.total_time_spent)}</p>
+                </div>
+                <div className="match-history">
+                    <h3>Match History</h3>
+                    <ul>
+                        {friendDetails.matchHistory.map((match, index) => (
+                            <li key={index} className="match-entry">
+                                <div className="match-date">{formatDate(match.date)}</div>
+                                <div className="match-details">
+                                    <span className="match-players">{match.player1} vs {match.player2}</span>
+                                    <span className="match-score">({match.score_player1} - {match.score_player2})</span>
+                                    <span className="match-winner">Winner: {match.winner}</span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );

@@ -41,17 +41,19 @@ class Ball {
     }
 }
 
-function Game({ 
-    player1Id = 1, 
-    player1Nickname = 'Player1', 
-    player2Id = 2, 
-    player2Nickname = 'Player2', 
-    onGameEnd = () => {} 
+function Game({
+    player1Id = 1,
+    player1Nickname = 'Player1',
+    player2Id = 2,
+    player2Nickname = 'Player2',
+    onGameEnd = () => {}
 }) {
     const [nickname, setNickname] = useState(player1Nickname);
     const [profilePicture, setProfilePicture] = useState('/default-profile.png');
     const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
+    const [gameOption, setGameOption] = useState('Invisibility');
+    const [powerUpsEnabled, setPowerUpsEnabled] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
     const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
@@ -166,6 +168,8 @@ function Game({
         let paddle = new Paddle(0, 0, 10, 100, 'white');
         let middleBar = new Paddle(canvas.width / 2 - 2 / 2, 0, 2, canvas.height, 'white');
         let ball = new Ball(10, 4, 6);
+        let player1UsedPowerUp = false;
+        let player2UsedPowerUp = false;
 
         const handleKeyDown = (event) => {
             if (event.key === 'w') {
@@ -179,6 +183,33 @@ function Game({
             }
             if (event.key === 'ArrowDown') {
                 player2.paddle.dy = 5;
+            }
+            if (powerUpsEnabled) {
+                if (gameOption === 'Invisibility') {
+                    if (event.key === ' ' && !player2UsedPowerUp) {
+                        player2.paddle.color = 'black';
+                        player2UsedPowerUp = true;
+                        setTimeout(() => {
+                            player2.paddle.color = 'violet';
+                        }, 5000);
+                    }
+                    if (event.key === 'Enter' && !player1UsedPowerUp) {
+                        player1.paddle.color = 'black';
+                        player1UsedPowerUp = true;
+                        setTimeout(() => {
+                            player1.paddle.color = 'orange';
+                        }, 5000);
+                    }
+                } else if (gameOption === 'Teleportation') {
+                    if (event.key === ' ' && !player2UsedPowerUp) {
+                        ball.y = height - ball.y;
+                        player2UsedPowerUp = true;
+                    }
+                    if (event.key === 'Enter' && !player1UsedPowerUp) {
+                        ball.y = height - ball.y;
+                        player1UsedPowerUp = true;
+                    }
+                }
             }
         };
 
@@ -226,8 +257,11 @@ function Game({
 
         const draw = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // console log the player1 and player2 invsiibility status
             drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
             drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
+
             drawBall(ball.x, ball.y, ball.size, 'white');
             drawMiddleBar(middleBar.x, middleBar.y, middleBar.width, middleBar.height, 'white');
             drawPoints(textPoint.x, textPoint.y);
@@ -385,28 +419,40 @@ function Game({
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-    
+
     return (
         <>
             {isStarted ? (
+            <div>
+                <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
                 <div>
-                    <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+                    <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
+                </div>
+            </div>
+        ) : (
+            <div>
+                <h1>{nickname} vs {player2Nickname}</h1>
+                {player2Nickname === 'PaddleMan' && (
                     <div>
-                        <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
+                        <img src={profilePicture} alt={`${nickname}'s profile`} width="50" height="50" />
+                        <p>{nickname}</p>
                     </div>
-                </div>
-            ) : (
+                )}
+                <button onClick={() => setIsStarted(true)}>Start Game</button>
+                {powerUpsEnabled && (
+                    <div>
+                        <button onClick={() => setGameOption(gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility')}>
+                            Switch to {gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility'}
+                        </button>
+                    </div>
+                )}
                 <div>
-                    <h1>{nickname} vs {player2Nickname}</h1>
-                    {player2Nickname === 'PaddleMan' && (
-                        <div>
-                            <img src={profilePicture} alt={`${nickname}'s profile`} width="50" height="50" />
-                            <p>{nickname}</p>
-                        </div>
-                    )}
-                    <button onClick={() => setIsStarted(true)}>Start Game</button>
+                    <button onClick={() => setPowerUpsEnabled(!powerUpsEnabled)}>
+                        Power-Ups {powerUpsEnabled ? 'On' : 'Off'}
+                    </button>
                 </div>
-            )}
+            </div>
+        )}
         </>
     );
 }

@@ -47,18 +47,21 @@ const restartGame = () => {
     window.location.reload();
 };
 
-function AIGame({ 
-    player1Id = 1, 
-    player1Nickname = 'Player1', 
-    player2Id = 2, 
-    player2Nickname = 'AI', 
-    onGameEnd = () => {} 
+function AIGame({
+    player1Id = 1,
+    player1Nickname = 'Player 1',
+    player2Id = 2,
+    player2Nickname = 'AI',
+    onGameEnd = () => {}
 }) {
     const [nickname, setNickname] = useState('User');
     const [profilePicture, setProfilePicture] = useState('/default-profile.png');
     const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
+    const [powerUpsEnabled, setPowerUpsEnabled] = useState(false);
+    const [gameOption, setGameOption] = useState('Invisibility');
+    const canvasContainer = useRef(null);
     const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
     let limitHitbox = 25;       // Starting limitHitbox value
@@ -114,7 +117,7 @@ function AIGame({
             };
         }
     }, []);
-    
+
     const saveMatch = async (player1, player2, winner, duration) => {
         try {
             const response = await fetch('/api/save-match-result/', {
@@ -132,11 +135,11 @@ function AIGame({
                     duration: duration,
                 }),
             });
-    
+
             if (!response.ok) {
                 throw new Error('Failed to save match');
             }
-    
+
             const data = await response.json();
             console.log(data.message);
         } catch (error) {
@@ -147,8 +150,8 @@ function AIGame({
     useEffect(() => {
         if (isStarted) {
             console.log(`Animation running -> ${isStarted}`);
-            pongCanvas.current.classList.add('is-animated');
-            pongCanvas.current.addEventListener('animationend', () => {
+            canvasContainer.current.classList.add('is-animated');
+            canvasContainer.current.addEventListener('animationend', () => {
                 startGame();
                 setIsReady(true);
             });
@@ -203,21 +206,41 @@ function AIGame({
         // let player1 = new Player(new Paddle(15, canvas.height / 2 - paddle.height / 2, paddle.width, paddle.height, 'orange'));
         // let player2 = new Player(new Paddle(canvas.width - paddle.width - 15, canvas.height / 2 - paddle.height / 2, paddle.width, paddle.height, 'violet'));
         let ball = new Ball(10, 4, 6);
+        let player1UsedPowerUp = false;
 
-        document.addEventListener('keydown', (event) => {
+        const handleKeyDown = (event) => {
             if (event.key === 'w') {
                 player1.paddle.dy = -5;
             }
             if (event.key === 's') {
                 player1.paddle.dy = 5;
             }
-        });
+            if (powerUpsEnabled) {
+                if (gameOption === 'Invisibility') {
+                    if (event.key === ' ' && !player1UsedPowerUp) {
+                        player2.paddle.color = 'black';
+                        player1UsedPowerUp = true;
+                        setTimeout(() => {
+                            player2.paddle.color = 'violet';
+                        }, 5000);
+                    }
+                } else if (gameOption === 'Teleportation') {
+                    if (event.key === ' ' && !player1UsedPowerUp) {
+                        ball.y = height - ball.y;
+                        player1UsedPowerUp = true;
+                    }
+                }
+            }
+        };
 
-        document.addEventListener('keyup', (event) => {
+        const handleKeyUp = (event) => {
             if (event.key === 'w' || event.key === 's') {
                 player1.paddle.dy = 0;
             }
-        });
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
 
         const drawRect = (x, y, width, height, color) => {
             context.fillStyle = color;
@@ -426,29 +449,54 @@ function AIGame({
         };
 
         let currentStopInterval = null; // Variable to keep track of the current interval
+        let aiUsedPowerUp = false;
 
         const aiMove = () => {
+            console.log (`Ball x: ${ball.x}`);
             const now = Date.now();
 
             const speed = 5; // Paddle speed
             const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
 
+            if (!aiUsedPowerUp && powerUpsEnabled && (player1.point > 0 || player2.point > 0)) {
+                console.log('Checking if using power-up');
+                // Ball is moving towards the AI's side and a point has already been scored
+                // Check if the ball is on the player's side and moving towards the player
+                if (ball.x < width / 2 && ball.dx < 0) {
+                    // Add a random chance to use the power-up, half the time
+                    const usePowerUp = Math.random() > 0.5;
+                    if (usePowerUp) {
+                        console.log('AI used power-up');
+                        if (gameOption === 'Teleportation') {
+                            ball.y = height - ball.y;
+                        } else if (gameOption === 'Invisibility') {
+                            player1.paddle.color = 'black';
+                            setTimeout(() => {
+                                player1.paddle.color = 'orange';
+                            }, 5000);
+                        }
+                        aiUsedPowerUp = true;
+                    }
+                }
+            }
+
             if (ball.dx < 0) {
                 if (ball.dy > 15) return; // Prevent the AI from moving to the middle if the ball is moving too fast
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
-                console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the left, move paddle to the middle of the board
                 lastAiMoveCall = now; // Update the last call time
                 const middleY = canvas.height / 2;
-                const distance = middleY - paddleCenterY;
+                let distance = middleY - paddleCenterY;
 
+                // console logs every variable of the if statement
                 if (Math.abs(distance) > 30) {
                     if (distance < 0) {
                         player2.paddle.dy = -speed; // Move up with a speed of 5
                     } else if (distance > 0) {
                         player2.paddle.dy = speed; // Move down with a speed of 5
                     }
-                } else {
+                }else {
                     player2.paddle.dy = 0; // Stop if already aligned
                 }
                 // Calculate the time it will take to reach the middle position with a random offset
@@ -467,13 +515,20 @@ function AIGame({
                     currentStopInterval = null;
                 }, timeToReach);
                 }
-                else {
+            else {
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
-                console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the right, predict the ball's position
                 lastAiMoveCall = now; // Update the last call time
                 const targetY = predictBallPosition(); // Get the predicted position of the ball
-                const distance = targetY - paddleCenterY;
+                let distance = targetY - paddleCenterY;
+
+                // check if invisibility is used and ai paddle is black
+                if (player2.paddle.color === 'black') {
+                    console.log('distance = ' + distance);
+                    distance += (Math.random() - 0.5) * 50; // Random adjustment between -25 and 25
+                    console.log('Invisibility used on AI' + distance);
+                }
 
                 if (Math.abs(distance) > 30) {
                     if (distance < 0) {
@@ -564,39 +619,54 @@ function AIGame({
     window.addEventListener('resize', handleResize);
 
     return (
-        <div>
-            <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
-            {isGameOver && (
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <h1>{winner} won!</h1>
-                    <button onClick={restartGame}>Restart Game</button>
+        <>
+            {isStarted ? (
+                <div className='gameContainer'>
+                    <div className="canvasContainer" ref={canvasContainer}>
+                        <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
+                    </div>
+                    <div>
+                        <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
+                    </div>
+                    {isGameOver && (
+                        <div className="screenContainer">
+                            <div className='endScreen'>
+                                <div className='winnerName'>{winner} won!</div>
+                                <button className='gamebtn' onClick={() => {
+                                    setIsStarted(false);
+                                    setIsGameOver(false);
+                                }}>Restart Game</button>
+                                <button className='gamebtn' onClick={() => navigate('/menu')}>Quit Game</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div>
+                    <h1>{nickname} vs {player2Nickname}</h1>
+                    {player2Nickname === 'PaddleMan' && (
+                        <div>
+                            <img src={profilePicture} alt={`${nickname}'s profile`} width="50" height="50" />
+                            <p>{nickname}</p>
+                        </div>
+                    )}
+                    <button onClick={() => setIsStarted(true)}>Start Game</button>
+                    {powerUpsEnabled && (
+                        <div>
+                            <button onClick={() => setGameOption(gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility')}>
+                                Switch to {gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility'}
+                            </button>
+                        </div>
+                    )}
+                    <div>
+                        <button onClick={() => setPowerUpsEnabled(!powerUpsEnabled)}>
+                            Power-Ups {powerUpsEnabled ? 'On' : 'Off'}
+                        </button>
+                    </div>
                 </div>
             )}
-        </div>
+        </>
     );
-    // return (
-    //     <>
-    //         {isStarted ?
-    //             (
-    //                 <div>
-    //                     <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
-    //                     <div>
-    //                         <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-    //                     </div>
-    //                 </div>
-    //             )
-    //             :
-    //             (<div>
-    //                 <h1>
-    //                     Game Menu
-    //                 </h1>
-    //                 <div>
-    //                     <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-    //                 </div>
-    //             </div>)
-    //         }
-    //     </>
-    // )
 }
 
 export default AIGame

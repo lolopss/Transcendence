@@ -51,11 +51,11 @@ function Multiplayer() {
     let paddleHitCount = 0;     // Track paddle hits
 
     const startGame = () => {
-        console.log('yes');
+        // console.log('yes');
     }
 
     useEffect(() => {
-        console.log('Starting game...');
+        // console.log('Starting game...');
         pongCanvas.current.classList.add('is-animated');
         pongCanvas.current.addEventListener('animationend', () => {
             startGame();
@@ -63,7 +63,7 @@ function Multiplayer() {
         });
     }, []);
 
-    console.log(`is ready -> ${isReady}`);
+    // console.log(`is ready -> ${isReady}`);
 
     const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
         try {
@@ -81,7 +81,7 @@ function Multiplayer() {
             }
 
             const data = await response.json();
-            console.log(data.message);
+            // console.log(data.message);
         } catch (error) {
             console.error('Error updating goals:', error);
         }
@@ -353,7 +353,7 @@ function Multiplayer() {
 		};
 
         const stopGame = (winningPlayer) => {
-            console.log('Game Finished');
+            // console.log('Game Finished');
             setIsReady(false); // Stop the game loop
             setIsGameOver(true);
             setWinner(winningPlayer);

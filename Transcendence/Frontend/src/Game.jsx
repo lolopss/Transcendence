@@ -93,13 +93,13 @@ function Game({
     }, []);
 
     const startGame = () => {
-        console.log('yes');
+        // console.log('Game started');
         startTime = new Date();
     };
 
     useEffect(() => {
         if (isStarted) {
-            console.log(`Animation running -> ${isStarted}`);
+            // console.log(`Animation running -> ${isStarted}`);
             canvasContainer.current.classList.add('is-animated');
             canvasContainer.current.addEventListener('animationend', () => {
                 startGame();
@@ -147,14 +147,14 @@ function Game({
                 throw new Error('Failed to save match');
             }
             const data = await response.json();
-            console.log(data.message);
+            // console.log(data.message);
         } catch (error) {
             console.error('Error saving match:', error);
         }
     };
 
     const stopGame = (winningPlayer) => {
-        console.log('Game Over');
+        // console.log('Game Over');
         setIsReady(false); // Stop the game loop
         setIsGameOver(true);
         setWinner(winningPlayer);

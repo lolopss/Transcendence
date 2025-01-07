@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import './Game.css';
 
 const width = 800;
@@ -55,6 +56,8 @@ function Game({
     const [isGameOver, setIsGameOver] = useState(false);
     const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
+    const canvasContainer = useRef(null);
+    const navigate = useNavigate();
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
     let animationFrameId = useRef(null);
@@ -95,8 +98,8 @@ function Game({
     useEffect(() => {
         if (isStarted) {
             console.log(`Animation running -> ${isStarted}`);
-            pongCanvas.current.classList.add('is-animated');
-            pongCanvas.current.addEventListener('animationend', () => {
+            canvasContainer.current.classList.add('is-animated');
+            canvasContainer.current.addEventListener('animationend', () => {
                 startGame();
                 setIsReady(true);
             });
@@ -387,11 +390,24 @@ function Game({
     return (
         <>
             {isStarted ? (
-                <div>
-                    <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+                <div className='gameContainer'>
+                    <div className="canvasContainer" ref={canvasContainer}>
+                        <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
+                    </div>
                     <div>
                         <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
                     </div>
+                    {isGameOver && (
+                        <div className="screenContainer">
+                            <div className='endScreen'>
+                                <div className='winnerName'>{winner.nickname} won !</div>
+                                <button className='gamebtn' onClick={() => {setIsStarted(false);
+                                                                            setIsGameOver(false);
+                                }}>Restart Game</button>
+                                <button className='gamebtn' onClick={()=>navigate('/menu')}>Quit Game</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div>

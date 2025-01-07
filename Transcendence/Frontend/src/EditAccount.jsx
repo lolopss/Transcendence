@@ -105,36 +105,45 @@ const EditAccount = () => {
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Username:
-                    <input type="text" name="username" value={userDetails.username} onChange={handleChange} />
-                </label>
-                <label>
-                    Email:
-                    <input type="email" name="email" value={userDetails.email} onChange={handleChange} />
-                </label>
-                <label>
-                    First Name:
-                    <input type="text" name="firstName" value={userDetails.firstName} onChange={handleChange} />
-                </label>
-                <label>
-                    Last Name:
-                    <input type="text" name="lastName" value={userDetails.lastName} onChange={handleChange} />
-                </label>
-                <label>
-                    Profile Picture:
-                    <input type="file" accept="image/*" onChange={handleImageChange} />
-                </label>
-                <div className="image-carousel">
-                    <button type="button" onClick={handlePrevImage}>←</button>
-                    {preview && <img src={preview} alt="Profile Preview" />}
-                    <button type="button" onClick={handleNextImage}>→</button>
-                </div>
-                <button type="submit">Save Changes</button>
-            </form>
-            {error && <div className="error-message">{error}</div>}
+        <div className='accountBody'>
+            <header className='accountHeader'>
+                <h2 className='accountLogo' onClick={()=>navigate('/menu')}>Pong</h2>
+                <nav className='accountNav'>
+                    <div className="navProfile" onClick={()=>navigate('/profile')}>Profile</div>
+                    <div className="navAccount" onClick={()=>navigate('/edit-account')}>Account</div>
+                </nav>
+            </header>
+            <div className="accountWrapper">
+                <form className='accountForm' onSubmit={handleSubmit}>
+                    <label className='accountLabel'>
+                        Username:
+                        <input className='accountInput' type="text" name="username" value={userDetails.username} onChange={handleChange} />
+                    </label>
+                    <label className='accountLabel'>
+                        Email:
+                        <input className='accountInput' type="email" name="email" value={userDetails.email} onChange={handleChange} />
+                    </label>
+                    <label className='accountLabel'>
+                        First Name:
+                        <input className='accountInput' type="text" name="firstName" value={userDetails.firstName} onChange={handleChange} />
+                    </label>
+                    <label className='accountLabel'>
+                        Last Name:
+                        <input className='accountInput' type="text" name="lastName" value={userDetails.lastName} onChange={handleChange} />
+                    </label>
+                    <label className='accountLabel'>
+                        Profile Picture:
+                        <input className='accountImage' type="file" accept="image/*" onChange={handleImageChange} />
+                    </label>
+                    <div className="image-carousel">
+                        <button className='carouselButton' type="button" onClick={handlePrevImage}>←</button>
+                        {preview && <img className='carouselImage' src={preview} alt="Profile Preview" />}
+                        <button className='carouselButton' type="button" onClick={handleNextImage}>→</button>
+                    </div>
+                    <button className='accountChanges' type="submit">Save Changes</button>
+                </form>
+                {error && <div className="error-message">{error}</div>}
+            </div>
         </div>
     );
 };

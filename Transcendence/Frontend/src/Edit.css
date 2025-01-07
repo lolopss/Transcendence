@@ -1,3 +1,152 @@
+:root{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    --back-color: rgb(20, 20, 20);
+    --back-color-1: rgb(35, 35, 35);
+    --back-color-2: rgb(25, 25, 25);
+    --text-color: white;
+    --color-1: rgb(255, 150, 0);
+    --color-2: rgb(187, 0, 255);
+    overflow: hidden;
+}
+
+.accountBody {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-width: 100vw;
+    background: rgb(48, 25, 48);
+}
+
+.accountHeader {
+    position: fixed;
+    height: 100%;
+    width: 200px;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: rgb(49, 42, 49);
+    color: white;
+}
+
+.accountLogo {
+    font-size: 35px;
+    margin: 30px 0 30px 5px;
+    user-select: none;
+}
+
+.navProfile, .navAccount {
+    width: 100%;
+    background: rgb(105, 69, 105);
+    padding: 25px 0 25px 5px;
+    transform-origin: left;
+    text-align: left;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: .5s;
+}
+
+.navProfile:hover, .navAccount:hover {
+    background: rgb(146, 99, 146);
+    border: solid 1px white;
+    transform: scaleX(1.1);
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.accountForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background: rgb(105, 69, 105);
+    padding: 20px 25px 30px 25px;
+    border: solid 2px white;
+    box-shadow: 0 0 5px white,
+                0 0 10px white,
+                0 0 20px white,
+                inset 0 0 5px rgb(49, 42, 49),
+                inset 0 0 10px rgb(49, 42, 49);
+    transition: .2s;
+}
+
+.accountForm:hover {
+    box-shadow: 0 0 5px white,
+                0 0 10px white;
+}
+
+.accountForm .accountLabel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 20px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.accountForm .accountInput {
+    margin-top: 3px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background: rgb(49, 42, 49);
+    color: white;
+    width: 100%;
+    height: 25px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 0 15px 0 5px;
+}
+
+.accountForm .accountImage {
+    margin-top: 3px;
+    margin-bottom: 20px;
+    color: white;
+    width: 100%;
+    height: 40px;
+    font-size: 15px;
+    font-weight: 500;
+    background: none;
+    vertical-align: middle;
+    padding: 10px 10px 10px 10px;
+}
+
+.accountForm .accountImage::file-selector-button {
+    height: 25px;
+    text-align: center;
+    text-size-adjust: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    padding-bottom: 3px;
+    transition: .2s;
+    margin-right: 10px;
+}
+
+.accountForm .accountImage::file-selector-button:hover {
+    color: violet;
+    box-shadow: 0 0 5px white;
+    transform: scale(1.1);
+}
+
+.accountForm .accountInput:focus {
+    background: rgb(146, 102, 146);
+    border: solid 1px white;
+}
+
 .image-carousel {
     display: flex;
     align-items: center;
@@ -6,15 +155,71 @@
     margin-top: 10px;
 }
 
-.image-carousel img {
+.image-carousel .carouselImage {
     width: 150px;
     height: 150px;
     border-radius: 50%;
+    position: relative;
 }
 
-.image-carousel button {
+.image-carousel::after {
+    position: absolute;
+    content: '';
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: none;
+    border: solid 2px white;
+    box-shadow: inset 0 0 5px black,
+                inset 0 0 10px black,
+                inset 0 0 25px black,
+                0 0 5px white;
+}
+
+.image-carousel .carouselButton {
     background-color: #f8f9fa;
+    text-align: center;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 25px;
+    font-weight: bold;
+    padding: 0 2px 8px 2px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.image-carousel .carouselButton:hover {
+    transform: scale(1.1);
+    color: violet;
+    box-shadow: 0 0 5px white;
+}
+
+.accountForm .accountChanges {
+    margin-top: 25px;
+    text-align: center;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 50%;
+    height: fit-content;
+    padding: 5px 10px;
+    color: black;
+    overflow: hidden;
+    box-shadow: 0 0 5px white;
+    background: white;
     border: none;
     cursor: pointer;
-    font-size: 24px;
+    border-radius: 5px;
+    user-select: none;
+    transition: .2s ease-in-out;
+}
+
+.accountForm .accountChanges:hover {
+    transform: scale(1.1);
+    color: violet;
 }

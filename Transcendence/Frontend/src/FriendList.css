@@ -1,40 +1,134 @@
+:root{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    --back-color: rgb(20, 20, 20);
+    --back-color-1: rgb(35, 35, 35);
+    --back-color-2: rgb(25, 25, 25);
+    --text-color: white;
+    --color-1: rgb(255, 150, 0);
+    --color-2: rgb(187, 0, 255);
+    overflow: hidden;
+}
+
 .friend-list {
     position: fixed;
     bottom: 0;
     right: 0;
     width: 250px;
-    background-color: #3b3232;
-    border: 1px solid #000000;
-    border-radius: 8px 8px 0 0;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    padding: 10px;
+    height: 300px;
+    transform: translateY(260px);
+    background-color: var(--back-color-2);
+    border: 1px solid white;
+    border-bottom: none;
+    border-right: none;
+    border-radius: 8px 0 0 0;
+    box-shadow: 0 0 10px white;
+    /* padding: 10px; */
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
     z-index: 1000;
+    padding: 5px 5px 0 10px;
+    transition: .5s;
+}
+
+.friend-list.active-list {
+    transform: translateY(0px);
+}
+
+.friend-list.active-list .listActiveIcon {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    fill: white;
+    transition: .2s;
+}
+
+.friend-list.active-list .listActiveIcon:hover {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    fill: white;
+    transform: scale(1.1);
+}
+
+.friend-list:not(.active-list) .listActiveIcon {
+    display: none;
+}
+
+.friend-list:not(.active-list) .listCloseIcon {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    fill: white;
+    transition: .2s;
+}
+
+.friend-list:not(.active-list) .listCloseIcon:hover {
+    position: absolute;
+    right: 5px;
+    top: 3px;
+    fill: white;
+    transform: scale(1.1);
+}
+
+.friend-list.active-list .listCloseIcon {
+    display: none;
 }
 
 .friend-list h3 {
-    margin: 0;
+    margin: 10px 0 0 0;
     padding: 0 0 10px;
     font-size: 16px;
+    width: 100%;
+    color: white;
     border-bottom: 1px solid #ccc;
 }
 
-.friend-list input {
-    width: calc(100% - 20px);
-    padding: 5px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.friend-list .friendInput {
+    margin: 10px 5px 10px 0;
+    width: 100%;
+    height: 25px;
+    background: rgb(45, 45, 45);
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    font-size: 1em;
+    color: white;
+    font-weight: 600;
+    padding: 0 15px 0 5px;
 }
 
-.friend-list button {
+.separation {
     width: 100%;
-    padding: 5px;
+    height: 1px;
+    background: #ccc;
+    margin-bottom: 20px;
+}
+
+.friend-list .addFriendButton {
+    text-align: center;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 15px;
+    font-weight: 800;
+    padding: 10px;
     margin-bottom: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
+    width: 100%;
+    height: fit-content;
+    padding: 5px 10px;
+    color: var(--text-color);
+    overflow: hidden;
+    transform: translateZ(50px);
+    box-shadow: 0 0 5px white;
+    background: var(--back-color-2);
     cursor: pointer;
+    border: solid 2px white;
+    border-radius: 5px;
+    user-select: none;
+    transition: .2s ease-in-out;
 }
 
 .friend-list button:hover {
@@ -73,4 +167,9 @@
 
 .friend-list .status.offline {
     background-color: red;
+}
+
+.message {
+    margin-top: 10px;
+    color: white;
 }

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import './Profile.css'; // Ensure you have a CSS file for styling
 
 const Profile = () => {
+    const navigate = useNavigate();
     const [userDetails, setUserDetails] = useState({
         nickname: '',
         username: '',
@@ -67,38 +69,49 @@ const Profile = () => {
     };
 
     return (
-        <div className="profile-container">
-            <div className="profile-header">
-                <img src={userDetails.profilePicture} alt="Profile" className="profile-picture" />
-                <h1>{userDetails.nickname}</h1>
-                <h2>@{userDetails.username}</h2>
-            </div>
-            <div className="profile-stats">
-                <h3>Stats</h3>
-                <p>Total Games: {userDetails.wins + userDetails.losses}</p>
-                <p>Wins: {userDetails.wins}</p>
-                <p>Losses: {userDetails.losses}</p>
-                <p>Goals: {userDetails.goals}</p>
-                <p>Goals Taken: {userDetails.goals_taken}</p>
-                <p>Longest Exchange: {userDetails.longuest_exchange}</p>
-                <p>Aces: {userDetails.ace}</p>
-                <p>Winrate: {userDetails.winrate.toFixed(2)}%</p>
-                <p>Total Time Spent: {formatTime(userDetails.total_time_spent)}</p>
-            </div>
-            <div className="match-history">
-                <h3>Match History</h3>
-                <ul>
-                    {userDetails.matchHistory.map((match, index) => (
-                        <li key={index} className="match-entry">
-                            <div className="match-date">{formatDate(match.date)}</div>
-                            <div className="match-details">
-                                <span className="match-players">{match.player1} vs {match.player2}</span>
-                                <span className="match-score">({match.score_player1} - {match.score_player2})</span>
-                                <span className="match-winner">Winner: {match.winner}</span>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+        <div className="profileBody">
+            <header className='profileHeader'>
+                <h2 className='profileLogo' onClick={()=>navigate('/menu')}>Pong</h2>
+                <nav className='profileNav'>
+                    <div className="navProfile" onClick={()=>navigate('/profile')}>Profile</div>
+                    <div className="navAccount" onClick={()=>navigate('/edit-account')}>Account</div>
+                </nav>
+            </header>
+            <div className="profile-container">
+                <div className="profile-image">
+                    <img src={userDetails.profilePicture} alt="Profile" className="profile-picture" />
+                </div>
+                <div className="profile-header">
+                    <h1>{userDetails.nickname}</h1>
+                    <h2>@{userDetails.username}</h2>
+                </div>
+                <div className="profile-stats">
+                    <h3>Stats</h3>
+                    <p>Total Games: {userDetails.wins + userDetails.losses}</p>
+                    <p>Wins: {userDetails.wins}</p>
+                    <p>Losses: {userDetails.losses}</p>
+                    <p>Goals: {userDetails.goals}</p>
+                    <p>Goals Taken: {userDetails.goals_taken}</p>
+                    <p>Longest Exchange: {userDetails.longuest_exchange}</p>
+                    <p>Aces: {userDetails.ace}</p>
+                    <p>Winrate: {userDetails.winrate.toFixed(2)}%</p>
+                    <p>Total Time Spent: {formatTime(userDetails.total_time_spent)}</p>
+                </div>
+                <div className="match-history">
+                    <h3>Match History</h3>
+                    <ul>
+                        {userDetails.matchHistory.map((match, index) => (
+                            <li key={index} className="match-entry">
+                                <div className="match-date">{formatDate(match.date)}</div>
+                                <div className="match-details">
+                                    <span className="match-players">{match.player1} vs {match.player2}</span>
+                                    <span className="match-score">({match.score_player1} - {match.score_player2})</span>
+                                    <span className="match-winner">Winner: {match.winner}</span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         </div>
     );

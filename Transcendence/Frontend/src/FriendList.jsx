@@ -65,22 +65,40 @@ const FriendList = () => {
         navigate(`/profile/${username}`);
     };
 
+    const [isListActive, setIsListActive] = useState(false);
+
+    const handleListActiveClick = ()=> {
+        setIsListActive(true);
+    }
+
+    const handleListCloseClick = ()=> {
+        setIsListActive(false);
+    }
+
     // Conditionally render the friend list UI based on the current route (for isOnline status)
     if (location.pathname !== '/menu') {
         return null;
     }
 
     return (
-        <div className="friend-list">
+        <div className={`friend-list ${isListActive ? 'active-list' : ''}`}>
+            <span className="listActiveIcon" onClick={handleListCloseClick}>
+                <svg className='wrapperSvg' xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="white"><path d="M480-200 240-440l56-56 184 183 184-183 56 56-240 240Zm0-240L240-680l56-56 184 183 184-183 56 56-240 240Z"/></svg>
+            </span>
+            <span className="listCloseIcon" onClick={handleListActiveClick}>
+                <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="#e8eaed"><path d="m296-224-56-56 240-240 240 240-56 56-184-183-184 183Zm0-240-56-56 240-240 240 240-56 56-184-183-184 183Z"/></svg>
+            </span>
             <h3>Friends</h3>
             <input
+                className='friendInput'
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search username"
+                placeholder="Username"
             />
-            <button onClick={handleAddFriend}>Add Friend</button>
-            {message && <p>{message}</p>}
+            <span className='separation'></span>
+            <button className='addFriendButton' onClick={handleAddFriend}>Add Friend</button>
+            {message && <p className='message'>{message}</p>}
             <ul>
                 {friends.map(friend => (
                     <li key={friend.username} onClick={() => handleFriendClick(friend.username)}>

@@ -608,8 +608,8 @@ class UserDetails(APIView):
         ]
 
         # Calculate stats based on match history
-        wins = sum(1 for match in match_history if match.winner_nickname == nickname)
-        losses = sum(1 for match in match_history if match.winner_nickname != nickname)
+        wins = sum(1 for match in match_history if match.score_player1 > match.score_player2)
+        losses = sum(1 for match in match_history if match.score_player1 < match.score_player2)
         goals = sum(match.score_player1 for match in match_history)
         goals_taken = sum(match.score_player2 for match in match_history)
         longuest_exchange = max((match.score_player1 + match.score_player2) for match in match_history) if match_history else 0

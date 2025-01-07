@@ -354,7 +354,7 @@ function GameMenu() {
                     <GameButton name="Start" onClick={() => navigate('/game')} refbtn={buttonStart}/>
                     <GameButton name="Options" onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
                     <GameButton name="Profile" onClick={() => navigate('/profile')} refbtn={buttonProfile}/>
-                    <GameButton name="Logout" refbtn={buttonLogout}/>
+                    <GameButton name="Logout" onClick={handleLogout} refbtn={buttonLogout}/>
                 </div>
             </div>
         </div>

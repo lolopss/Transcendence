@@ -100,8 +100,13 @@ const FriendProfile = () => {
                 <h3>Match History</h3>
                 <ul>
                     {friendDetails.matchHistory.map((match, index) => (
-                        <li key={index}>
-                            {formatDate(match.date)}: {match.player1} vs {match.player2} - Winner: {match.winner} ({match.score_player1} - {match.score_player2})
+                        <li key={index} className="match-entry">
+                            <div className="match-date">{formatDate(match.date)}</div>
+                            <div className="match-details">
+                                <span className="match-players">{match.player1} vs {match.player2}</span>
+                                <span className="match-score">({match.score_player1} - {match.score_player2})</span>
+                                <span className="match-winner">Winner: {match.winner}</span>
+                            </div>
                         </li>
                     ))}
                 </ul>

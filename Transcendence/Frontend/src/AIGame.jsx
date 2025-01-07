@@ -92,12 +92,12 @@ function AIGame({
     }, []);
 
     const startGame = () => {
-        console.log('yes');
+        // console.log('Game started');
         startTime = new Date();
     }
 
     useEffect(() => {
-        console.log('Starting game...');
+        // console.log('Starting game...');
         if (pongCanvas.current) {
             pongCanvas.current.classList.add('is-animated');
             const handleAnimationEnd = () => {
@@ -108,7 +108,7 @@ function AIGame({
 
             // Cleanup function
             return () => {
-                console.log("Cleaning up ...");
+                // console.log("Cleaning up ...");
                 if (pongCanvas.current) {
                     pongCanvas.current.removeEventListener('animationend', handleAnimationEnd);
                 }
@@ -141,7 +141,7 @@ function AIGame({
             }
 
             const data = await response.json();
-            console.log(data.message);
+            // console.log(data.message);
         } catch (error) {
             console.error('Error saving match:', error);
         }
@@ -149,7 +149,7 @@ function AIGame({
 
     useEffect(() => {
         if (isStarted) {
-            console.log(`Animation running -> ${isStarted}`);
+            // console.log(`Animation running -> ${isStarted}`);
             canvasContainer.current.classList.add('is-animated');
             canvasContainer.current.addEventListener('animationend', () => {
                 startGame();
@@ -161,7 +161,7 @@ function AIGame({
     }, [isStarted]);
 
     const stopGame = (winningPlayer) => {
-        console.log('Game Over');
+        // console.log('Game Over');
         clearInterval(aiInterval);
         clearInterval(currentStopInterval);
         setIsReady(false); // Stop the game loop
@@ -401,7 +401,7 @@ function AIGame({
                 } else {
                     clearInterval(aiInterval);
                     // wait for 1000 - timeSinceLastCall before calling aiMove
-                    console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
+                    // console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
                     setTimeout(() => {
                         aiMove();
                         lastAiMoveCall = now;
@@ -452,21 +452,18 @@ function AIGame({
         let aiUsedPowerUp = false;
 
         const aiMove = () => {
-            console.log (`Ball x: ${ball.x}`);
             const now = Date.now();
 
             const speed = 5; // Paddle speed
             const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
 
             if (!aiUsedPowerUp && powerUpsEnabled && (player1.point > 0 || player2.point > 0)) {
-                console.log('Checking if using power-up');
                 // Ball is moving towards the AI's side and a point has already been scored
                 // Check if the ball is on the player's side and moving towards the player
                 if (ball.x < width / 2 && ball.dx < 0) {
                     // Add a random chance to use the power-up, half the time
                     const usePowerUp = Math.random() > 0.5;
                     if (usePowerUp) {
-                        console.log('AI used power-up');
                         if (gameOption === 'Teleportation') {
                             ball.y = height - ball.y;
                         } else if (gameOption === 'Invisibility') {
@@ -525,9 +522,7 @@ function AIGame({
 
                 // check if invisibility is used and ai paddle is black
                 if (player2.paddle.color === 'black') {
-                    console.log('distance = ' + distance);
                     distance += (Math.random() - 0.5) * 50; // Random adjustment between -25 and 25
-                    console.log('Invisibility used on AI' + distance);
                 }
 
                 if (Math.abs(distance) > 30) {

@@ -87,12 +87,12 @@ function AIGame({
     }, []);
 
     const startGame = () => {
-        console.log('yes');
+        // console.log('Game started');
         startTime = new Date();
     }
 
     useEffect(() => {
-        console.log('Starting game...');
+        // console.log('Starting game...');
         if (pongCanvas.current) {
             pongCanvas.current.classList.add('is-animated');
             const handleAnimationEnd = () => {
@@ -103,7 +103,7 @@ function AIGame({
 
             // Cleanup function
             return () => {
-                console.log("Cleaning up ...");
+                // console.log("Cleaning up ...");
                 if (pongCanvas.current) {
                     pongCanvas.current.removeEventListener('animationend', handleAnimationEnd);
                 }
@@ -136,7 +136,6 @@ function AIGame({
             }
 
             const data = await response.json();
-            console.log(data.message);
         } catch (error) {
             console.error('Error saving match:', error);
         }
@@ -354,7 +353,7 @@ function AIGame({
                 } else {
                     clearInterval(aiInterval);
                     // wait for 1000 - timeSinceLastCall before calling aiMove
-                    console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
+                    // console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
                     setTimeout(() => {
                         aiMove();
                         lastAiMoveCall = now;
@@ -412,7 +411,7 @@ function AIGame({
             if (ball.dx < 0) {
                 if (ball.dy > 15) return; // Prevent the AI from moving to the middle if the ball is moving too fast
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
-                console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the left, move paddle to the middle of the board
                 lastAiMoveCall = now; // Update the last call time
                 const middleY = canvas.height / 2;
@@ -444,7 +443,7 @@ function AIGame({
                 }, timeToReach);
                 } else {
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
-                console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the right, predict the ball's position
                 lastAiMoveCall = now; // Update the last call time
                 const targetY = predictBallPosition(); // Get the predicted position of the ball
@@ -483,7 +482,7 @@ function AIGame({
         };
 
         const stopGame = (winningPlayer) => {
-            console.log('Game Finished');
+            // console.log('Game Finished');
             clearInterval(aiInterval);
             clearInterval(currentStopInterval);
             setIsReady(false); // Stop the game loop
@@ -511,14 +510,14 @@ function AIGame({
         const gameLoop = () => {
             if (player1.point >= 5) {
                 if (player1.point === 5)
-                    console.log('duration : ', duration);
+                    // console.log('duration : ', duration);
                     duration = (Date.now() - startTime) / 1000; // Calculate duration in seconds
                     saveMatch(player1, player2, player1, duration);
                 stopGame(player1);
             } else if (player2.point >= 5){
                 if (player2.point === 5)
                     duration = (Date.now() - startTime) / 1000; // Calculate duration in seconds
-                    console.log('duration : ', duration);
+                    // console.log('duration : ', duration);
                     saveMatch(player1, player2, player2, duration);
                 stopGame(player2);
             }

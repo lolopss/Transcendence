@@ -43,7 +43,7 @@ const RegistrationPage = () => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log('Registration successful!');
+        // console.log('Registration successful!');
         navigate('/login'); // Ensure `navigate` is defined or imported if using react-router
       } else {
         console.error(data);

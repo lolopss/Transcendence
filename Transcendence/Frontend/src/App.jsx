@@ -19,7 +19,7 @@ import './FriendList.css';  // Ensure the CSS file is imported
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('authToken');
   if (!token) {
-    console.log("No token found. Redirecting to login.");
+    // console.log("No token found. Redirecting to login.");
     return <Navigate to="/login" replace />;
   }
   return children;

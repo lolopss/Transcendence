@@ -68,9 +68,9 @@ const Tournament = () => {
     };
 
     const logGameState = () => {
-        console.log('Current Match:', currentMatch);
-        console.log('Winners:', winners);
-        console.log('Is Game Finished:', isGameFinished);
+        // console.log('Current Match:', currentMatch);
+        // console.log('Winners:', winners);
+        // console.log('Is Game Finished:', isGameFinished);
     };
 
     const renderBracket = () => {

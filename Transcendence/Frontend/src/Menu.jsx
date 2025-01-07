@@ -106,7 +106,7 @@ function GameMenu() {
             });
             if (response.ok) {
                 const userDetails = await response.json();
-                console.log('User Details:', userDetails);
+                // console.log('User Details:', userDetails);
             } else {
                 console.error('Failed to fetch user details');
             }
@@ -215,7 +215,7 @@ function GameMenu() {
     const handleProfileClick = () => {
         navigate('/Profile');
     };
-    
+
     /* ------------------- Frontend ------------------- */
 
     const menu = useRef(null);
@@ -273,7 +273,7 @@ function GameMenu() {
             menu.current.style.transition = 'all .5s ease-in-out';
             menu.current.style.background='none';
         })
-        
+
         menu.current.addEventListener('mouseout', () => {
             menu.current.style.background='';
             menu.current.style.boxShadow='';

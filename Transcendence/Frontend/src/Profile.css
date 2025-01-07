@@ -18,7 +18,7 @@
     align-items: center;
     min-height: 100vh;
     min-width: 100vw;
-    background: rgb(48, 25, 48);
+    background: var(--back-color);
 }
 
 .profileHeader {
@@ -29,7 +29,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    background: rgb(49, 42, 49);
+    background: var(--back-color-1);
     color: white;
 }
 
@@ -37,11 +37,18 @@
     font-size: 35px;
     margin: 30px 0 30px 5px;
     user-select: none;
+    transform-origin: left;
+    transition: .2s;
+}
+
+.profileLogo:hover {
+    transform: scale(1.1);
+    text-shadow: 0 0 5px var(--color-1);
 }
 
 .navProfile, .navAccount {
     width: 100%;
-    background: rgb(105, 69, 105);
+    background: var(--color-1);
     padding: 25px 0 25px 5px;
     transform-origin: left;
     text-align: left;
@@ -55,8 +62,9 @@
 }
 
 .navProfile:hover, .navAccount:hover {
-    background: rgb(146, 99, 146);
-    border: solid 1px white;
+    border: solid 1px orange;
+    box-shadow: 0 0 3px var(--color-1),
+                0 0 8px var(--color-1);
     transform: scaleX(1.1);
     font-weight: 800;
     letter-spacing: 2px;
@@ -65,9 +73,10 @@
 .profile-container {
     width: clamp(300px, 70%, 500px);
     height: fit-content;
+    max-height: 800px;
     padding: 20px;
     text-align: center;
-    background-color: #1a1a1a;
+    background-color: var(--back-color-1);
     color: white;
     border: solid 2px white;
     border-radius: 5px;
@@ -93,8 +102,8 @@
 }
 
 .profile-image .profile-picture {
-    width: 150px;
-    height: 150px;
+    width: 125px;
+    height: 125px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -102,8 +111,8 @@
 .profile-image::after {
     position: absolute;
     content: '';
-    width: 150px;
-    height: 150px;
+    width: 125px;
+    height: 125px;
     border-radius: 50%;
     background: none;
     border: solid 2px white;
@@ -125,7 +134,7 @@
     font-weight: bold;
     letter-spacing: 2px;
     margin-bottom: 12px;
-    color: violet;
+    color: var(--color-1);
     width: 100%;
     padding-bottom: 10px;
     border-bottom: solid 1px white;
@@ -153,7 +162,7 @@
     font-weight: bold;
     letter-spacing: 2px;
     margin-bottom: 12px;
-    color: violet;
+    color: var(--color-1);
     width: 100%;
     padding-bottom: 10px;
     border-bottom: solid 1px white;

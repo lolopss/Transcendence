@@ -184,6 +184,7 @@
 .image-carousel .carouselImage {
     width: 150px;
     height: 150px;
+    background: linear-gradient(145deg, black, rgb(75, 50, 3));
     border-radius: 50%;
     position: relative;
 }

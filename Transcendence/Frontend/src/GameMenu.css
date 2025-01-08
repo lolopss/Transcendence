@@ -45,7 +45,7 @@
     transform: scaleX(1);
 }
 
-.menu-body {
+.game-menu-body {
     margin: 0;
     padding: 0;
     background: var(--back-color);
@@ -56,7 +56,7 @@
     overflow: hidden;
 }
 
-.menu-body .centerMenu {
+.game-menu-body .centerGameMenu {
     background: transparent;
     height: 100vh;
     width: 70vw;
@@ -69,7 +69,7 @@
     position: relative;
 }
 
-.centerMenu h1 {
+.centerGameMenu h1 {
     position: absolute;
     top: 10%;
     padding: 25px 40px 25px 40px;
@@ -96,7 +96,7 @@
     user-select: none;
 }
 
-.centerMenu h1:hover {
+.centerGameMenu h1:hover {
     transform: scale(1.1);
     box-shadow: 0 0 5px var(--color-1),
                 0 0 10px var(--color-1),
@@ -104,19 +104,19 @@
                 0 0 35px var(--color-1);
 }
 
-.centerMenu:has(.btn:hover) h1 {
+.centerGameMenu:has(.btn:hover) h1 {
     color: var(--text-color);
     text-shadow: 0 0 0px #fff, 0 0 10px var(--color-1), 0 0 15px var(--color-1), 0 0 20px var(--color-1);
     box-shadow: none;
 }
 
-.centerMenu:has(.btn:active) h1 {
+.centerGameMenu:has(.btn:active) h1 {
     transition: none;
     color: var(--text-color);
     text-shadow: 0 0 0px #fff, 0 0 10px var(--color-2), 0 0 15px var(--color-2), 0 0 20px var(--color-2);
 }
 
-.centerMenu .menuButton {
+.centerGameMenu .gameMenuButton {
     padding: 0;
     margin-top: 50px;
     display: flex;
@@ -127,7 +127,7 @@
     transform: perspective(1000px);
 }
 
-.menuButton .btn {
+.gameMenuButton .btn {
     /*aspect-ratio: 2/1;*/
     text-align: center;
     text-decoration: none;
@@ -167,7 +167,7 @@
     transition: .5s;
 }
 
-.menu-body:has(.centerMenu:hover) #buttonLogout {
+.game-menu-body:has(.centerGameMenu:hover) #buttonLogout {
     right: 5%;
 }
 
@@ -195,7 +195,7 @@
                 0 0 100px var(--color-2);
 }
 
-.menuButton .btn:hover {
+.gameMenuButton .btn:hover {
     transform: translateZ(100px) scale(1.2);
     box-shadow: 0 0 10px var(--color-1),
                 0 0 50px var(--color-1),
@@ -204,27 +204,27 @@
     font-weight: bold;
 }
 
-.menuButton .btn:hover + * {
+.gameMenuButton .btn:hover + * {
     filter: brightness(.5);
 }
 
-.menuButton .btn:hover + * + * {
+.gameMenuButton .btn:hover + * + * {
     filter: brightness(.2);
 }
 
-.menuButton .btn:hover + * + * + * {
+.gameMenuButton .btn:hover + * + * + * {
     filter: brightness(.05);
 }
 
-.menuButton .btn:has(+ *:hover) {
+.gameMenuButton .btn:has(+ *:hover) {
     filter: brightness(.5);
 }
 
-.menuButton .btn:has(+ * + *:hover) {
+.gameMenuButton .btn:has(+ * + *:hover) {
     filter: brightness(.2);
 }
 
-.menuButton .btn:has(+ * + * + *:hover) {
+.gameMenuButton .btn:has(+ * + * + *:hover) {
     filter: brightness(.05);
 }
 
@@ -233,14 +233,14 @@
     display: block;
 }
 
-.menuProfilePicture {
+.gameMenuProfilePicture {
     position: absolute;
     top: 1%;
     right: 11%;
     display: flex;
 }
 
-.menuProfilePicture::after {
+.gameMenuProfilePicture::after {
     position: absolute;
     content: '';
     width: 100px;
@@ -251,14 +251,14 @@
                 inset 0 0 5px black;
 }
 
-.menuProfilePicture img {
+.gameMenuProfilePicture img {
     width: 100px;
     height: 100px;
     background: linear-gradient(145deg, black, rgb(75, 50, 3));
     border-radius: 50%;
 }
 
-.menuLanguage {
+.gameMenuLanguage {
     position: absolute;
     top: 1%;
     left: 11%;
@@ -319,7 +319,7 @@
     transition: .5s;
 }
 
-.menu-body:has(.centerMenu:hover) .border:nth-child(1) {
+.game-menu-body:has(.centerGameMenu:hover) .border:nth-child(1) {
     width: 5%;
     box-shadow: 0 0 10px var(--color-2),
                 0 0 20px var(--color-2),
@@ -327,7 +327,7 @@
                 0 0 60px var(--color-2);
 }
 
-.menu-body:has(.centerMenu:hover) .border:nth-child(2) {
+.game-menu-body:has(.centerGameMenu:hover) .border:nth-child(2) {
     width: 5%;
     box-shadow: 0 0 10px var(--color-1),
                 0 0 20px var(--color-1),
@@ -335,11 +335,11 @@
                 0 0 60px var(--color-1);
 }
 
-.menu-body:has(#buttonLogout:hover) #border:nth-child(1), .menu-body:has(#buttonLogout:hover) #border:nth-child(2) {
+.game-menu-body:has(#buttonLogout:hover) #border:nth-child(1), .game-menu-body:has(#buttonLogout:hover) #border:nth-child(2) {
     width: 5%;
 }
 
-.menu-body:has(.btn:hover) #border:nth-child(1), .menu-body:has(.btn:hover) #border:nth-child(2) {
+.game-menu-body:has(.btn:hover) #border:nth-child(1), .game-menu-body:has(.btn:hover) #border:nth-child(2) {
     opacity: 0;
 }
 

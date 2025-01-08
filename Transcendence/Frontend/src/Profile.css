@@ -117,6 +117,7 @@
 .profile-image .profile-picture {
     width: 125px;
     height: 125px;
+    background: linear-gradient(145deg, black, rgb(75, 50, 3));
     border-radius: 50%;
     object-fit: cover;
 }
@@ -162,12 +163,14 @@
     font-weight: 600;
 }
 
-
 .match-history {
     margin-top: 20px;
     background-color: #333;
     padding: 20px;
     border-radius: 5px;
+    max-height: 250px;
+    overflow-y: scroll;
+    scrollbar-width: thin;
 }
 
 .match-history h3 {

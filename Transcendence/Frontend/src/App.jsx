@@ -6,6 +6,7 @@ import Game from './Game';
 import Multiplayer from './Multiplayer';
 import AIGame from './AIGame';
 import Menu from './Menu';
+import GameMenu from './GameMenu';
 import Matchmaking from './Matchmaking';
 import OAuthCallback from './OAuthCallback';
 import Verify2FA from './Verify2FA';
@@ -70,6 +71,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         {/* <Route path="/register" element={<RegisterPage />} /> */}
         <Route path="/verify-2fa" element={<Verify2FA />} />
+        <Route path="/game-menu" element={/*<ProtectedRoute>*/<GameMenu />/*</ProtectedRoute>*/} />
         <Route path="/game" element={/*<ProtectedRoute>*/<Game />/*</ProtectedRoute>*/} />
         <Route path="/ai-game" element={/*<ProtectedRoute>*/<AIGame />/*</ProtectedRoute>*/} />
         <Route path="/menu" element={/*<ProtectedRoute>*/<Menu />/*</ProtectedRoute>*/} />

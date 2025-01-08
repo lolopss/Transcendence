@@ -137,7 +137,7 @@ const EditAccount = () => {
                     </label>
                     <div className="image-carousel">
                         <button className='carouselButton' type="button" onClick={handlePrevImage}>←</button>
-                        {preview && <img className='carouselImage' src={preview} alt="Profile Preview" />}
+                        {preview && <img className='carouselImage' src={preview}/>}
                         <button className='carouselButton' type="button" onClick={handleNextImage}>→</button>
                     </div>
                     <button className='accountChanges' type="submit">Save Changes</button>

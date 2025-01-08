@@ -1,31 +1,15 @@
-/* #gameCanvas {
-    background-color: black;
-}
-
-.is-animated {
-    animation: pongEntrance 4s 1 ease-in-out;
-}
-
-@keyframes pongEntrance {
-    from {
-        -webkit-filter: blur(25px);
-        transform: translateY(-70vh) rotate3d(1, 0, 0, -80deg);
-    }
-    to {
-        transform: translateY(0vh);
-    }
-} */
-
-/*.gameContainer {
-    background-color: blueviolet;
-    position: relative;
-}*/
-
-* {
+:root{
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
+    --back-color: rgb(20, 20, 20);
+    --back-color-1: rgb(35, 35, 35);
+    --back-color-2: rgb(25, 25, 25);
+    --text-color: white;
+    --color-1: rgb(255, 150, 0);
+    --color-2: rgb(187, 0, 255);
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .gameContainer {
@@ -198,4 +182,168 @@
     background: rgb(255, 150, 0);
     border: solid 2px orange;
     font-weight: bold;
+}
+
+.vsMenu {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+}
+
+/* .vsMenu::after {
+    position: absolute;
+    content: '';
+    left: 50%;
+    height: 100vh;
+    width: 1px;
+    background: white;
+} */
+
+.vsMenuReturn {
+    position: absolute;
+    top: 1vh;
+    font-size: 50px;
+    color: white;
+    text-shadow: 0 0 5px white,
+                0 0 10px white;
+    transition: .2s;
+    user-select: none;
+    cursor: pointer;
+}
+
+.vsMenuReturn:hover {
+    text-shadow: 0 0 5px var(--color-1),
+                0 0 10px var(--color-1);
+    transform: scale(1.1);
+}
+
+.vsTitles {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: baseline;
+    margin-bottom: 10vh;
+    user-select: none;
+    position: relative;
+}
+
+.vsTitles .vsPl1 {
+    margin-right: 20vw;
+    font-size: clamp(30px, 6vw, 88px);
+    color: var(--text-color);
+    text-shadow:    0 0 5px var(--color-1),
+                    0 0 15px var(--color-1);
+    transform: translateY(-3vh);
+}
+
+.vsTitles .vsPl2 {
+    margin-left: 20vw;
+    font-size: clamp(30px, 6vw, 88px);
+    color: var(--text-color);
+    text-shadow:    0 0 5px var(--color-2),
+                    0 0 15px var(--color-2);
+    transform: translateY(-3vh);
+}
+
+.vsTitles .vsVs {
+    font-size: clamp(50px, 10vw, 200px);
+    /* letter-spacing: 25px; */
+    color: var(--text-color);
+    text-shadow:    0 0 5px white,
+                    0 0 15px white;
+    position: absolute;
+    transform: translateY(-50px);
+}
+
+.vsBtnContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.vsBtn {
+    text-align: center;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: clamp(10px, 3vw, 20px);
+    border-radius: 5px;
+    border: solid 2px white;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    opacity: 1;
+    height: fit-content;
+    padding: 2px 5px;
+    /* color: var(--text-color); */
+    color: black;
+    overflow: hidden;
+    transform: translateZ(50px);
+    box-shadow: 0 0 10px white;
+    /* background: var(--back-color-2); */
+    background: white;
+    cursor: pointer;
+    user-select: none;
+    transition: .2s ease-in-out;
+}
+
+.vsBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 5px var(--color-1),
+                0 0 15px var(--color-1);
+    background: var(--color-1);
+    color: white;
+    font-weight: bold;
+}
+
+.vsBtn:active {
+    transition: none;
+    transform: scale(1);
+    box-shadow: 0 0 5px var(--color-2),
+                0 0 15px var(--color-2);
+    background: var(--color-2);
+}
+
+.vsPowerUps {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: -50px;
+}
+
+.vsPowerUps .vsInv.Teleportation {
+    letter-spacing: 4px;
+    margin-right: 3vw;
+    color: var(--text-color);
+    text-shadow:    0 0 4px var(--text-color);
+    filter: brightness(.5);
+}
+
+.vsPowerUps .vsInv.Invisibility {
+    letter-spacing: 4px;
+    margin-right: 3vw;
+    color: white;
+    text-shadow:    0 0 2px var(--color-1),
+                    0 0 8px var(--color-1);
+}
+
+.vsPowerUps .vsTel.Invisibility {
+    letter-spacing: 2px;
+    margin-left: 3vw;
+    color: var(--text-color);
+    text-shadow:    0 0 4px var(--text-color);
+    filter: brightness(.5);
+}
+
+.vsPowerUps .vsTel.Teleportation {
+    letter-spacing: 2px;
+    margin-left: 3vw;
+    color: white;
+    text-shadow:    0 0 2px var(--color-2),
+                    0 0 8px var(--color-2);
 }

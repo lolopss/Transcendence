@@ -133,6 +133,7 @@ function GameMenu() {
             refBtn.current.addEventListener('mouseover', () => {
                 body.current.style.backgroundImage=backImage;
                 body.current.style.backgroundSize="cover";
+                body.current.style.backgroundPosition="center center";
                 body.current.style.boxShadow="inset 0 0 50px black,inset 0 0 100px black,inset 0 0 150px black,inset 0 0 270px black,inset 0 0 400px black";
                 border1.current.style.opacity=0;
                 border2.current.style.opacity=0;
@@ -164,8 +165,8 @@ function GameMenu() {
             menu.current.style.boxShadow='';
         })
 
-        applyEvent(buttonStartVs, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
-        applyEvent(buttonStartAi, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
+        applyEvent(buttonStartVs, "url('../Icons/fondviolet.png')");
+        applyEvent(buttonStartAi, "url('../Icons/AIviolet.png')");
         applyEvent(buttonStartTournament, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
 
         pongTitle.current.addEventListener('mousedown', () => {

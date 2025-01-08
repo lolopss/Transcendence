@@ -67,6 +67,11 @@
     align-items: center;
     text-align: center;
     position: relative;
+    backdrop-filter: blur(10px);
+}
+
+.game-menu-body .centerGameMenu:hover {
+    width: 100vw;
 }
 
 .centerGameMenu h1 {
@@ -80,16 +85,14 @@
     text-size-adjust: 100%;
     height: fit-content;
     width: max-content;
-    font-size: 100px;
+    font-size: clamp(25px, 6vw, 100px);
     color: var(--text-color);
     margin: auto;
     border: solid 3px white;
     border-radius: 10px;
     background: var(--back-color-2);
     box-shadow: 0 0 5px var(--text-color),
-                0 0 10px var(--text-color),
-                0 0 25px var(--text-color),
-                0 0 35px var(--text-color);
+                0 0 10px var(--text-color);
     transition: .2s ease-in-out;
     transform-origin: top 0, left 0;
     cursor: pointer;
@@ -118,7 +121,7 @@
 
 .centerGameMenu .gameMenuButton {
     padding: 0;
-    margin-top: 50px;
+    margin-top: 25px;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -128,19 +131,17 @@
 }
 
 .gameMenuButton .btn {
-    /*aspect-ratio: 2/1;*/
     text-align: center;
     text-decoration: none;
     text-size-adjust: 100%;
     font-size: 50px;
+    font-size: clamp(10px, 3vw, 50px);
     margin-top: 25px;
-    opacity: 1; /**/
-    /*width: 300px;*/
+    opacity: 1;
     height: fit-content;
     padding: 5px 10px;
     color: var(--text-color);
     overflow: hidden;
-    /*letter-spacing: 2px;*/
     transform: translateZ(50px);
     box-shadow: 0 0 10px white;
     background: var(--back-color-2);
@@ -196,7 +197,7 @@
 }
 
 .gameMenuButton .btn:hover {
-    transform: translateZ(100px) scale(1.2);
+    transform: translateZ(100px) scale(1.1);
     box-shadow: 0 0 10px var(--color-1),
                 0 0 50px var(--color-1),
                 0 0 100px var(--color-1);
@@ -235,8 +236,8 @@
 
 .gameMenuProfilePicture {
     position: absolute;
-    top: 1%;
-    right: 11%;
+    top: 2%;
+    right: 12%;
     display: flex;
 }
 
@@ -260,8 +261,8 @@
 
 .gameMenuLanguage {
     position: absolute;
-    top: 1%;
-    left: 11%;
+    top: 2%;
+    left: 12%;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Game from './Game';
+import './Tournament.css'
 
 const Tournament = () => {
     const [players, setPlayers] = useState(Array(8).fill({ id: null, nickname: '' }));
@@ -68,9 +69,9 @@ const Tournament = () => {
     };
 
     const logGameState = () => {
-        // console.log('Current Match:', currentMatch);
-        // console.log('Winners:', winners);
-        // console.log('Is Game Finished:', isGameFinished);
+        console.log('Current Match:', currentMatch);
+        console.log('Winners:', winners);
+        console.log('Is Game Finished:', isGameFinished);
     };
 
     const renderBracket = () => {
@@ -131,7 +132,7 @@ const Tournament = () => {
                     onGameEnd={(winner) => handleGameEnd(winner, player1, player2)}
                 />
                 {isGameFinished && !tournamentWinner && (
-                    <button onClick={nextGame}>Next Game</button>
+                    <button className='nextgame' onClick={nextGame}>Next Game</button>
                 )}
                 {tournamentWinner && (
                     <h2>Tournament Winner: {tournamentWinner.nickname}</h2>

@@ -431,7 +431,7 @@ function Game({
                     <div>
                         <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
                     </div>
-                    {isGameOver && (
+                    {/* {isGameOver && (
                         <div className="screenContainer">
                             <div className='endScreen'>
                                 <div className='winnerName'>{winner.nickname} won !</div>
@@ -439,32 +439,44 @@ function Game({
                                     setIsStarted(false);
                                     setIsGameOver(false);
                                 }}>Restart Game</button>
-                                <button className='gamebtn' onClick={() => navigate('/menu')}>Quit Game</button>
+                                <button className='gamebtn' onClick={() => {
+                                    setIsStarted(false);
+                                    navigate('/menu');
+                                }}>Quit Game</button>
                             </div>
                         </div>
-                    )}
+                    )} */}
                 </div>
             ) : (
-                <div>
-                    <h1>{nickname} vs {player2Nickname}</h1>
+                <div className='vsMenu'>
+                    <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
+                    <div className="vsTitles">
+                        <h1 className='vsPl1'>{nickname}</h1>
+                        <h1 className='vsVs'> vs </h1>
+                        <h1 className='vsPl2'>{player2Nickname}</h1>
+                    </div>
                     {player2Nickname === 'PaddleMan' && (
                         <div>
                             <img src={profilePicture} alt={`${nickname}'s profile`} width="50" height="50" />
                             <p>{nickname}</p>
                         </div>
                     )}
-                    <button onClick={() => setIsStarted(true)}>Start Game</button>
-                    {powerUpsEnabled && (
+                    <div className="vsBtnContainer">
+                        <button className='vsBtn' onClick={() => setIsStarted(true)}>Start Game</button>
                         <div>
-                            <button onClick={() => setGameOption(gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility')}>
-                                Switch to {gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility'}
+                            <button className='vsBtn' onClick={() => setPowerUpsEnabled(!powerUpsEnabled)}>
+                                Power-Ups {powerUpsEnabled ? 'On' : 'Off'}
                             </button>
                         </div>
-                    )}
-                    <div>
-                        <button onClick={() => setPowerUpsEnabled(!powerUpsEnabled)}>
-                            Power-Ups {powerUpsEnabled ? 'On' : 'Off'}
-                        </button>
+                        {powerUpsEnabled && (
+                            <div className='vsPowerUps'>
+                                <h3 className={`vsInv ${gameOption}`}>Invisibility</h3>
+                                <button className='vsBtn' onClick={() => setGameOption(gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility')}>
+                                    Switch
+                                </button>
+                                <h3 className={`vsTel ${gameOption}`}>Teleportation</h3>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

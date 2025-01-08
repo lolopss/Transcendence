@@ -86,10 +86,12 @@
     border: solid 3px white;
     border-radius: 10px;
     background: var(--back-color-2);
-    box-shadow: 0 0 5px var(--text-color),
+    /* box-shadow: 0 0 5px var(--text-color),
                 0 0 10px var(--text-color),
                 0 0 25px var(--text-color),
-                0 0 35px var(--text-color);
+                0 0 35px var(--text-color); */
+    box-shadow: 0 0 5px var(--text-color),
+                0 0 10px var(--text-color);
     transition: .2s ease-in-out;
     transform-origin: top 0, left 0;
     cursor: pointer;
@@ -196,7 +198,7 @@
 }
 
 .menuButton .btn:hover {
-    transform: translateZ(100px) scale(1.2);
+    transform: translateZ(100px) scale(1.1);
     box-shadow: 0 0 10px var(--color-1),
                 0 0 50px var(--color-1),
                 0 0 100px var(--color-1);

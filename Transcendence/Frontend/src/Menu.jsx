@@ -230,6 +230,8 @@ function GameMenu() {
     const borderAnim2 = useRef(null);
     const body = useRef(null);
     const pongTitle = useRef(null);
+    const translateIcon = useRef(null);
+    const [isTranslateActive, setIsTranslateActive] = useState(false);
 
     const applyEvent = (refBtn, backImage) => {
         if (refBtn.current) {
@@ -297,6 +299,14 @@ function GameMenu() {
             pongTitle.current.style.boxShadow="";
         })
 
+        translateIcon.current.addEventListener('mouseover', () => {
+            setIsTranslateActive(true);
+        })
+    
+        translateIcon.current.addEventListener('mouseout', () => {
+            setIsTranslateActive(false);
+        })
+
     },[]);
 
     return (
@@ -351,18 +361,23 @@ function GameMenu() {
                 </div>
                 <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>The Pong</h1>
                 <div className="menuButton">
-                    {/* <GameButton name="Start" onClick={() => navigate('/game')} refbtn={buttonStart}/>
-                    <GameButton name="Options" onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
-                    <GameButton name="Profile" onClick={() => navigate('/profile')} refbtn={buttonProfile}/>
-                    <GameButton name="Logout" onClick={handleLogout} refbtn={buttonLogout}/> */}
                     <GameButton name={translations.start_btn} onClick={() => navigate('/game')} refbtn={buttonStart}/>
                     <GameButton name={translations.options_btn} onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
                     <GameButton name={translations.profile} onClick={() => navigate('/profile')} refbtn={buttonProfile}/>
                     <GameButton name={translations.logout_btn} onClick={handleLogout} refbtn={buttonLogout}/>
                 </div>
             </div>
-            <div className="profile-picture" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
+            <div className="menuProfilePicture" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
                 {profilePicture && <img src={profilePicture} alt="Profile" />}
+            </div>
+            <div className='menuLanguage' ref={translateIcon}>
+                {/* <h3>{translations.language_preference}</h3> */}
+                <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="#e8eaed"><path d="m476-80 182-480h84L924-80h-84l-43-122H603L560-80h-84ZM160-200l-56-56 202-202q-35-35-63.5-80T190-640h84q20 39 40 68t48 58q33-33 68.5-92.5T484-720H40v-80h280v-80h80v80h280v80H564q-21 72-63 148t-83 116l96 98-30 82-122-125-202 201Zm468-72h144l-72-204-72 204Z"/></svg>
+                <div className={`languageButton ${isTranslateActive ? 'active' : ''}`}>
+                    <button className='langBtn' onClick={() => updateLanguage('en')} disabled={language === 'en'}>{translations.english}</button>
+                    <button className='langBtn' onClick={() => updateLanguage('es')} disabled={language === 'es'}>{translations.spanish}</button>
+                    <button className='langBtn' onClick={() => updateLanguage('fr')} disabled={language === 'fr'}>{translations.french}</button>
+                </div>
             </div>
         </div>
     );

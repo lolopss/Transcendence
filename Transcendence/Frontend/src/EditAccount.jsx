@@ -142,7 +142,7 @@ const EditAccount = () => {
                     </div>
                     <button className='accountChanges' type="submit">Save Changes</button>
                 </form>
-                {error && <div className="error-message">{error}</div>}
+                {/* {error && <div className="error-message">{error}</div>} */}
             </div>
         </div>
     );

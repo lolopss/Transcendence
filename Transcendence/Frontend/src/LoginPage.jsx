@@ -158,7 +158,7 @@ const LoginPage = () => {
   return (
       <div className="body">
         <header className='loginHeader'>
-            <h2 className="logo">Logo</h2>
+            <h2 className="logo">PONG</h2>
             <nav className="navigation">
                 {/* <a href="#">Home</a>
                 <a href="#">About</a> */}

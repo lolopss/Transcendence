@@ -19,6 +19,11 @@
     min-height: 100vh;
     min-width: 100vw;
     background: var(--back-color);
+    transition: .5s;
+}
+
+.accountBody:has(.accountForm:hover) {
+    background: transparent;
 }
 
 .accountHeader {
@@ -32,6 +37,7 @@
     justify-content: flex-start;
     background: var(--back-color-1);
     color: white;
+    z-index: 999;
 }
 
 .accountLogo {
@@ -59,16 +65,26 @@
     font-weight: 700;
     letter-spacing: 1px;
     cursor: pointer;
-    transition: .5s;
+    transition: .2s;
 }
 
 .navProfile:hover, .navAccount:hover {
-    border: solid 1px orange;
+    border-right: solid 5px orange;
     box-shadow: 0 0 3px var(--color-1),
                 0 0 8px var(--color-1);
     transform: scaleX(1.1);
     font-weight: 800;
     letter-spacing: 2px;
+}
+
+.accountNav:has(.navProfile:hover) .navAccount,
+.accountNav:has(.navAccount:hover) .navProfile {
+    transition: none;
+    filter: brightness(.8);
+}
+
+.accountWrapper {
+    max-height: 90vh;
 }
 
 .accountForm {
@@ -77,12 +93,15 @@
     justify-content: center;
     align-items: center;
     color: white;
+    width: 450px;
     background: var(--back-color-1);
     padding: 20px 25px 30px 25px;
     border: solid 2px white;
+    border-radius: 8px;
     box-shadow: 0 0 5px white,
                 0 0 10px white,
                 0 0 20px white,
+                0 0 30px var(--back-color),
                 inset 0 0 5px var(--back-color),
                 inset 0 0 10px var(--back-color);
     transition: .2s;

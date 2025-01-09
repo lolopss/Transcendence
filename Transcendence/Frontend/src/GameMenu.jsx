@@ -105,6 +105,7 @@ function GameMenu() {
 
     const menu = useRef(null);
     const buttonStartVs = useRef(null);
+    const buttonStartMultiplayer = useRef(null);
     const buttonStartAi = useRef(null);
     const buttonStartTournament = useRef(null);
     const border1 = useRef(null);
@@ -166,6 +167,7 @@ function GameMenu() {
         })
 
         applyEvent(buttonStartVs, "url('../Icons/fondviolet.png')");
+        applyEvent(buttonStartMultiplayer, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
         applyEvent(buttonStartAi, "url('../Icons/AIviolet.png')");
         applyEvent(buttonStartTournament, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
 
@@ -205,6 +207,7 @@ function GameMenu() {
                     <GameButton name={translations.options_btn} onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
                     <GameButton name={translations.profile} onClick={() => navigate('/profile')} refbtn={buttonProfile}/> */}
                     <GameButton name="VS" onClick={() => navigate('/game')} refbtn={buttonStartVs}/>
+                    <GameButton name="MULTIPLAYER" onClick={() => navigate('/multiplayer')} refbtn={buttonStartMultiplayer}/>
                     <GameButton name="AI" onClick={() => navigate('/ai-game')} refbtn={buttonStartAi}/>
                     <GameButton name="TOURNAMENT" onClick={() => navigate('/tournament')} refbtn={buttonStartTournament}/>
                 </div>

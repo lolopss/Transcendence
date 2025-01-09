@@ -74,6 +74,7 @@ const App = () => {
         <Route path="/game-menu" element={/*<ProtectedRoute>*/<GameMenu />/*</ProtectedRoute>*/} />
         <Route path="/game" element={/*<ProtectedRoute>*/<Game />/*</ProtectedRoute>*/} />
         <Route path="/ai-game" element={/*<ProtectedRoute>*/<AIGame />/*</ProtectedRoute>*/} />
+        <Route path="/multiplayer" element={/*<ProtectedRoute>*/<Multiplayer />/*</ProtectedRoute>*/} />
         <Route path="/menu" element={/*<ProtectedRoute>*/<Menu />/*</ProtectedRoute>*/} />
         <Route path="/edit-account" element={<EditAccount />} />
         {/* <Route path="/matchmaking" element={<ProtectedRoute><Matchmaking /></ProtectedRoute>} /> */}

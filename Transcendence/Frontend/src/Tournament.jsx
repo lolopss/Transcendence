@@ -143,12 +143,13 @@ const Tournament = () => {
     };
 
     return (
-        <div>
+        <div className='tournamentContainer'>
             {!isTournamentStarted ? (
-                <div>
-                    <h2>Enter Player Names</h2>
+                <div className='tournamentInput'>
+                    <h2 className='tournamentPlayerNames'>ENTER PLAYER NAMES</h2>
                     {players.map((player, index) => (
                         <input
+                            className='playerInput'
                             key={index}
                             type="text"
                             value={player.nickname}
@@ -156,7 +157,8 @@ const Tournament = () => {
                             placeholder={`Player ${index + 1}`}
                         />
                     ))}
-                    <button onClick={startTournament}>Start Tournament</button>
+                    <button className='startTournamentBtn' onClick={startTournament}>START</button>
+                    <span className='bracket'>START</span>
                 </div>
             ) : (
                 <div>

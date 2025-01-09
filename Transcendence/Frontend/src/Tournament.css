@@ -1,3 +1,43 @@
+:root{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    --back-color: rgb(20, 20, 20);
+    --back-color-1: rgb(35, 35, 35);
+    --back-color-2: rgb(25, 25, 25);
+    --text-color: white;
+    --color-1: rgb(255, 150, 0);
+    --color-2: rgb(187, 0, 255);
+    overflow: hidden;
+}
+
+.tournamentContainer {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* .tournamentContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: calc(50% - 1px);
+    width: 1px;
+    height: 100%;
+    background: white;
+} */
+
+.tournamentPlayerNames {
+    color: white;
+    text-shadow: 0 0 10px orange;
+    font-size: 50px;
+    font-weight: 700;
+    margin-top: 10%;
+}
+
 .nextgame {
     position: absolute;
     top: 0;
@@ -5,4 +45,177 @@
     font-size: 50px;
     height: fit-content;
     width: fit-content;
+}
+
+.playerInput {
+    width: 200px;
+    height: 40px;
+    border: none;
+    outline: none;
+    font-size: 20px;
+    color: white;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+    position: absolute;
+    border-radius: 10px;
+}
+
+.playerInput:focus {
+    border-bottom: 3px solid rgb(145, 88, 23);
+}
+
+/* .playerInput:nth-child(even) {
+    left: calc(30vw - 200px);
+    top: calc((var(--index) * 50px) + 25vh);
+} */
+
+.playerInput:nth-child(2) {
+    left: calc(30vw - 200px);
+    top: calc((var(--index) * 50px) + 25vh);
+    background: var(--back-color);
+}
+
+.playerInput:nth-child(3) {
+    left: calc(30vw - 200px);
+    top: calc(((var(--index) + 1) * 50px) + 25vh);
+    background: var(--back-color);
+}
+
+.playerInput:nth-child(4) {
+    left: calc(30vw - 200px);
+    top: calc(((var(--index) + 2) * 50px) + 25vh);
+    background: white;
+    color: var(--back-color);
+}
+
+.playerInput:nth-child(5) {
+    left: calc(30vw - 200px);
+    top: calc(((var(--index) + 3) * 50px) + 25vh);
+    background: white;
+    color: var(--back-color);
+}
+
+/* .playerInput:nth-child(odd) {
+    left: 70vw;
+    top: calc(((var(--index) - 1) * 50px) + 25vh);
+} */
+
+.playerInput:nth-child(6) {
+    left: 70vw;
+    top: calc(((var(--index) - 4) * 50px) + 25vh);
+    background: white;
+    color: var(--back-color);
+}
+
+.playerInput:nth-child(7) {
+    left: 70vw;
+    top: calc(((var(--index) - 3) * 50px) + 25vh);
+    background: white;
+    color: var(--back-color);
+}
+
+.playerInput:nth-child(8) {
+    left: 70vw;
+    top: calc(((var(--index) - 2) * 50px) + 25vh);
+    background: var(--back-color);
+}
+
+.playerInput:nth-child(9) {
+    left: 70vw;
+    top: calc(((var(--index) - 1) * 50px) + 25vh);
+    background: var(--back-color);
+}
+
+.playerInput:nth-child(2) {
+    --index: 1;
+}
+.playerInput:nth-child(3) {
+    --index: 2;
+}
+.playerInput:nth-child(4) {
+    --index: 3;
+}
+.playerInput:nth-child(5) {
+    --index: 4;
+}
+.playerInput:nth-child(6) {
+    --index: 5;
+}
+.playerInput:nth-child(7) {
+    --index: 6;
+}
+.playerInput:nth-child(8) {
+    --index: 7;
+}
+.playerInput:nth-child(9) {
+    --index: 8;
+}
+
+.startTournamentBtn {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    aspect-ratio: 1/1;
+    text-size-adjust: 100%;
+    font-size: clamp(20px, 2vw, 40px);
+    font-weight: 700;
+    padding: 10px;
+    border: solid 2px rgb(172, 172, 172);
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 0 5px gray,
+                0 0 15px gray;
+    color: black;
+    mix-blend-mode: screen;
+    z-index: 10;
+    transition: .5s;
+}
+
+
+.startTournamentBtn:hover {
+    transform: translateX(-50%) scale(1.16);
+}
+
+.bracket {
+    position: absolute;
+    top: calc(39% - 1.5px);
+    left: 50%;
+    transform: translateX(-50%);
+    aspect-ratio: 1/1;
+    text-size-adjust: 100%;
+    font-size: clamp(20px, 2vw, 40px);
+    font-weight: 700;
+    padding: 20px;
+    border: solid 3px white;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 5px gray,
+                0 0 15px gray,
+                inset 0 0 2px white,
+                inset 0 0 5px white,
+                inset 0 0 15px white,
+                inset 0 0 30px white;
+    color: transparent;
+    z-index: 1;
+}
+
+.bracket::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -201px;
+    width: 200px;
+    height: 3px;
+    background: white;
+}
+
+.bracket::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -201px;
+    width: 200px;
+    height: 3px;
+    background: white;
 }

@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import './Game.css'
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import './Game.css';
 
 const width = 800;
 const height = 400;
@@ -47,6 +48,8 @@ function Multiplayer() {
     const [winner, setWinner] = useState('');
     const [isReady, setIsReady] = useState(false);
     const pongCanvas = useRef(null);
+    const canvasContainer = useRef(null);
+    const navigate = useNavigate();
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
 
@@ -56,8 +59,8 @@ function Multiplayer() {
 
     useEffect(() => {
         // console.log('Starting game...');
-        pongCanvas.current.classList.add('is-animated');
-        pongCanvas.current.addEventListener('animationend', () => {
+        canvasContainer.current.classList.add('is-animated');
+        canvasContainer.current.addEventListener('animationend', () => {
             startGame();
             setIsReady(true);
         });
@@ -87,22 +90,22 @@ function Multiplayer() {
         }
     };
 
-    const handleResize = () => {
-        if (!isStarted)
-            return ;
-        const ctx = pongCanvas.current.getContext('2d');
-        const windowHeight = window.innerHeight;
-        const windowWidth = window.innerWidth;
+    // const handleResize = () => {
+    //     if (!isStarted)
+    //         return ;
+    //     const ctx = pongCanvas.current.getContext('2d');
+    //     const windowHeight = window.innerHeight;
+    //     const windowWidth = window.innerWidth;
 
-        let newHeight = windowHeight / ratio;
-        let newWidth = windowWidth / ratio;
+    //     let newHeight = windowHeight / ratio;
+    //     let newWidth = windowWidth / ratio;
 
-        const maxHeight = Math.min(newHeight, height);
-        const maxWidth = Math.min(newWidth, width);
+    //     const maxHeight = Math.min(newHeight, height);
+    //     const maxWidth = Math.min(newWidth, width);
 
-        ctx.canvas.height = maxHeight / ratio;
-        ctx.canvas.width = maxWidth;
-    };
+    //     ctx.canvas.height = maxHeight / ratio;
+    //     ctx.canvas.width = maxWidth;
+    // };
 
     useEffect(() => {
         if (!isReady)
@@ -375,15 +378,23 @@ function Multiplayer() {
             gameLoop();
 
     }, [isReady]);
-    window.addEventListener('resize', handleResize);
+    // window.addEventListener('resize', handleResize);
 
     return (
-        <div>
-            <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
+        <div className='gameContainer'>
+            <div className="canvasContainer" ref={canvasContainer}>
+                <canvas ref={pongCanvas} className={isReady ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
+            </div>
             {isGameOver && (
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <h1>{winner} won!</h1>
-                    <button onClick={restartGame}>Restart Game</button>
+                <div className="screenContainer">
+                    <div className='endScreen'>
+                        <div className='winnerName'>{winner} won !</div>
+                        <button className='gamebtn' onClick={restartGame}>Restart Game</button>
+                        <button className='gamebtn' onClick={() => {
+                            setIsReady(false);
+                            navigate('/menu');
+                        }}>Quit Game</button>
+                    </div>
                 </div>
             )}
         </div>

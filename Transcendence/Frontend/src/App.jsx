@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import Game from './Game';
+import TournamentGame from './TournamentGame.jsx';
 import Multiplayer from './Multiplayer';
 import AIGame from './AIGame';
 import Menu from './Menu';

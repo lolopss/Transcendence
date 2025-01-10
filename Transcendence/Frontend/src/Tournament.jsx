@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Game from './Game';
+import { useNavigate, Link } from 'react-router-dom';
+import TournamentGame from './TournamentGame';
 import './Tournament.css'
 
 const Tournament = () => {
@@ -11,6 +12,7 @@ const Tournament = () => {
     const [tournamentWinner, setTournamentWinner] = useState(null);
     const [nickname, setNickname] = useState('User');
     const [profilePicture, setProfilePicture] = useState('/default-profile.png');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -52,7 +54,7 @@ const Tournament = () => {
 
     const handleGameEnd = (winner, player1, player2) => {
         const newWinners = [...winners];
-        const winnerName = winner === 'Player 1' ? player1 : player2;
+        const winnerName = winner.nickname === player1.nickname ? player1 : player2;
         newWinners[currentMatch] = winnerName;
         setWinners(newWinners);
         setIsGameFinished(true);
@@ -122,8 +124,8 @@ const Tournament = () => {
 
         return (
             <div>
-                <h3>{player1.nickname} vs {player2.nickname}</h3>
-                <Game
+                <h3 className='currentMatch'>{player1.nickname} vs {player2.nickname}</h3>
+                <TournamentGame
                     key={`${player1.nickname}-${player2.nickname}`} // Ensure the Game component resets
                     player1Id={player1.id}
                     player1Nickname={player1.nickname}
@@ -132,10 +134,27 @@ const Tournament = () => {
                     onGameEnd={(winner) => handleGameEnd(winner, player1, player2)}
                 />
                 {isGameFinished && !tournamentWinner && (
-                    <button className='nextgame' onClick={nextGame}>Next Game</button>
+                    <div className="screenContainer">
+                        <div className='endScreen'>
+                            <div className='winnerName'>{winners[currentMatch].nickname} won !</div>
+                            <button className='gamebtn' onClick={nextGame}>Next Game</button>
+                            <button className='gamebtn' onClick={logGameState}>Log Game State</button>
+                            <button className='gamebtn' onClick={() => {
+                                navigate('/menu');
+                            }}>Quit Game</button>
+                        </div>
+                    </div>
                 )}
                 {tournamentWinner && (
-                    <h2>Tournament Winner: {tournamentWinner.nickname}</h2>
+                    <div className="screenContainer">
+                        <div className='endScreen'>
+                            <h2 className='winnerName'>{tournamentWinner.nickname} won the Tournament !</h2>
+                            <button className='gamebtn' onClick={logGameState}>Log Game State</button>
+                            <button className='gamebtn' onClick={() => {
+                                navigate('/menu');
+                            }}>Quit Game</button>
+                        </div>
+                    </div>
                 )}
                 <button onClick={logGameState}>Log Game State</button>
             </div>
@@ -145,24 +164,42 @@ const Tournament = () => {
     return (
         <div className='tournamentContainer'>
             {!isTournamentStarted ? (
-                <div className='tournamentInput'>
-                    <h2 className='tournamentPlayerNames'>ENTER PLAYER NAMES</h2>
-                    {players.map((player, index) => (
-                        <input
-                            className='playerInput'
-                            key={index}
-                            type="text"
-                            value={player.nickname}
-                            onChange={(e) => handleInputChange(index, e.target.value)}
-                            placeholder={`Player ${index + 1}`}
-                        />
-                    ))}
-                    <button className='startTournamentBtn' onClick={startTournament}>START</button>
-                    <span className='bracket'>START</span>
+                <div className="tournamentContainer">
+                    <h1 className='tournamentMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
+                    <div className='tournamentInput'>
+                        <h2 className='tournamentPlayerNames'>ENTER PLAYER NAMES</h2>
+                        {players.map((player, index) => (
+                            <input
+                                className='playerInput'
+                                key={index}
+                                type="text"
+                                value={player.nickname}
+                                onChange={(e) => handleInputChange(index, e.target.value)}
+                                placeholder={`Player ${index + 1}`}
+                            />
+                        ))}
+                        <button className='startTournamentBtn' onClick={startTournament}>START</button>
+                        <div className="bracketContainer">
+                            <span className='bracket'>START</span>
+                            <span className='bracket2'></span>
+                            <span className='bracket3'></span>
+                            <span className='bracket4'></span>
+                            <span className='bracket5'></span>
+                            <span className='bracket6'></span>
+                            <span className='bracket7'></span>
+                            <span className='bracket8'></span>
+                            <span className='bracket9'></span>
+                            <span className='bracket10'></span>
+                            <span className='bracket11'></span>
+                            <span className='bracket12'></span>
+                        </div>
+                    </div>
                 </div>
             ) : (
-                <div>
-                    {renderBracket()}
+                <div className='bracketContainer'>
+                    <div className="bracketRender">
+                        {renderBracket()}
+                    </div>
                     {renderGame()}
                 </div>
             )}

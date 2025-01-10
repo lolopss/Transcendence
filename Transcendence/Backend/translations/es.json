@@ -22,5 +22,8 @@
 	"french": "Francés",
 	"delete_account": "Eliminar cuenta",
     "tournament": "Torneo",
-	"profile": "Perfil"
+	"profile": "Perfil",
+	"vs": "Contra",
+	"vsAI": "Contra AI",
+	"multiplayer": "Multijugador"
   }

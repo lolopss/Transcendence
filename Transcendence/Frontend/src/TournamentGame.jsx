@@ -42,7 +42,7 @@ class Ball {
     }
 }
 
-function Game({
+function tournamentGame({
     player1Id = 1,
     player1Nickname = 'Player1',
     player2Id = 2,
@@ -431,7 +431,7 @@ function Game({
                     <div>
                         <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
                     </div>
-                    {isGameOver && (
+                    {/* {isGameOver && (
                         <div className="screenContainer">
                             <div className='endScreen'>
                                 <div className='winnerName'>{winner.nickname} won !</div>
@@ -445,7 +445,7 @@ function Game({
                                 }}>Quit Game</button>
                             </div>
                         </div>
-                    )}
+                    )} */}
                 </div>
             ) : (
                 <div className='vsMenu'>
@@ -484,4 +484,4 @@ function Game({
     );
 }
 
-export default Game;
+export default tournamentGame;

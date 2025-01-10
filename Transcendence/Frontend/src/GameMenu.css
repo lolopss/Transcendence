@@ -134,10 +134,8 @@
     text-align: center;
     text-decoration: none;
     text-size-adjust: 100%;
-    font-size: 50px;
     font-size: clamp(10px, 3vw, 50px);
     margin-top: 25px;
-    opacity: 1;
     height: fit-content;
     padding: 5px 10px;
     color: var(--text-color);
@@ -150,50 +148,8 @@
     transition: .2s ease-in-out;
 }
 
-#buttonLogout {
-    z-index: 1;
-    position: absolute;
-    opacity: 1;
-    bottom: 5%;
-    right: 10%;
-    height: 50px;
-    width: 100px;
-    color: var(--text-color);
-    overflow: hidden;
-    letter-spacing: 3px;
-    font-weight: bold;
-    /*background: var(--color-2);*/
-    border: none;
-    background: var(--back-color);
-    transition: .5s;
-}
-
 .game-menu-body:has(.centerGameMenu:hover) #buttonLogout {
     right: 5%;
-}
-
-#buttonLogout:hover {
-    transform: scale(1.2);
-    box-shadow: 0 0 10px var(--color-1),
-                0 0 50px var(--color-1),
-                0 0 100px var(--color-1);
-    background: var(--color-1);
-}
-
-#buttonLogout:active {
-    transition: none;
-    background: var(--color-2);
-    box-shadow: 0 0 10px var(--color-2),
-                0 0 50px var(--color-2),
-                0 0 100px var(--color-2);
-}
-
-#buttonStart:active, #buttonOptions:active, #buttonProfile:active {
-    transition: none;
-    background: var(--color-2);
-    box-shadow: 0 0 10px var(--color-2),
-                0 0 50px var(--color-2),
-                0 0 100px var(--color-2);
 }
 
 .gameMenuButton .btn:hover {

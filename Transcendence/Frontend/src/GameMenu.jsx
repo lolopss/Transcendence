@@ -167,9 +167,9 @@ function GameMenu() {
         })
 
         applyEvent(buttonStartVs, "url('../Icons/fondviolet.png')");
-        applyEvent(buttonStartMultiplayer, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
+        applyEvent(buttonStartMultiplayer, "url('../Icons/Multiplayer.png')");
         applyEvent(buttonStartAi, "url('../Icons/AIviolet.png')");
-        applyEvent(buttonStartTournament, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
+        applyEvent(buttonStartTournament, "url('../Icons/Tournament.png')");
 
         pongTitle.current.addEventListener('mousedown', () => {
             pongTitle.current.style.transition="none";
@@ -203,13 +203,10 @@ function GameMenu() {
             <div className="centerGameMenu" ref={menu}>
                 <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>The Pong</h1>
                 <div className="gameMenuButton">
-                    {/* <GameButton name={translations.start_btn} onClick={() => navigate('/game')} refbtn={buttonStart}/>
-                    <GameButton name={translations.options_btn} onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
-                    <GameButton name={translations.profile} onClick={() => navigate('/profile')} refbtn={buttonProfile}/> */}
-                    <GameButton name="VS" onClick={() => navigate('/game')} refbtn={buttonStartVs}/>
-                    <GameButton name="MULTIPLAYER" onClick={() => navigate('/multiplayer')} refbtn={buttonStartMultiplayer}/>
-                    <GameButton name="AI" onClick={() => navigate('/ai-game')} refbtn={buttonStartAi}/>
-                    <GameButton name="TOURNAMENT" onClick={() => navigate('/tournament')} refbtn={buttonStartTournament}/>
+                    <GameButton name={translations.vs} onClick={() => navigate('/game')} refbtn={buttonStartVs}/>
+                    <GameButton name={translations.multiplayer} onClick={() => navigate('/multiplayer')} refbtn={buttonStartMultiplayer}/>
+                    <GameButton name={translations.vsAI} onClick={() => navigate('/ai-game')} refbtn={buttonStartAi}/>
+                    <GameButton name={translations.tournament} onClick={() => navigate('/tournament')} refbtn={buttonStartTournament}/>
                 </div>
             </div>
             <div className="gameMenuProfilePicture" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>

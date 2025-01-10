@@ -30,12 +30,30 @@
     background: white;
 } */
 
+.tournamentMenuReturn {
+    position: absolute;
+    top: 3vh;
+    font-size: 50px;
+    color: white;
+    text-shadow: 0 0 5px white,
+                0 0 10px white;
+    transition: .2s;
+    user-select: none;
+    cursor: pointer;
+}
+
+.tournamentMenuReturn:hover {
+    text-shadow: 0 0 5px var(--color-1),
+                0 0 10px var(--color-1);
+    transform: scale(1.1);
+}
+
 .tournamentPlayerNames {
     color: white;
     text-shadow: 0 0 10px orange;
     font-size: 50px;
     font-weight: 700;
-    margin-top: 10%;
+    margin-top: 20%;
 }
 
 .nextgame {
@@ -58,6 +76,7 @@
     padding: 0 35px 0 5px;
     position: absolute;
     border-radius: 10px;
+    z-index: 5;
 }
 
 .playerInput:focus {
@@ -204,8 +223,9 @@
     content: '';
     position: absolute;
     top: 50%;
-    right: -201px;
-    width: 200px;
+    right: -120%;
+    /* width: 200px; */
+    width: 120%;
     height: 3px;
     background: white;
 }
@@ -214,8 +234,448 @@
     content: '';
     position: absolute;
     top: 50%;
-    left: -201px;
-    width: 200px;
+    left: -120%;
+    width: 120%;
     height: 3px;
     background: white;
+}
+
+.bracket2 {
+    position: absolute;
+    top: calc(38% - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 950px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket2::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket2::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -50px;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket3 {
+    position: absolute;
+    top: calc(59% - 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 950px;
+    height: 3px;
+    background: transparent;
+}
+
+.bracket3::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -50px;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket3::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -50px;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket4 {
+    position: absolute;
+    top: calc(59% - 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 950px;
+    height: 3px;
+    background: transparent;
+}
+
+.bracket4::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket4::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket5 {
+    position: absolute;
+    top: calc(38% - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 950px;
+    height: 3px;
+    background: transparent;
+}
+
+.bracket5::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket5::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket6 {
+    position: absolute;
+    top: calc(38% - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 575px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket6::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket6::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket7 {
+    position: absolute;
+    top: calc(38% - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 575px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket7::after {
+    content: '';
+    position: absolute;
+    right: -180px;
+    width: 180px;
+    height: 3px;
+    background: white;
+}
+
+.bracket7::before {
+    content: '';
+    position: absolute;
+    left: -180px;
+    width: 180px;
+    height: 3px;
+    background: white;
+}
+
+.bracket8 {
+    position: absolute;
+    top: calc(38% - 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 575px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket8::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket8::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket9 {
+    position: absolute;
+    top: calc(59% - 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 575px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket9::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -100px;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket9::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -100px;
+    width: 3px;
+    height: 100px;
+    background: white;
+}
+
+.bracket10 {
+    position: absolute;
+    top: calc(59% - 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 575px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket10::after {
+    content: '';
+    position: absolute;
+    right: -180px;
+    width: 180px;
+    height: 3px;
+    background: white;
+}
+
+.bracket10::before {
+    content: '';
+    position: absolute;
+    left: -180px;
+    width: 180px;
+    height: 3px;
+    background: white;
+}
+
+.bracket11 {
+    position: absolute;
+    top: calc(59% - 3px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 575px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket11::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket11::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket12 {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 575px;
+    height: 3px;
+    background: transparent;
+    z-index: 1;
+}
+
+.bracket12::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracket12::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: -6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: white;
+}
+
+.bracketRender {
+    position: absolute;
+    top: 2%;
+    left: 2%;
+    z-index: 100;
+}
+.currentMatch {
+    position: absolute;
+    top: 17%;
+    left: 2%;
+    z-index: 100;
+}
+
+.screenContainer {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99;
+}
+
+.endScreen {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    border: 3px solid white;
+    box-shadow: 0 0 5px white,
+                0 0 10px white,
+                0 0 20px white,
+                inset 0 0 5px white,
+                inset 0 0 10px black,
+                inset 0 0 20px white;
+    width: 300px;
+    height: fit-content;
+    padding: 100px 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    transition: .2s;
+    user-select: none;
+}
+
+.endScreen:has(.gamebtn:hover) {
+    box-shadow: 0 0 5px rgb(255, 150, 0),
+                0 0 10px rgb(255, 150, 0),
+                0 0 20px rgb(255, 150, 0),
+                inset 0 0 5px black,
+                inset 0 0 10px black,
+                inset 0 0 20px black;
+    border: solid 3px rgb(255, 150, 0);
+}
+
+.endScreen .winnerName {
+    text-size-adjust: 100%;
+    font-size: 50px;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 50px;
+}
+
+.endScreen .gamebtn {
+    /*aspect-ratio: 2/1;*/
+    text-align: center;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 20px;
+    margin-top: 25px;
+    opacity: 1;
+    height: fit-content;
+    min-width: 150px;
+    padding: 5px 10px;
+    border: 2px solid white;
+    color: white;
+    overflow: hidden;
+    /* box-shadow: 0 0 10px white,
+                0 0 20px white; */
+    background: rgb(25, 25, 25);
+    cursor: pointer;
+    user-select: none;
+    transition: .2s ease-in-out;
+}
+
+.endScreen .gamebtn:hover {
+    transform: translateZ(100px) scale(1.2);
+    box-shadow: 0 0 10px rgb(255, 150, 0),
+                0 0 50px rgb(255, 150, 0),
+                0 0 100px rgb(255, 150, 0);
+    background: rgb(255, 150, 0);
+    border: solid 2px orange;
+    font-weight: bold;
 }

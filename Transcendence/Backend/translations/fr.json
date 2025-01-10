@@ -22,5 +22,8 @@
 	"french": "Français",
 	"delete_account": "Delete Account",
 	"tournament": "Tournoi",
-	"profile": "Profil"
+	"profile": "Profil",
+	"vs": "Duel",
+	"vsAI": "Duel IA",
+	"multiplayer": "Multijoueur"
   }

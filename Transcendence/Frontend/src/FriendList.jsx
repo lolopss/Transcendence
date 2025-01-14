@@ -32,7 +32,7 @@ const FriendList = () => {
 
     useEffect(() => {
         fetchFriends();
-        const interval = setInterval(fetchFriends, 1000);  // Fetch friends every second
+        const interval = setInterval(fetchFriends, 10000);  // Fetch friends every 20 second
         return () => clearInterval(interval);  // Cleanup interval on component unmount
     }, []);
 

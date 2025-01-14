@@ -141,7 +141,8 @@ DATABASES = {
 
 CSRF_TRUSTED_ORIGINS = [
     'https://localhost:8000',
-    'http://localhost:8000',  # For non-HTTPS connections
+    'http://localhost:8000',
+    'https://10.12.2.4:8000',  # For non-HTTPS connections
 ]
 
 
@@ -150,6 +151,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:8000',
+    'https://10.12.2.4:8000',
+    'https://10.12.2.4:8000',
     'https://*'
 ]
 
@@ -162,7 +165,6 @@ AUTHENTICATION_BACKENDS = [
 
 SOCIAL_AUTH_42_KEY = os.environ.get('CLIENT_ID')
 SOCIAL_AUTH_42_SECRET = os.environ.get('CLIENT_SECRET')
-SOCIAL_AUTH_42_REDIRECT_URI = 'https://localhost:8000/register42'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

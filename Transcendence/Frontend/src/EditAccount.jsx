@@ -12,6 +12,8 @@ const pepeImages = [
 ];
 
 const EditAccount = () => {
+    const [language, setLanguage] = useState('en');
+    const [translations, setTranslations] = useState({});
     const [userDetails, setUserDetails] = useState({
         username: '',
         email: '',
@@ -24,6 +26,45 @@ const EditAccount = () => {
     const [isFileUploaded, setIsFileUploaded] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            try {
+                const response = await fetch('/api/user-details/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setLanguage(data.language);
+                    loadTranslations(data.language);
+                } else {
+                    console.error('Failed to fetch user details');
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+
+        fetchUserDetails();
+    }, []);
+
+    const loadTranslations = async (language) => {
+        try {
+            const response = await fetch(`/api/translations/${language}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+            const data = await response.json();
+            setTranslations(data);
+        } catch (error) {
+            console.error('Error loading translations:', error);
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -109,30 +150,30 @@ const EditAccount = () => {
             <header className='accountHeader'>
                 <h2 className='accountLogo' onClick={()=>navigate('/menu')}>Pong</h2>
                 <nav className='accountNav'>
-                    <div className="navProfile" onClick={()=>navigate('/profile')}>Profile</div>
-                    <div className="navAccount" onClick={()=>navigate('/edit-account')}>Account</div>
+                    <div className="navProfile" onClick={()=>navigate('/profile')}>{translations.profil}</div>
+                    <div className="navAccount" onClick={()=>navigate('/edit-account')}>{translations.account}</div>
                 </nav>
             </header>
             <div className="accountWrapper">
                 <form className='accountForm' onSubmit={handleSubmit}>
                     <label className='accountLabel'>
-                        Username:
+                        {translations.username}:
                         <input className='accountInput' type="text" name="username" value={userDetails.username} onChange={handleChange} />
                     </label>
                     <label className='accountLabel'>
-                        Email:
+                    {translations.email}:
                         <input className='accountInput' type="email" name="email" value={userDetails.email} onChange={handleChange} />
                     </label>
                     <label className='accountLabel'>
-                        First Name:
+                    {translations.firstName}:
                         <input className='accountInput' type="text" name="firstName" value={userDetails.firstName} onChange={handleChange} />
                     </label>
                     <label className='accountLabel'>
-                        Last Name:
+                    {translations.lastName}:
                         <input className='accountInput' type="text" name="lastName" value={userDetails.lastName} onChange={handleChange} />
                     </label>
                     <label className='accountLabel'>
-                        Profile Picture:
+                    {translations.profilePicture}:
                         <input className='accountImage' type="file" accept="image/*" onChange={handleImageChange} />
                     </label>
                     <div className="image-carousel">
@@ -140,7 +181,7 @@ const EditAccount = () => {
                         {preview && <img className='carouselImage' src={preview}/>}
                         <button className='carouselButton' type="button" onClick={handleNextImage}>→</button>
                     </div>
-                    <button className='accountChanges' type="submit">Save Changes</button>
+                    <button className='accountChanges' type="submit">{translations.saveChanges}</button>
                 </form>
                 {/* {error && <div className="error-message">{error}</div>} */}
             </div>

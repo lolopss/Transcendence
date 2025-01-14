@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import './Profile.css';
+import { useNavigate, Link } from 'react-router-dom';
+import './FriendProfile.css';
 
 const FriendProfile = () => {
+    const navigate = useNavigate();
     const { username } = useParams();
     const [friendDetails, setFriendDetails] = useState({
         nickname: '',
@@ -78,14 +80,24 @@ const FriendProfile = () => {
     }
 
     return (
-        <div className="profile-body">
-            <div className="profile-container">
-                <div className="profile-header">
-                    <img src={friendDetails.profilePicture} alt="Profile" className="profile-picture" />
+        <div className="friendProfileBody">
+            <header className='friendProfileHeader'>
+                <h2 className='friendProfileLogo' onClick={()=>navigate('/menu')}>Pong</h2>
+                <nav className='friendProfileNav'>
+                    <div className="navProfile" onClick={()=>navigate('/profile')}>Profile</div>
+                    <div className="navAccount" onClick={()=>navigate('/edit-account')}>Account</div>
+                    <div className="navFriendProfile" onClick={()=>navigate(`/profile/${friendDetails.username}`)}>FriendProfile</div>
+                </nav>
+            </header>
+            <div className="friend-profile-container">
+                <div className="friend-profile-image">
+                    <img src={friendDetails.profilePicture} alt="Profile" className="friend-profile-picture" />
+                </div>
+                <div className="friend-profile-header">
                     <h1>{friendDetails.nickname}</h1>
                     <h2>@{friendDetails.username}</h2>
                 </div>
-                <div className="profile-stats">
+                <div className="friend-profile-stats">
                     <h3>Stats</h3>
                     <p>Total Games: {friendDetails.wins + friendDetails.losses}</p>
                     <p>Wins: {friendDetails.wins}</p>

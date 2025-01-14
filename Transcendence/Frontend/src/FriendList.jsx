@@ -8,6 +8,47 @@ const FriendList = () => {
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
+    const [language, setLanguage] = useState('en');
+    const [translations, setTranslations] = useState({});
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            try {
+                const response = await fetch('/api/user-details/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setLanguage(data.language);
+                    loadTranslations(data.language);
+                } else {
+                    console.error('Failed to fetch user details');
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+
+        fetchUserDetails();
+    }, []);
+
+    const loadTranslations = async (language) => {
+        try {
+            const response = await fetch(`/api/translations/${language}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+            const data = await response.json();
+            setTranslations(data);
+        } catch (error) {
+            console.error('Error loading translations:', error);
+        }
+    };
 
     const fetchFriends = async () => {
         try {
@@ -88,7 +129,7 @@ const FriendList = () => {
             <span className="listCloseIcon" onClick={handleListActiveClick}>
                 <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="#e8eaed"><path d="m296-224-56-56 240-240 240 240-56 56-184-183-184 183Zm0-240-56-56 240-240 240 240-56 56-184-183-184 183Z"/></svg>
             </span>
-            <h3>Friends</h3>
+            <h3>{translations.friends}</h3>
             <input
                 className='friendInput'
                 type="text"
@@ -97,7 +138,7 @@ const FriendList = () => {
                 placeholder="Username"
             />
             <span className='separation'></span>
-            <button className='addFriendButton' onClick={handleAddFriend}>Add Friend</button>
+            <button className='addFriendButton' onClick={handleAddFriend}>{translations.addFriends}</button>
             {message && <p className='message'>{message}</p>}
             <ul>
                 {friends.map(friend => (

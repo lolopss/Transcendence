@@ -166,8 +166,6 @@ const LoginPage = () => {
             </nav>
         </header>
 
-        <button className="test" onClick={()=>navigate('/menu')}>menu</button>
-
         <div className="overlay"></div>
 
         {error && <p className='error'>{error}</p>}

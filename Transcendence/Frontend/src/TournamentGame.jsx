@@ -428,30 +428,12 @@ function tournamentGame({
                     <div className="canvasContainer" ref={canvasContainer}>
                         <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
                     </div>
-                    <div>
-                        <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
-                    </div>
-                    {/* {isGameOver && (
-                        <div className="screenContainer">
-                            <div className='endScreen'>
-                                <div className='winnerName'>{winner.nickname} won !</div>
-                                <button className='gamebtn' onClick={() => {
-                                    setIsStarted(false);
-                                    setIsGameOver(false);
-                                }}>Restart Game</button>
-                                <button className='gamebtn' onClick={() => {
-                                    setIsStarted(false);
-                                    navigate('/menu');
-                                }}>Quit Game</button>
-                            </div>
-                        </div>
-                    )} */}
                 </div>
             ) : (
                 <div className='vsMenu'>
                     <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
                     <div className="vsTitles">
-                        <h1 className='vsPl1'>{nickname}</h1>
+                        <h1 className='vsPl1'>{player1Nickname}</h1>
                         <h1 className='vsVs'> vs </h1>
                         <h1 className='vsPl2'>{player2Nickname}</h1>
                     </div>

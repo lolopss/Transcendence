@@ -59,6 +59,8 @@ function Game({
     const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
     const canvasContainer = useRef(null);
+    const [language, setLanguage] = useState('en');
+    const [translations, setTranslations] = useState({});
     const navigate = useNavigate();
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
@@ -67,6 +69,45 @@ function Game({
     // Define player1 and player2 at the component level
     const player1 = new Player(player1Id, player1Nickname, new Paddle(15, height / 2 - 50, 10, 100, 'orange'));
     const player2 = new Player(player2Id, player2Nickname, new Paddle(width - 25, height / 2 - 50, 10, 100, 'violet'));
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            try {
+                const response = await fetch('/api/user-details/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setLanguage(data.language);
+                    loadTranslations(data.language);
+                } else {
+                    console.error('Failed to fetch user details');
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+
+        fetchUserDetails();
+    }, []);
+
+    const loadTranslations = async (language) => {
+        try {
+            const response = await fetch(`/api/translations/${language}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+            const data = await response.json();
+            setTranslations(data);
+        } catch (error) {
+            console.error('Error loading translations:', error);
+        }
+    };
 
     useEffect(() => {
         const fetchUserProfile = async () => {
@@ -428,21 +469,18 @@ function Game({
                     <div className="canvasContainer" ref={canvasContainer}>
                         <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
                     </div>
-                    <div>
-                        <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
-                    </div>
                     {isGameOver && (
                         <div className="screenContainer">
                             <div className='endScreen'>
-                                <div className='winnerName'>{winner.nickname} won !</div>
+                                <div className='winnerName'>{winner.nickname} {translations.won} !</div>
                                 <button className='gamebtn' onClick={() => {
                                     setIsStarted(false);
                                     setIsGameOver(false);
-                                }}>Restart Game</button>
+                                }}>{translations.restartGame}</button>
                                 <button className='gamebtn' onClick={() => {
                                     setIsStarted(false);
                                     navigate('/menu');
-                                }}>Quit Game</button>
+                                }}>{translations.quit_game}</button>
                             </div>
                         </div>
                     )}
@@ -462,19 +500,19 @@ function Game({
                         </div>
                     )}
                     <div className="vsBtnContainer">
-                        <button className='vsBtn' onClick={() => setIsStarted(true)}>Start Game</button>
+                        <button className='vsBtn' onClick={() => setIsStarted(true)}>{translations.start_game}</button>
                         <div>
                             <button className='vsBtn' onClick={() => setPowerUpsEnabled(!powerUpsEnabled)}>
-                                Power-Ups {powerUpsEnabled ? 'On' : 'Off'}
+                                {translations.powerUps} {powerUpsEnabled ? 'On' : 'Off'}
                             </button>
                         </div>
                         {powerUpsEnabled && (
                             <div className='vsPowerUps'>
-                                <h3 className={`vsInv ${gameOption}`}>Invisibility</h3>
+                                <h3 className={`vsInv ${gameOption}`}>{translations.invisibility}</h3>
                                 <button className='vsBtn' onClick={() => setGameOption(gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility')}>
-                                    Switch
+                                    {translations.switch}
                                 </button>
-                                <h3 className={`vsTel ${gameOption}`}>Teleportation</h3>
+                                <h3 className={`vsTel ${gameOption}`}>{translations.teleportation}</h3>
                             </div>
                         )}
                     </div>

@@ -669,9 +669,6 @@ function AIGame({
                     <div className="canvasContainer" ref={canvasContainer}>
                         <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
                     </div>
-                    <div>
-                        <button onClick={() => setIsStarted(false)}>Game = {isStarted ? 'On' : 'Off'}</button>
-                    </div>
                     {isGameOver && (
                         <div className="screenContainer">
                             <div className='endScreen'>

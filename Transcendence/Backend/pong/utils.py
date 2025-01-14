@@ -59,7 +59,7 @@ def ManageGameQueue():
         from . models import GameServerModel, WaitingPlayerModel
         # Attempt to find a game server with a 'waiting' state
         game_server = GameServerModel.objects.filter(state='waiting').first()
-        
+
         if game_server:
             if game_server.firstPlayerId == -1:
                 player1 = WaitingPlayerModel.objects.first()
@@ -74,7 +74,7 @@ def ManageGameQueue():
                     game_server.secondPlayerId = player2.player_id
                     game_server.save()
                     player2.delete()
-            
+
             # If both players are assigned, set the game server state to 'full'
             if game_server.firstPlayerId != -1 and game_server.secondPlayerId != -1:
                 game_server.state = 'full'
@@ -85,7 +85,7 @@ def ManageGameQueue():
             # Create a new game server if none is available
             GameServerModel.objects.create()
             logger.info("No waiting game server found. Creating a new game server.")
-        
+
         settings.IS_SEARCHING = False
     else:
         settings.IS_SEARCHING = False
@@ -96,8 +96,8 @@ from datetime import timedelta
 
 def check_inactive_users():
     now = timezone.now()
-    three_seconds_ago = now - timedelta(seconds=3)
-    inactive_users = User.objects.filter(profile__last_activity__lt=three_seconds_ago, profile__isOnline=True)
+    twentytwo_seconds_ago = now - timedelta(seconds=22)
+    inactive_users = User.objects.filter(profile__last_activity__lt=twentytwo_seconds_ago, profile__isOnline=True)
 
     for user in inactive_users:
         user.profile.isOnline = False

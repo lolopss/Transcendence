@@ -72,7 +72,12 @@ const LoginPage = () => {
       return;
     }
 
-    const redirectUri = encodeURIComponent('https://localhost:8000/register42');  // Ensure this matches the backend
+    let redirectUri;
+    if (window.location.hostname === 'localhost') {
+        redirectUri = encodeURIComponent('https://localhost:8000/register42');
+    } else {
+        redirectUri = encodeURIComponent('https://10.12.2.4:8000/register42');
+    }
     const state = encodeURIComponent(Math.random().toString(36).substring(2));
     const oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=public&state=${state}`;
 

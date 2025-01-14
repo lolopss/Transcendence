@@ -56,13 +56,18 @@ def register42(request):
     if state != saved_state:
         return JsonResponse({'error': 'State mismatch. Potential CSRF attack.'}, status=400)
 
+    if request.get_host().startswith('localhost'):
+        redirect_uri = 'https://localhost:8000/register42'
+    else:
+        redirect_uri = 'https://10.12.2.4:8000/register42'
+
     # Exchange the authorization code for access tokens
     token_url = 'https://api.intra.42.fr/oauth/token'
     payload = {
         'grant_type': 'authorization_code',
         'client_id': os.getenv("CLIENT_ID"),
         'client_secret': os.getenv("CLIENT_SECRET"),
-        'redirect_uri': 'https://localhost:8000/register42',  # Ensure this matches the frontend redirect URL
+        'redirect_uri': redirect_uri,  # Ensure this matches the frontend redirect URL
         'code': code
     }
 
@@ -88,12 +93,17 @@ class CallbackView(APIView):
         logger.info("OAuth callback received with authorization code.")
         code = request.query_params.get('code')
         # Token request parameters
+        if request.get_host().startswith('localhost'):
+            redirect_uri = 'https://localhost:8000/register42'
+        else:
+            redirect_uri = 'https://10.12.2.4:8000/register42'
+
         token_params = {
             "client_id": os.getenv("CLIENT_ID"),
             "client_secret": os.getenv("CLIENT_SECRET"),
             "code": code,
             "grant_type": "authorization_code",
-            "redirect_uri": 'https://localhost:8000/register42',
+            "redirect_uri": redirect_uri,
         }
         # Exchange authorization code for access token
         try:
@@ -591,7 +601,7 @@ class UserDetails(APIView):
             totp = pyotp.TOTP(user.profile.two_fa_secret)
             provisioning_uri = totp.provisioning_uri(name=user.username, issuer_name="Transcendence")
         profile_picture_url = user.profile.profile_picture.url if user.profile.profile_picture else '/media/profile_pictures/pepe.png'
-        
+
         # For match history
         matches_as_player1 = Match.objects.filter(player1=user)
         match_history = list(matches_as_player1)
@@ -680,7 +690,7 @@ class AnonymizeAccount(APIView):
         user.last_name = ''
         user.save()
         return Response({'message': 'User account anonymized successfully'}, status=status.HTTP_200_OK)
-    
+
 
 # views.py
 from django.contrib.auth.models import User
@@ -738,7 +748,7 @@ def edit_account(request):
     # If there are validation errors, return them
     if errors:
         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     # Save the updated user information
     user.save()
     user.profile.save()
@@ -763,7 +773,7 @@ class SaveMatchResult(APIView):
         score_player1 = data.get('score_player1')
         score_player2 = data.get('score_player2')
         duration = data.get('duration')
-        
+
         if winner_nickname is None or score_player1 is None or score_player2 is None or duration is None:
             return Response({'error': 'All fields are required'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -821,7 +831,7 @@ class FriendListView(APIView):
         user.profile.last_activity = now
         user.profile.isOnline = True
         user.profile.save()
-        
+
         # Check for inactive users
         check_inactive_users()
 

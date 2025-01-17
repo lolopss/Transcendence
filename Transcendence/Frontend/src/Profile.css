@@ -198,3 +198,15 @@
     margin-bottom: 10px;
     color: white;
 }
+
+.winrate-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center the content horizontally */
+    gap: 10px; /* Adjust the gap as needed */
+}
+
+.winrate-chart {
+    width: 40px; /* Adjust the width as needed */
+    height: 40px; /* Adjust the height as needed */
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import './Edit.css'; // Import the CSS file
@@ -150,7 +150,7 @@ const EditAccount = () => {
             <header className='accountHeader'>
                 <h2 className='accountLogo' onClick={()=>navigate('/menu')}>Pong</h2>
                 <nav className='accountNav'>
-                    <div className="navProfile" onClick={()=>navigate('/profile')}>{translations.profil}</div>
+                    <div className="navProfile" onClick={()=>navigate('/profile')}>{translations.profile}</div>
                     <div className="navAccount" onClick={()=>navigate('/edit-account')}>{translations.account}</div>
                 </nav>
             </header>

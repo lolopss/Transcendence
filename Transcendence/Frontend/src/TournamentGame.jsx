@@ -126,32 +126,32 @@ function tournamentGame({
         ctx.canvas.width = maxWidth;
     };
 
-    const saveMatch = async (player1, player2, winner, duration) => {
-        try {
-            const response = await fetch('/api/save-match-result/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-                },
-                body: JSON.stringify({
-                    player1_nickname: player1.nickname,
-                    player2_nickname: player2.nickname,
-                    winner_nickname: winner.nickname,
-                    score_player1: player1.point,
-                    score_player2: player2.point,
-                    duration: duration,
-                }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to save match');
-            }
-            const data = await response.json();
-            // console.log(data.message);
-        } catch (error) {
-            console.error('Error saving match:', error);
-        }
-    };
+    // const saveMatch = async (player1, player2, winner, duration) => {
+    //     try {
+    //         const response = await fetch('/api/save-match-result/', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+    //             },
+    //             body: JSON.stringify({
+    //                 player1_nickname: player1.nickname,
+    //                 player2_nickname: player2.nickname,
+    //                 winner_nickname: winner.nickname,
+    //                 score_player1: player1.point,
+    //                 score_player2: player2.point,
+    //                 duration: duration,
+    //             }),
+    //         });
+    //         if (!response.ok) {
+    //             throw new Error('Failed to save match');
+    //         }
+    //         const data = await response.json();
+    //         // console.log(data.message);
+    //     } catch (error) {
+    //         console.error('Error saving match:', error);
+    //     }
+    // };
 
     const stopGame = (winningPlayer) => {
         // console.log('Game Over');
@@ -383,14 +383,14 @@ function tournamentGame({
                 if (player1.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    saveMatch(player1, player2, player1, duration);
+                    // saveMatch(player1, player2, player1, duration);
                 }
                 stopGame(player1);
             } else if (player2.point >= 5) {
                 if (player2.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    saveMatch(player1, player2, player2, duration);
+                    // saveMatch(player1, player2, player2, duration);
                 }
                 stopGame(player2);
             }

@@ -299,6 +299,7 @@
     font-weight: bold;
 }
 
+
 .vsBtn:active {
     transition: none;
     transform: scale(1);
@@ -346,4 +347,36 @@
     color: white;
     text-shadow:    0 0 2px var(--color-2),
                     0 0 8px var(--color-2);
+}
+.pl1-profile-image, .pl2-profile-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -180px;
+}
+
+.pl1-profile-image .profile-picture, .pl2-profile-image .profile-picture {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(145deg, black, rgb(75, 50, 3));
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.pl1-profile-image::after, .pl2-profile-image::after {
+    position: absolute;
+    content: '';
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: none;
+    border: solid 2px white;
+    box-shadow: inset 0 0 5px black,
+                inset 0 0 10px black,
+                inset 0 0 25px black,
+                0 0 5px white;
 }

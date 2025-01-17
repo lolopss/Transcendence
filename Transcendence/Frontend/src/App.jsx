@@ -21,7 +21,7 @@ import './FriendList.css';  // Ensure the CSS file is imported
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('authToken');
   if (!token) {
-    // console.log("No token found. Redirecting to login.");
+    console.log("No token found. Redirecting to login.");
     return <Navigate to="/login" replace />;
   }
   return children;
@@ -72,20 +72,44 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         {/* <Route path="/register" element={<RegisterPage />} /> */}
         <Route path="/verify-2fa" element={<Verify2FA />} />
-        <Route path="/game-menu" element={/*<ProtectedRoute>*/<GameMenu />/*</ProtectedRoute>*/} />
-        <Route path="/game" element={/*<ProtectedRoute>*/<Game />/*</ProtectedRoute>*/} />
-        <Route path="/ai-game" element={/*<ProtectedRoute>*/<AIGame />/*</ProtectedRoute>*/} />
-        <Route path="/multiplayer" element={/*<ProtectedRoute>*/<Multiplayer />/*</ProtectedRoute>*/} />
-        <Route path="/menu" element={/*<ProtectedRoute>*/<Menu />/*</ProtectedRoute>*/} />
-        <Route path="/edit-account" element={<EditAccount />} />
-        {/* <Route path="/matchmaking" element={<ProtectedRoute><Matchmaking /></ProtectedRoute>} /> */}
+        <Route path="/game-menu" element={<ProtectedRoute><GameMenu /></ProtectedRoute>} />
+        <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
+        <Route path="/ai-game" element={<ProtectedRoute><AIGame /></ProtectedRoute>} />
+        <Route path="/multiplayer" element={<ProtectedRoute><Multiplayer /></ProtectedRoute>} />
+        <Route path="/menu" element={<ProtectedRoute><Menu /></ProtectedRoute>} />
+        <Route path="/edit-account" element={<ProtectedRoute><EditAccount /></ProtectedRoute>} />
         <Route path="/register42" element={<OAuthCallback />} /> {/* OAuth callback route */}
-        <Route path="/profile/:username" element={/*<ProtectedRoute>*/<FriendProfile />/*</ProtectedRoute>*/} />
-        <Route path="/profile/" element={/*<ProtectedRoute>*/<Profile />/*</ProtectedRoute>*/} />
-        <Route path="/tournament" element={<Tournament />} />
+        <Route path="/profile/:username" element={<ProtectedRoute><FriendProfile /></ProtectedRoute>} />
+        <Route path="/profile/" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/tournament" element={<ProtectedRoute><Tournament /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </>
   );
 };
+
+//   return (
+  //     <>
+  //       {showFriendList && <FriendList />}
+  //       <Routes>
+  //         <Route path="/login" element={<LoginPage />} />
+  //         {/* <Route path="/register" element={<RegisterPage />} /> */}
+//         <Route path="/verify-2fa" element={<Verify2FA />} />
+//         <Route path="/game-menu" element={<GameMenu />} />
+//         <Route path="/game" element={<Game />} />
+//         <Route path="/ai-game" element={<AIGame />} />
+//         <Route path="/multiplayer" element={<Multiplayer />} />
+//         <Route path="/menu" element={<Menu />} />
+//         <Route path="/edit-account" element={<EditAccount />} />
+//         {/* <Route path="/matchmaking" element={<Matchmaking />} /> */}
+//         <Route path="/register42" element={<OAuthCallback />} /> {/* OAuth callback route */}
+//         <Route path="/profile/:username" element={<FriendProfile />} />
+//         <Route path="/profile/" element={<Profile />} />
+//         <Route path="/tournament" element={<Tournament />} />
+//         <Route path="*" element={<Navigate to="/login" />} />
+//       </Routes>
+//     </>
+//   );
+// };
+
 export default App;

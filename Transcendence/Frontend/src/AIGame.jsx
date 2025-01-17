@@ -57,6 +57,7 @@ function AIGame({
 }) {
     const [nickname, setNickname] = useState('User');
     const [profilePicture, setProfilePicture] = useState('/default-profile.png');
+    const [profilePictureIA, setProfilePictureIA] = useState('/media/profile_pictures/pepe-ia2.gif');
     const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
@@ -689,9 +690,17 @@ function AIGame({
                 <div className='vsMenu'>
                     <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
                     <div className="vsTitles">
-                        <h1 className='vsPl1'>{nickname}</h1>
+                    <h1 className='vsPl1'>{nickname}
+                            <div className="pl1-profile-image">
+                                <img src={profilePicture} className="profile-picture" />
+                            </div>
+                        </h1>
                         <h1 className='vsVs'> vs </h1>
-                        <h1 className='vsPl2'>{player2Nickname}</h1>
+                        <h1 className='vsPl2'>{player2Nickname}
+                            <div className="pl2-profile-image">
+                                <img src={profilePictureIA} className="profile-picture" />
+                            </div>
+                        </h1>
                     </div>
                     {player2Nickname === 'PaddleMan' && (
                         <div>

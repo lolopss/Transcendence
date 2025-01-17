@@ -426,6 +426,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 class GetTranslations(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated with JWT
+
     def get(self, request, language_code):
         if language_code not in ['en', 'es', 'fr']:
             return JsonResponse({'error': 'Invalid language code'}, status=400)
@@ -459,123 +461,101 @@ class GetTranslations(APIView):
 
         return JsonResponse(translations)
 
-# # This will hold your matchmaking queue
-# matchmaking_queue = []
 
-# @api_view(['POST'])
-# async def matchmaking(request):
-#     user_id = request.data.get('user_id')
-#     matchmaking_queue.append(user_id)
+# class JoinQueue(APIView):
+#     permission_classes = [AllowAny]
 
-#     if len(matchmaking_queue) >= 2:
-#         player1_id = matchmaking_queue.pop(0)
-#         player2_id = matchmaking_queue.pop(0)
+#     def post(self, request):
+#         # Extract the JWT token from the Authorization header
+#         auth_header = request.headers.get('Authorization')
+#         token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
 
-#         player1 = Profile.objects.get(user_id=player1_id)
-#         player2 = Profile.objects.get(user_id=player2_id)
+#         # Decode the token to get the user_id
+#         validated_token = JWTAuthentication().get_validated_token(token)
+#         user_id = validated_token['user_id']  # Extract user_id from the token payload
 
-#         # Return the nicknames instead of just user IDs
-#         return Response({
-#             'message': 'Match found',
-#             'players': [player1.nickname, player2.nickname]
-#         })
-
-#     return Response({'message': 'Waiting for another player...'})
-
-class JoinQueue(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        # Extract the JWT token from the Authorization header
-        auth_header = request.headers.get('Authorization')
-        token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
-
-        # Decode the token to get the user_id
-        validated_token = JWTAuthentication().get_validated_token(token)
-        user_id = validated_token['user_id']  # Extract user_id from the token payload
-
-        # Check if the player is already in the queue
-        if not WaitingPlayerModel.objects.filter(player_id=user_id).exists():
-            # Add player to the waiting queue if they aren't already in it
-            WaitingPlayerModel.objects.create(player_id=user_id)
-            return Response({'message': 'You have joined the queue.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'You are already in the queue.'}, status=status.HTTP_200_OK)
+#         # Check if the player is already in the queue
+#         if not WaitingPlayerModel.objects.filter(player_id=user_id).exists():
+#             # Add player to the waiting queue if they aren't already in it
+#             WaitingPlayerModel.objects.create(player_id=user_id)
+#             return Response({'message': 'You have joined the queue.'}, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'message': 'You are already in the queue.'}, status=status.HTTP_200_OK)
 
 
-class CheckJoinGame(APIView):
-    permission_classes = (permissions.AllowAny,)
+# class CheckJoinGame(APIView):
+#     permission_classes = (permissions.AllowAny,)
 
 
-    def post(self, request):
-        # Initialize logging
-        logger = logging.getLogger(__name__)
+#     def post(self, request):
+#         # Initialize logging
+#         logger = logging.getLogger(__name__)
 
-        # Manage the game queue
-        ManageGameQueue()
+#         # Manage the game queue
+#         ManageGameQueue()
 
-        # Extract JWT token from Authorization header
-        auth_header = request.headers.get('Authorization')
+#         # Extract JWT token from Authorization header
+#         auth_header = request.headers.get('Authorization')
 
-        token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
+#         token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
 
-        # Decode the token to get the user_id
-        validated_token = JWTAuthentication().get_validated_token(token)
-        user_id = validated_token['user_id']
+#         # Decode the token to get the user_id
+#         validated_token = JWTAuthentication().get_validated_token(token)
+#         user_id = validated_token['user_id']
 
-        # Query the GameServerModel to check if the user is in an existing game
-        game_server = GameServerModel.objects.filter(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)).first()
+#         # Query the GameServerModel to check if the user is in an existing game
+#         game_server = GameServerModel.objects.filter(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)).first()
 
-        # Check game state and return appropriate response
-        if game_server:
-            if game_server.state == 'full':
-                return Response({'gameId': game_server.serverId}, status=status.HTTP_200_OK)
-            else:
-                return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
-        else:
-            return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
+#         # Check game state and return appropriate response
+#         if game_server:
+#             if game_server.state == 'full':
+#                 return Response({'gameId': game_server.serverId}, status=status.HTTP_200_OK)
+#             else:
+#                 return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
+#         else:
+#             return Response({'message': 'Searching for a game.'}, status=status.HTTP_200_OK)
 
-class ExitQueue(APIView):
-    permission_classes = [permissions.AllowAny]
+# class ExitQueue(APIView):
+#     permission_classes = [permissions.AllowAny]
 
-    def post(self, request):
-        logger = logging.getLogger(__name__)
-        auth_header = request.headers.get('Authorization')
-        token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
+#     def post(self, request):
+#         logger = logging.getLogger(__name__)
+#         auth_header = request.headers.get('Authorization')
+#         token = auth_header.split(" ")[1] if auth_header and " " in auth_header else None
 
-        # Decode the token to get the user_id
-        validated_token = JWTAuthentication().get_validated_token(token)
-        user_id = validated_token['user_id']  # Extract user_id from the token payload
-        logger.info(f"User ID for exit queue: {user_id}")
+#         # Decode the token to get the user_id
+#         validated_token = JWTAuthentication().get_validated_token(token)
+#         user_id = validated_token['user_id']  # Extract user_id from the token payload
+#         logger.info(f"User ID for exit queue: {user_id}")
 
-        # Attempt to find the game server; handle the case where no match is found
-        game_server = GameServerModel.objects.filter(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)).first()
+#         # Attempt to find the game server; handle the case where no match is found
+#         game_server = GameServerModel.objects.filter(Q(firstPlayerId=user_id) | Q(secondPlayerId=user_id)).first()
 
-        # Remove the player from the waiting queue
-        try:
-            waiting_player = WaitingPlayerModel.objects.get(player_id=user_id)
-            waiting_player.delete()
-            logger.info(f"Player {user_id} removed from waiting queue.")
-        except WaitingPlayerModel.DoesNotExist:
-            logger.info(f"Player {user_id} not found in waiting queue.")
+#         # Remove the player from the waiting queue
+#         try:
+#             waiting_player = WaitingPlayerModel.objects.get(player_id=user_id)
+#             waiting_player.delete()
+#             logger.info(f"Player {user_id} removed from waiting queue.")
+#         except WaitingPlayerModel.DoesNotExist:
+#             logger.info(f"Player {user_id} not found in waiting queue.")
 
-        # If a matching game server exists, reset the player slot and state
-        if game_server:
-            if int(game_server.firstPlayerId) == int(user_id):
-                game_server.firstPlayerId = -1
-            if int(game_server.secondPlayerId) == int(user_id):
-                game_server.secondPlayerId = -1
+#         # If a matching game server exists, reset the player slot and state
+#         if game_server:
+#             if int(game_server.firstPlayerId) == int(user_id):
+#                 game_server.firstPlayerId = -1
+#             if int(game_server.secondPlayerId) == int(user_id):
+#                 game_server.secondPlayerId = -1
 
-            # Update state back to 'waiting' only if both slots are empty
-            if game_server.firstPlayerId == -1 and game_server.secondPlayerId == -1:
-                game_server.state = 'waiting'
+#             # Update state back to 'waiting' only if both slots are empty
+#             if game_server.firstPlayerId == -1 and game_server.secondPlayerId == -1:
+#                 game_server.state = 'waiting'
 
-            game_server.save()
-            logger.info(f"Game server {game_server.serverId} updated: {game_server.firstPlayerId}, {game_server.secondPlayerId}, state: {game_server.state}")
-        else:
-            logger.info(f"No game server found for player {user_id}.")
+#             game_server.save()
+#             logger.info(f"Game server {game_server.serverId} updated: {game_server.firstPlayerId}, {game_server.secondPlayerId}, state: {game_server.state}")
+#         else:
+#             logger.info(f"No game server found for player {user_id}.")
 
-        return Response({"message": 'You left the queue'}, status=status.HTTP_200_OK)
+#         return Response({"message": 'You left the queue'}, status=status.HTTP_200_OK)
 
 #to check if properly connected
 class UserDetails(APIView):
@@ -616,7 +596,7 @@ class UserDetails(APIView):
                 'score_player2': match.score_player2,
                 'duration': match.duration,  # Time spent in seconds
 
-            }
+            }   
             for match in match_history
         ]
 

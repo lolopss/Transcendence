@@ -489,9 +489,17 @@ function Game({
                 <div className='vsMenu'>
                     <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
                     <div className="vsTitles">
-                        <h1 className='vsPl1'>{nickname}</h1>
+                        <h1 className='vsPl1'>{nickname}
+                            <div className="pl1-profile-image">
+                                <img src={profilePicture} className="profile-picture" />
+                            </div>
+                        </h1>
                         <h1 className='vsVs'> vs </h1>
-                        <h1 className='vsPl2'>{player2Nickname}</h1>
+                        <h1 className='vsPl2'>{player2Nickname}
+                            <div className="pl2-profile-image">
+                                <img src={'/media/profile_pictures/pepe_boxe.png'} className="profile-picture" />
+                            </div>
+                        </h1>
                     </div>
                     {player2Nickname === 'PaddleMan' && (
                         <div>

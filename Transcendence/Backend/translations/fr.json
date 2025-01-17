@@ -26,7 +26,7 @@
 	"vs": "Duel",
 	"vsAI": "Duel IA",
 	"multiplayer": "Multijoueur",
-	"username": "Pseudo",
+	"username": "Nom d'Utilisateur",
 	"friends": "Amis",
 	"addFriends": "Ajouter un Ami",
 	"stats": "Stats",
@@ -52,5 +52,7 @@
 	"switch": "Echanger",
 	"teleportation": "Téléportation",
 	"won": "a Gagné",
-	"restartGame": "Rejouer"
+	"restartGame": "Rejouer",
+	"security": "Sécurité",
+	"nickname": "Pseudonyme"
   }

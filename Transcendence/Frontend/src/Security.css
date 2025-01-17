@@ -1,0 +1,111 @@
+:root{
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    --back-color: rgb(20, 20, 20);
+    --back-color-1: rgb(35, 35, 35);
+    --back-color-2: rgb(25, 25, 25);
+    --text-color: white;
+    --color-1: rgb(255, 150, 0);
+    --color-2: rgb(187, 0, 255);
+    overflow: hidden;
+}
+
+.securityBody {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-width: 100vw;
+    background: var(--back-color);
+    transition: .5s;
+}
+
+.securityBody:has(.security-container:hover) {
+    background: transparent;
+}
+
+.securityHeader {
+    position: fixed;
+    height: 100%;
+    width: 200px;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: var(--back-color-1);
+    color: white;
+    z-index: 999;
+}
+
+.securityLogo {
+    font-size: 35px;
+    margin: 30px 0 30px 5px;
+    user-select: none;
+    transform-origin: left;
+    transition: .2s;
+}
+
+.securityLogo:hover {
+    transform: scale(1.1);
+    text-shadow: 0 0 5px var(--color-1);
+}
+
+.navSecurity, .navAccount {
+    width: 100%;
+    background: var(--color-1);
+    padding: 25px 0 25px 5px;
+    transform-origin: left;
+    text-align: left;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.navSecurity:hover, .navAccount:hover, .navSecurity:hover {
+    border-right: solid 5px orange;
+    box-shadow: 0 0 3px var(--color-1),
+                0 0 8px var(--color-1);
+    transform: scaleX(1.1);
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.securityNav:has(.navSecurity:hover) .navAccount,
+.securityNav:has(.navSecurity:hover) .navProfile,
+.securityNav:has(.navProfile:hover) .navSecurity,
+.securityNav:has(.navProfile:hover) .navAccount,
+.securityNav:has(.navAccount:hover) .navSecurity,
+.securityNav:has(.navAccount:hover) .navProfile {
+    transition: none;
+    filter: brightness(.8);
+}
+
+.security-container {
+    width: clamp(300px, 70%, 500px);
+    height: fit-content;
+    max-height: 90vh;
+    padding: 20px;
+    text-align: center;
+    background-color: var(--back-color-1);
+    color: white;
+    border: solid 2px white;
+    border-radius: 5px;
+    box-shadow: 0 0 5px white,
+                0 0 10px white,
+                0 0 20px white,
+                0 0 30px var(--back-color),
+                inset 0 0 5px black,
+                inset 0 0 10px black;
+    transition: .2s;
+}
+
+.security-container:hover {
+    box-shadow: 0 0 5px white,
+                0 0 10px white;
+}

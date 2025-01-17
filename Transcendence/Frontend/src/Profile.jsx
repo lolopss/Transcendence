@@ -94,6 +94,7 @@ const Profile = () => {
                 <nav className='profileNav'>
                     <div className="navProfile" onClick={()=>navigate('/profile')}>{translations.profile}</div>
                     <div className="navAccount" onClick={()=>navigate('/edit-account')}>{translations.account}</div>
+                    <div className="navSecurity" onClick={()=>navigate('/security')}>{translations.security}</div>
                 </nav>
             </header>
             <div className="profile-container">

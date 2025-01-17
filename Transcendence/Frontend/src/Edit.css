@@ -68,7 +68,7 @@
     transition: .2s;
 }
 
-.navProfile:hover, .navAccount:hover {
+.navProfile:hover, .navAccount:hover, .navSecurity:hover {
     border-right: solid 5px orange;
     box-shadow: 0 0 3px var(--color-1),
                 0 0 8px var(--color-1);
@@ -77,7 +77,11 @@
     letter-spacing: 2px;
 }
 
+.accountNav:has(.navSecurity:hover) .navAccount,
+.accountNav:has(.navSecurity:hover) .navProfile,
+.accountNav:has(.navProfile:hover) .navSecurity,
 .accountNav:has(.navProfile:hover) .navAccount,
+.accountNav:has(.navAccount:hover) .navSecurity,
 .accountNav:has(.navAccount:hover) .navProfile {
     transition: none;
     filter: brightness(.8);

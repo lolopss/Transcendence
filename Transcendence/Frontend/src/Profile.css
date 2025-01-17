@@ -67,7 +67,7 @@
     transition: .2s;
 }
 
-.navProfile:hover, .navAccount:hover {
+.navProfile:hover, .navAccount:hover, .navSecurity:hover {
     border-right: solid 5px orange;
     box-shadow: 0 0 3px var(--color-1),
                 0 0 8px var(--color-1);
@@ -76,7 +76,11 @@
     letter-spacing: 2px;
 }
 
+.profileNav:has(.navSecurity:hover) .navAccount,
+.profileNav:has(.navSecurity:hover) .navProfile,
+.profileNav:has(.navProfile:hover) .navSecurity,
 .profileNav:has(.navProfile:hover) .navAccount,
+.profileNav:has(.navAccount:hover) .navSecurity,
 .profileNav:has(.navAccount:hover) .navProfile {
     transition: none;
     filter: brightness(.8);
@@ -85,7 +89,7 @@
 .profile-container {
     width: clamp(300px, 70%, 500px);
     height: fit-content;
-    max-height: 90vh;
+    max-height: 80vh;
     padding: 20px;
     text-align: center;
     background-color: var(--back-color-1);
@@ -98,6 +102,8 @@
                 0 0 30px var(--back-color),
                 inset 0 0 5px black,
                 inset 0 0 10px black;
+    overflow-y: scroll;
+    scrollbar-width: thin;
     transition: .2s;
 }
 
@@ -167,10 +173,9 @@
     margin-top: 20px;
     background-color: #333;
     padding: 20px;
+    padding-bottom: 10px;
     border-radius: 5px;
-    max-height: 250px;
-    overflow-y: scroll;
-    scrollbar-width: thin;
+    /* max-height: 250px; */
 }
 
 .match-history h3 {

@@ -134,6 +134,7 @@ function GameMenu() {
             refBtn.current.addEventListener('mouseover', () => {
                 body.current.style.backgroundImage=backImage;
                 body.current.style.backgroundSize="cover";
+                body.current.style.background="black";
                 body.current.style.backgroundPosition="center center";
                 body.current.style.boxShadow="inset 0 0 50px black,inset 0 0 100px black,inset 0 0 150px black,inset 0 0 270px black,inset 0 0 400px black";
                 border1.current.style.opacity=0;
@@ -145,6 +146,7 @@ function GameMenu() {
             })
             refBtn.current.addEventListener('mouseout', () => {
                 body.current.style.backgroundImage="";
+                body.current.style.background="";
                 border1.current.style.opacity=1;
                 border2.current.style.opacity=1;
                 borderAnim.current.style.opacity=0;
@@ -166,10 +168,10 @@ function GameMenu() {
             menu.current.style.boxShadow='';
         })
 
-        applyEvent(buttonStartVs, "url('../Icons/fondviolet.png')");
-        applyEvent(buttonStartMultiplayer, "url('../Icons/Multiplayer.png')");
-        applyEvent(buttonStartAi, "url('../Icons/AIviolet.png')");
-        applyEvent(buttonStartTournament, "url('../Icons/Tournament.png')");
+        applyEvent(buttonStartVs, "");
+        applyEvent(buttonStartMultiplayer, "");
+        applyEvent(buttonStartAi, "");
+        applyEvent(buttonStartTournament, "");
 
         pongTitle.current.addEventListener('mousedown', () => {
             pongTitle.current.style.transition="none";

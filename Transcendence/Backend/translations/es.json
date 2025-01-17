@@ -52,5 +52,7 @@
     "switch": "Intercambiar",
     "teleportation": "Teletransportación",
 	"won": "Ganó",
-    "restartGame": "Reiniciar juego"
+    "restartGame": "Reiniciar juego",
+	"security": "Seguridad",
+	"nickname": "Apodo"
   }

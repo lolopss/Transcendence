@@ -12,6 +12,7 @@ const FriendList = () => {
     const [translations, setTranslations] = useState({});
 
     useEffect(() => {
+        console.log("in friendlist");
         const fetchUserDetails = async () => {
             try {
                 const response = await fetch('/api/user-details/', {

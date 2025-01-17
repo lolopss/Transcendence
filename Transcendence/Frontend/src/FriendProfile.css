@@ -89,7 +89,7 @@
 .friend-profile-container {
     width: clamp(300px, 70%, 500px);
     height: fit-content;
-    max-height: 90vh;
+    max-height: 80vh;
     padding: 20px;
     text-align: center;
     background-color: var(--back-color-1);
@@ -102,6 +102,8 @@
                 0 0 30px var(--back-color),
                 inset 0 0 5px black,
                 inset 0 0 10px black;
+    overflow-y: scroll;
+    scrollbar-width: thin;
     transition: .2s;
 }
 
@@ -171,10 +173,9 @@
     margin-top: 20px;
     background-color: #333;
     padding: 20px;
+    padding-bottom: 10px;
     border-radius: 5px;
-    max-height: 250px;
-    overflow-y: scroll;
-    scrollbar-width: thin;
+    /* max-height: 250px; */
 }
 
 .match-history h3 {

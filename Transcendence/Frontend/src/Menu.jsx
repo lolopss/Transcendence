@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import GameButton from './GameButton.jsx';
 import './FriendList.css';
 import './Menu.css';
 
@@ -250,6 +251,7 @@ function Menu() {
             refBtn.current.addEventListener('mouseover', () => {
                 body.current.style.backgroundImage=backImage;
                 body.current.style.backgroundSize="cover";
+                body.current.style.background="black";
                 body.current.style.boxShadow="inset 0 0 50px black,inset 0 0 100px black,inset 0 0 150px black,inset 0 0 270px black,inset 0 0 400px black";
                 border1.current.style.opacity=0;
                 border2.current.style.opacity=0;
@@ -260,12 +262,17 @@ function Menu() {
             })
             refBtn.current.addEventListener('mouseout', () => {
                 body.current.style.backgroundImage="";
+                body.current.style.background="";
                 border1.current.style.opacity=1;
                 border2.current.style.opacity=1;
                 borderAnim.current.style.opacity=0;
                 borderAnim.current.classList.remove('border-is-animate');
                 borderAnim2.current.style.opacity=0;
                 borderAnim2.current.classList.remove('border2-is-animate');
+                refBtn.current.style.transition="";
+                refBtn.current.style.border="";
+                refBtn.current.style.background="";
+                refBtn.current.style.boxShadow="";
             })
         }
     }
@@ -281,9 +288,9 @@ function Menu() {
             menu.current.style.boxShadow='';
         })
 
-        applyEvent(buttonStart, "url('../Icons/Capture d’écran du 2024-11-18 15-19-32.png')");
-        applyEvent(buttonOptions, "url('../Icons/04-1920x1080-93bc8f9277c05c92d97d689c2088150f.png')");
-        applyEvent(buttonProfile, "url('../Icons/Capture d’écran du 2024-11-18 15-42-04.png')");
+        applyEvent(buttonStart, "");
+        applyEvent(buttonOptions, "");
+        applyEvent(buttonProfile, "");
         applyEvent(buttonLogout, "");
 
         pongTitle.current.addEventListener('mousedown', () => {
@@ -399,10 +406,10 @@ function Menu() {
     // );
 }
 
-function GameButton({ name, onClick, refbtn }) {
-    return (
-        <button className="btn" ref={refbtn} onClick={onClick}>{name}</button>
-    );
-}
+// function GameButton({ name, onClick, refbtn }) {
+//     return (
+//         <button className="btn" ref={refbtn} onClick={onClick}>{name}</button>
+//     );
+// }
 
 export default Menu;

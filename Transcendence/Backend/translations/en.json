@@ -52,5 +52,7 @@
     "switch": "Switch",
     "teleportation": "Teleportation",
 	"won": "Won",
-    "restartGame": "Restart Game"
+    "restartGame": "Restart Game",
+	"security": "Security",
+	"nickname": "nickname"
   }

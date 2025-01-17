@@ -152,6 +152,7 @@ const EditAccount = () => {
                 <nav className='accountNav'>
                     <div className="navProfile" onClick={()=>navigate('/profile')}>{translations.profile}</div>
                     <div className="navAccount" onClick={()=>navigate('/edit-account')}>{translations.account}</div>
+                    <div className="navSecurity" onClick={()=>navigate('/security')}>{translations.security}</div>
                 </nav>
             </header>
             <div className="accountWrapper">
@@ -165,12 +166,8 @@ const EditAccount = () => {
                         <input className='accountInput' type="email" name="email" value={userDetails.email} onChange={handleChange} />
                     </label>
                     <label className='accountLabel'>
-                    {translations.firstName}:
-                        <input className='accountInput' type="text" name="firstName" value={userDetails.firstName} onChange={handleChange} />
-                    </label>
-                    <label className='accountLabel'>
-                    {translations.lastName}:
-                        <input className='accountInput' type="text" name="lastName" value={userDetails.lastName} onChange={handleChange} />
+                    {translations.nickname}:
+                        <input className='accountInput' type="text" name="nickname" value={userDetails.nickname} onChange={handleChange} />
                     </label>
                     <label className='accountLabel'>
                     {translations.profilePicture}:

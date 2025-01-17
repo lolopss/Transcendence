@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Doughnut } from 'react-chartjs-2';
+import { Chart, ArcElement } from 'chart.js';
 import './Profile.css'; // Ensure you have a CSS file for styling
+
+// Register the ArcElement
+Chart.register(ArcElement);
 
 const Profile = () => {
     const [language, setLanguage] = useState('en');
@@ -87,6 +92,17 @@ const Profile = () => {
         return `${hours}h ${minutes}m ${remainingSeconds}s`;
     };
 
+    const winrateData = {
+        labels: ['Wins', 'Losses'],
+        datasets: [
+            {
+                data: userDetails.wins === 0 && userDetails.losses === 0 ? [1] : [userDetails.wins, userDetails.losses],
+                backgroundColor: userDetails.wins === 0 && userDetails.losses === 0 ? ['#d3d3d3'] : ['#36A2EB', '#FF6384'],
+                hoverBackgroundColor: userDetails.wins === 0 && userDetails.losses === 0 ? ['#d3d3d3'] : ['#36A2EB', '#FF6384'],
+            },
+        ],
+    };
+
     return (
         <div className="profileBody">
             <header className='profileHeader'>
@@ -113,7 +129,12 @@ const Profile = () => {
                     <p>{translations.goalsTaken}: {userDetails.goals_taken}</p>
                     <p>{translations.longestExchange}: {userDetails.longuest_exchange}</p>
                     <p>{translations.aces}: {userDetails.ace}</p>
-                    <p>{translations.winrate}: {userDetails.winrate.toFixed(2)}%</p>
+                    <div className="winrate-container">
+                        <p>{translations.winrate}: {userDetails.winrate.toFixed(2)}%</p>
+                        <div className="winrate-chart">
+                            <Doughnut data={winrateData} />
+                        </div>
+                    </div>
                     <p>{translations.totalTimeSpent}: {formatTime(userDetails.total_time_spent)}</p>
                 </div>
                 <div className="match-history">

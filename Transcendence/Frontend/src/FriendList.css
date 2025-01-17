@@ -173,3 +173,9 @@
     margin-top: 10px;
     color: white;
 }
+
+.friendName {
+    color: white;
+    font-weight: 600;
+    margin-right: 5px;
+}

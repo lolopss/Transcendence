@@ -12,7 +12,6 @@ const FriendList = () => {
     const [translations, setTranslations] = useState({});
 
     useEffect(() => {
-        console.log("in friendlist");
         const fetchUserDetails = async () => {
             try {
                 const response = await fetch('/api/user-details/', {
@@ -145,7 +144,7 @@ const FriendList = () => {
                 {friends.map(friend => (
                     <li key={friend.username} onClick={() => handleFriendClick(friend.username)}>
                         <img src={friend.profilePicture} alt={friend.username} className="friend-picture" />
-                        <span>{friend.nickname}</span>
+                        <span className='friendName'>{friend.nickname}</span>
                         <span className={`status ${friend.isOnline ? 'online' : 'offline'}`}></span>
                     </li>
                 ))}

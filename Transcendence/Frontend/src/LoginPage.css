@@ -5,10 +5,6 @@
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.test {
-    z-index: 99;
-}
-
 .body {
     position: relative;
     overflow: hidden;
@@ -16,8 +12,6 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    /* background-color: violet; */
-    /* background: url('../Icons/Capture d’écran 2024-11-22 152222.png') no-repeat; */
     background-size: cover;
     background-position: center 90px;
 }

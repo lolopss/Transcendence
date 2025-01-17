@@ -67,7 +67,7 @@
     transition: .2s;
 }
 
-.navProfile:hover, .navAccount:hover, .navFriendProfile:hover {
+.navProfile:hover, .navAccount:hover, .navSecurity:hover, .navFriendProfile:hover {
     border-right: solid 5px orange;
     box-shadow: 0 0 3px var(--color-1),
                 0 0 8px var(--color-1);
@@ -77,11 +77,17 @@
 }
 
 .friendProfileNav:has(.navProfile:hover) .navAccount,
+.friendProfileNav:has(.navSecurity:hover) .navAccount,
 .friendProfileNav:has(.navFriendProfile:hover) .navAccount,
 .friendProfileNav:has(.navAccount:hover) .navProfile,
+.friendProfileNav:has(.navSecurity:hover) .navProfile,
 .friendProfileNav:has(.navFriendProfile:hover) .navProfile,
 .friendProfileNav:has(.navProfile:hover) .navFriendProfile,
-.friendProfileNav:has(.navAccount:hover) .navFriendProfile {
+.friendProfileNav:has(.navAccount:hover) .navFriendProfile,
+.friendProfileNav:has(.navSecurity:hover) .navFriendProfile,
+.friendProfileNav:has(.navProfile:hover) .navSecurity,
+.friendProfileNav:has(.navAccount:hover) .navSecurity,
+.friendProfileNav:has(.navFriendProfile:hover) .navSecurity {
     transition: none;
     filter: brightness(.8);
 }

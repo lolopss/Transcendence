@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import "./OAuthCallback.css"
 
 const OAuthCallback = () => {
   const [error, setError] = useState(null);
@@ -83,9 +84,11 @@ const OAuthCallback = () => {
   }, [navigate]);
 
   return (
-    <div>
-      <h2>Processing OAuth...</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="authBody">
+      <div className='oAuth'>
+        <h2 className='oAuthText'>Processing OAuth...</h2>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+      </div>
     </div>
   );
 };

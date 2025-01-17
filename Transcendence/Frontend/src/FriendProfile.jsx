@@ -86,6 +86,7 @@ const FriendProfile = () => {
                 <nav className='friendProfileNav'>
                     <div className="navProfile" onClick={()=>navigate('/profile')}>Profile</div>
                     <div className="navAccount" onClick={()=>navigate('/edit-account')}>Account</div>
+                    <div className="navSecurity" onClick={()=>navigate('/security')}>Security</div>
                     <div className="navFriendProfile" onClick={()=>navigate(`/profile/${friendDetails.username}`)}>FriendProfile</div>
                 </nav>
             </header>

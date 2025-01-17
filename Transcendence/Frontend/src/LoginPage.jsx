@@ -170,8 +170,6 @@ const LoginPage = () => {
         <header className='loginHeader'>
             <h2 className="logo">PONG</h2>
             <nav className="navigation">
-                {/* <a href="#">Home</a>
-                <a href="#">About</a> */}
                 <button className="btnLogin-popup" onClick={handleBtnPopupClick}>Login</button>
             </nav>
         </header>

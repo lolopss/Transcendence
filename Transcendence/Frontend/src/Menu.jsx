@@ -317,25 +317,6 @@ function Menu() {
     },[]);
 
     return (
-        // <div>
-        //     {is2FAEnabled && (
-        //         <div>
-        //             <p>{translations.scan_qr}</p>
-        //             <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(provisioningUri)}&size=200x200`} alt="QR Code" />
-        //         </div>
-        //     )}
-        //     <div>
-        //         <h3>Account</h3>
-        //         <GameButton usage="Edit your account" name="Edit Account" onClick={() => navigate('/edit-account')} />
-        //         <div className="data-privacy">
-        //             <h3>Data Privacy Rights</h3>
-        //             <p>You have the right to delete or anonymize your account. Please use the buttons below to exercise these rights.</p>
-        //             <GameButton usage="Anonymize your account" name="Anonymize Account" onClick={anonymizeAccount} />
-        //             <GameButton usage="Delete your account" name="Delete Account" onClick={deleteAccount} />
-        //         </div>
-        //     </div>
-        // </div>
-
         <div className='menu-body' ref={body}>
             <span className="border" ref={border1}></span>
             <span className="border" ref={border2}></span>
@@ -346,7 +327,7 @@ function Menu() {
                 <div className="menuButton">
                     <GameButton name={translations.start_btn} onClick={() => navigate('/game-menu')} refbtn={buttonStart}/>
                     <GameButton name={translations.options_btn} onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
-                    <GameButton name={translations.profile} onClick={() => navigate('/profile')} refbtn={buttonProfile}/>
+                    {/* <GameButton name={translations.profile} onClick={() => navigate('/profile')} refbtn={buttonProfile}/> */}
                     <GameButton name={translations.logout_btn} onClick={handleLogout} refbtn={buttonLogout}/>
                 </div>
             </div>
@@ -363,53 +344,6 @@ function Menu() {
             </div>
         </div>
     );
-
-    // return (
-    //     <div>
-    //         <h2>{translations.title}</h2>
-    //         <GameButton usage={translations.start_game} name={translations.start_btn} onClick={() => navigate('/game')} />
-    //         <GameButton usage={translations.start_multiplayer} name={translations.start_btn} onClick={() => navigate('/multiplayer')} />
-    //         <GameButton usage={translations.start_game_ai} name={translations.start_btn} onClick={() => navigate('/ai-game')} />
-    //         <GameButton usage={translations.tournament} name={translations.start_btn} onClick={() => navigate('/tournament')} />
-    //         <GameButton usage={translations.see_options} name={translations.options_btn} />
-    //         <GameButton usage={translations.quit_game} name={translations.quit_btn} />
-    //         <GameButton usage={translations.find_match} name={translations.find_btn} onClick={() => navigate('/matchmaking')} />
-    //         <GameButton usage={translations.logout} name={translations.logout} onClick={handleLogout} />
-    //         <GameButton usage={translations.print_details} name={translations.print_btn} onClick={printUserDetails} />
-    //         <GameButton usage={translations.toggle_2fa} name={`${translations.toggle_2fa} ${is2FAEnabled ? 'Enabled' : 'Disabled'}`} onClick={toggle2FA} />
-    //         {is2FAEnabled && (
-    //             <div>
-    //                 <p>{translations.scan_qr}</p>
-    //                 <img src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(provisioningUri)}&size=200x200`} alt="QR Code" />
-    //             </div>
-    //         )}
-    //         <div>
-    //             <h3>{translations.language_preference}</h3>
-    //             <button onClick={() => updateLanguage('en')} disabled={language === 'en'}>{translations.english}</button>
-    //             <button onClick={() => updateLanguage('es')} disabled={language === 'es'}>{translations.spanish}</button>
-    //             <button onClick={() => updateLanguage('fr')} disabled={language === 'fr'}>{translations.french}</button>
-    //         </div>
-    //         <div>
-    //             <h3>Account</h3>
-    //             <GameButton usage="Edit your account" name="Edit Account" onClick={() => navigate('/edit-account')} />
-    //             <div className="data-privacy">
-    //                 <h3>Data Privacy Rights</h3>
-    //                 <p>You have the right to delete or anonymize your account. Please use the buttons below to exercise these rights.</p>
-    //                 <GameButton usage="Anonymize your account" name="Anonymize Account" onClick={anonymizeAccount} />
-    //                 <GameButton usage="Delete your account" name="Delete Account" onClick={deleteAccount} />
-    //             </div>
-    //         </div>
-    //         <div className="profile-picture" onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
-    //             {profilePicture && <img src={profilePicture} alt="Profile" />}
-    //         </div>
-    //     </div>
-    // );
 }
-
-// function GameButton({ name, onClick, refbtn }) {
-//     return (
-//         <button className="btn" ref={refbtn} onClick={onClick}>{name}</button>
-//     );
-// }
 
 export default Menu;

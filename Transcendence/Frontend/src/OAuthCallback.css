@@ -1,0 +1,29 @@
+.authBody {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url("../Icons/Login.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.oAuth {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.oAuthText {
+    color: white;
+    font-size: 25px;
+    font-weight: 700;
+}

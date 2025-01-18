@@ -1,46 +1,47 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Paddle, Player, Ball, width, height, ratio } from './GameComponents';
 import './Game.css';
 
-const width = 800;
-const height = 400;
-const ratio = width / height;
+// const width = 800;
+// const height = 400;
+// const ratio = width / height;
 let shakeDuration = 10;
 let shakeSpeed = 5;
 let startTime; // Declare startTime globally
 
 
-class Paddle {
-    constructor(x, y, width, height, color) {
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
-        this.dy = 0;
-        this.color = color;
-    }
-}
+// class Paddle {
+//     constructor(x, y, width, height, color) {
+//         this.width = width;
+//         this.height = height;
+//         this.x = x;
+//         this.y = y;
+//         this.dy = 0;
+//         this.color = color;
+//     }
+// }
 
-class Player {
-    constructor(id, nickname, paddle) {
-        this.id = id;
-        this.nickname = nickname;
-        this.paddle = paddle;
-        this.point = 0;
-    }
-}
+// class Player {
+//     constructor(id, nickname, paddle) {
+//         this.id = id;
+//         this.nickname = nickname;
+//         this.paddle = paddle;
+//         this.point = 0;
+//     }
+// }
 
-class Ball {
-    constructor(size, speed, shakeSpeed) {
-        this.size = size;
-        this.initialSpeed = speed;
-        this.speed = speed;
-        this.x = width / 2;
-        this.y = height / 2;
-        this.dx = this.speed;
-        this.dy = this.speed;
-    }
-}
+// class Ball {
+//     constructor(size, speed, shakeSpeed) {
+//         this.size = size;
+//         this.initialSpeed = speed;
+//         this.speed = speed;
+//         this.x = width / 2;
+//         this.y = height / 2;
+//         this.dx = this.speed;
+//         this.dy = this.speed;
+//     }
+// }
 
 function tournamentGame({
     player1Id = 1,
@@ -55,8 +56,8 @@ function tournamentGame({
     const [isReady, setIsReady] = useState(false);
     const [gameOption, setGameOption] = useState('Invisibility');
     const [powerUpsEnabled, setPowerUpsEnabled] = useState(false);
-    const [isGameOver, setIsGameOver] = useState(false);
-    const [winner, setWinner] = useState('');
+    // const [isGameOver, setIsGameOver] = useState(false);
+    // const [winner, setWinner] = useState('');
     const pongCanvas = useRef(null);
     const canvasContainer = useRef(null);
     const navigate = useNavigate();
@@ -156,8 +157,8 @@ function tournamentGame({
     const stopGame = (winningPlayer) => {
         // console.log('Game Over');
         setIsReady(false); // Stop the game loop
-        setIsGameOver(true);
-        setWinner(winningPlayer);
+        // setIsGameOver(true);
+        // setWinner(winningPlayer);
         onGameEnd(winningPlayer); // Call the onGameEnd prop with the winner
     };
 

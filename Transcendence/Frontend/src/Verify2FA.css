@@ -1,0 +1,76 @@
+.a2fBody {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url("../Icons/Login.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.a2f {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.a2fText {
+    color: white;
+    font-size: 35px;
+    letter-spacing: 3px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    user-select: none;
+}
+
+.a2f input {
+    border-radius: 5px;
+    border: 2px solid white;
+    outline: none;
+    background: var(--back-color);
+    color: white;
+    width: 200px;
+    height: 35px;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 0 15px 0 5px;
+}
+
+.a2f input:focus {
+    border-bottom: 2px solid orange;
+}
+
+.a2f button {
+    margin-top: 10px;
+    border: solid 2px white;
+    border-radius: 5px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-size-adjust: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    min-width: 100px;
+    padding: 5px;
+    color: white;
+    background: var(--back-color);
+    transition: .2s;
+}
+
+.a2f button:hover {
+    border: solid 2px orange;
+    background: var(--color-1);
+    box-shadow: 0 0 3px var(--color-1);
+}
+
+.a2f p {
+    font-family: Arial, Helvetica, sans-serif;
+    color: red;
+    font-size: 15px;
+}

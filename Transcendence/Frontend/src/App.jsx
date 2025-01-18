@@ -95,7 +95,7 @@ const App = () => {
         {showFriendList && <FriendList />}
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          {/* <Route path="/register" element={<RegisterPage />} /> */}
+          <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify-2fa" element={<Verify2FA />} />
         <Route path="/game-menu" element={<GameMenu />} />
         <Route path="/game" element={<Game />} />

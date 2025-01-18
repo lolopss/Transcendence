@@ -135,7 +135,7 @@ const FriendList = () => {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Username"
+                placeholder={translations.username}
             />
             <span className='separation'></span>
             <button className='addFriendButton' onClick={handleAddFriend}>{translations.addFriends}</button>

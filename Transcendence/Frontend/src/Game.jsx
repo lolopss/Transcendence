@@ -1,56 +1,26 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Paddle, Player, Ball, width, height, ratio } from './GameComponents';
 import './Game.css';
 
-const width = 800;
-const height = 400;
-const ratio = width / height;
 let shakeDuration = 10;
 let shakeSpeed = 5;
 let startTime; // Declare startTime globally
-
-
-class Paddle {
-    constructor(x, y, width, height, color) {
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
-        this.dy = 0;
-        this.color = color;
-    }
-}
-
-class Player {
-    constructor(id, nickname, paddle) {
-        this.id = id;
-        this.nickname = nickname;
-        this.paddle = paddle;
-        this.point = 0;
-    }
-}
-
-class Ball {
-    constructor(size, speed, shakeSpeed) {
-        this.size = size;
-        this.initialSpeed = speed;
-        this.speed = speed;
-        this.x = width / 2;
-        this.y = height / 2;
-        this.dx = this.speed;
-        this.dy = this.speed;
-    }
-}
+let aiInterval = null; // Declare aiInterval globally
+let currentStopInterval = null; // Declare currentStopInterval globally
 
 function Game({
     player1Id = 1,
     player1Nickname = 'Player1',
     player2Id = 2,
     player2Nickname = 'Player2',
+    tournamentStarted = false,
+    aiStarted = false,
     onGameEnd = () => {}
 }) {
     const [nickname, setNickname] = useState(player1Nickname);
     const [profilePicture, setProfilePicture] = useState('/default-profile.png');
+    const [profilePictureIA, setProfilePictureIA] = useState('/media/profile_pictures/pepe-ia2.gif');
     const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const [gameOption, setGameOption] = useState('Invisibility');
@@ -65,11 +35,7 @@ function Game({
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
     let animationFrameId = useRef(null);
-
-    // Define player1 and player2 at the component level
-    const player1 = new Player(player1Id, player1Nickname, new Paddle(15, height / 2 - 50, 10, 100, 'orange'));
-    const player2 = new Player(player2Id, player2Nickname, new Paddle(width - 25, height / 2 - 50, 10, 100, 'violet'));
-
+    
     useEffect(() => {
         const fetchUserDetails = async () => {
             try {
@@ -83,6 +49,8 @@ function Game({
                     const data = await response.json();
                     setLanguage(data.language);
                     loadTranslations(data.language);
+                    setNickname(data.nickname);
+                    setProfilePicture(data.profile_picture);
                 } else {
                     console.error('Failed to fetch user details');
                 }
@@ -90,10 +58,10 @@ function Game({
                 console.error('Error fetching user details:', error);
             }
         };
-
+        
         fetchUserDetails();
     }, []);
-
+    
     const loadTranslations = async (language) => {
         try {
             const response = await fetch(`/api/translations/${language}/`, {
@@ -108,35 +76,15 @@ function Game({
             console.error('Error loading translations:', error);
         }
     };
-
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const response = await fetch('/api/user-details/', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-                    },
-                });
-                if (response.ok) {
-                    const userDetails = await response.json();
-                    setNickname(userDetails.nickname);
-                    setProfilePicture(userDetails.profile_picture);
-                } else {
-                    console.error('Failed to fetch user details');
-                }
-            } catch (error) {
-                console.error('Error fetching user details:', error);
-            }
-        };
-
-        fetchUserProfile();
-    }, []);
-
+    
     const startGame = () => {
         // console.log('Game started');
         startTime = new Date();
     };
+    
+    // Define player1 and player2 at the component level
+    const player1 = new Player(player1Id, nickname, new Paddle(15, height / 2 - 50, 10, 100, 'orange'));
+    const player2 = new Player(player2Id, player2Nickname, new Paddle(width - 25, height / 2 - 50, 10, 100, 'violet'));
 
     useEffect(() => {
         if (isStarted) {
@@ -146,6 +94,19 @@ function Game({
                 startGame();
                 setIsReady(true);
             });
+ 
+            // Cleanup function
+            return () => {
+                // console.log("Cleaning up ...");
+                if (canvasContainer.current) {
+                    canvasContainer.current.removeEventListener('animationend', () => {
+                        startGame();
+                        setIsReady(true);
+                    });
+                }
+                clearInterval(aiInterval);
+                clearInterval(currentStopInterval);
+            };
         } else {
             setIsReady(false);
         }
@@ -196,6 +157,10 @@ function Game({
 
     const stopGame = (winningPlayer) => {
         // console.log('Game Over');
+        if (aiStarted){
+            clearInterval(aiInterval);
+            clearInterval(currentStopInterval);
+        }
         setIsReady(false); // Stop the game loop
         setIsGameOver(true);
         setWinner(winningPlayer);
@@ -222,10 +187,10 @@ function Game({
             if (event.key === 's') {
                 player1.paddle.dy = 5;
             }
-            if (event.key === 'ArrowUp') {
+            if (event.key === 'ArrowUp' && aiStarted === false) {
                 player2.paddle.dy = -5;
             }
-            if (event.key === 'ArrowDown') {
+            if (event.key === 'ArrowDown' && aiStarted === false) {
                 player2.paddle.dy = 5;
             }
             if (powerUpsEnabled) {
@@ -237,7 +202,7 @@ function Game({
                             player2.paddle.color = 'violet';
                         }, 5000);
                     }
-                    if (event.key === 'Enter' && !player1UsedPowerUp) {
+                    if (event.key === 'Enter' && !player1UsedPowerUp && aiStarted === false) {
                         player1.paddle.color = 'black';
                         player1UsedPowerUp = true;
                         setTimeout(() => {
@@ -249,7 +214,7 @@ function Game({
                         ball.y = height - ball.y;
                         player2UsedPowerUp = true;
                     }
-                    if (event.key === 'Enter' && !player1UsedPowerUp) {
+                    if (event.key === 'Enter' && !player1UsedPowerUp && aiStarted === false) {
                         ball.y = height - ball.y;
                         player1UsedPowerUp = true;
                     }
@@ -261,7 +226,7 @@ function Game({
             if (event.key === 'w' || event.key === 's') {
                 player1.paddle.dy = 0;
             }
-            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            if ((event.key === 'ArrowUp' || event.key === 'ArrowDown') && aiStarted === false) {
                 player2.paddle.dy = 0;
             }
         };
@@ -320,9 +285,26 @@ function Game({
         const resetBall = () => {
             ball.x = canvas.width / 2;
             ball.y = canvas.height / 2;
+            if (player1.point >= 5 || player2.point >= 5) {
+                return;
+            }
             ball.speed = ball.initialSpeed;
             ball.dx = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
             ball.dy = (Math.random() * 2 - 1) * ball.speed;
+
+            if (aiStarted === true) {
+                // Clear existing AI interval
+                if (currentStopInterval) {
+                    clearInterval(currentStopInterval);
+                    currentStopInterval = null;
+                }
+
+                // Clear existing AI move interval
+                clearInterval(aiInterval);
+                aiInterval = setInterval(() => {
+                    aiMove();
+                }, 1000);
+            }
         };
 
         const ballMovement = () => {
@@ -367,6 +349,8 @@ function Game({
                 }
             }
         };
+        
+        let lastAiMoveCall = Date.now(); // Track the last time aiMove was called
 
         const handlePaddleHit = (paddleY) => {
             // Increase ball speed and adjust direction based on paddle hit location
@@ -390,6 +374,25 @@ function Game({
             if (paddleHitCount % 2 === 0 && limitHitbox > 15) {
                 limitHitbox--; // Reduce limitHitbox after every two paddle hits
             }
+
+            if (ball.dx > 0 && aiStarted === true) {
+                const now = Date.now();
+                const timeSinceLastCall = now - lastAiMoveCall;
+
+                if (timeSinceLastCall >= 1000) {
+                    clearInterval(aiInterval);
+                    aiMove();
+                    lastAiMoveCall = now;
+                } else {
+                    clearInterval(aiInterval);
+                    // wait for 1000 - timeSinceLastCall before calling aiMove
+                    // console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
+                    setTimeout(() => {
+                        aiMove();
+                        lastAiMoveCall = now;
+                    }, 1000 - timeSinceLastCall);
+                }
+            }
         };
 
         const shakeScreen = () => {
@@ -410,6 +413,141 @@ function Game({
             }
         };
 
+        const predictBallPosition = () => {
+            let predictedY = ball.y;
+            let predictedDy = ball.dy;
+            let predictedX = ball.x;
+            let predictedDx = ball.dx;
+
+            // Predict the ball's position considering bounces
+            while (predictedX < canvas.width - limitHitbox) {
+                predictedY += predictedDy;
+                predictedX += predictedDx;
+
+                // Bounce off top and bottom edges
+                if (predictedY + ball.size > canvas.height - 5|| predictedY - ball.size < 5) {
+                    predictedDy *= -1;
+                }
+            }
+
+            return predictedY;
+        };
+
+        let currentStopInterval = null; // Variable to keep track of the current interval
+        let aiUsedPowerUp = false;
+
+        const aiMove = () => {
+            const now = Date.now();
+
+            const speed = 5; // Paddle speed
+            const paddleCenterY = player2.paddle.y + player2.paddle.height / 2;
+
+            if (!aiUsedPowerUp && powerUpsEnabled && (player1.point > 0 || player2.point > 0)) {
+                // Ball is moving towards the AI's side and a point has already been scored
+                // Check if the ball is on the player's side and moving towards the player
+                if (ball.x < width / 2 && ball.dx < 0) {
+                    // Add a random chance to use the power-up, half the time
+                    const usePowerUp = Math.random() > 0.5;
+                    if (usePowerUp) {
+                        if (gameOption === 'Teleportation') {
+                            ball.y = height - ball.y;
+                        } else if (gameOption === 'Invisibility') {
+                            player1.paddle.color = 'black';
+                            setTimeout(() => {
+                                player1.paddle.color = 'orange';
+                            }, 5000);
+                        }
+                        aiUsedPowerUp = true;
+                    }
+                }
+            }
+
+            if (ball.dx < 0) {
+                if (ball.dy > 15) return; // Prevent the AI from moving to the middle if the ball is moving too fast
+                const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
+                // console.log(`Time since last aiMove middle call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // Ball is moving towards the left, move paddle to the middle of the board
+                lastAiMoveCall = now; // Update the last call time
+                const middleY = canvas.height / 2;
+                let distance = middleY - paddleCenterY;
+
+                // console logs every variable of the if statement
+                if (Math.abs(distance) > 30) {
+                    if (distance < 0) {
+                        player2.paddle.dy = -speed; // Move up with a speed of 5
+                    } else if (distance > 0) {
+                        player2.paddle.dy = speed; // Move down with a speed of 5
+                    }
+                }else {
+                    player2.paddle.dy = 0; // Stop if already aligned
+                }
+                // Calculate the time it will take to reach the middle position with a random offset
+                const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);
+
+                // Clear any existing interval
+                if (currentStopInterval) {
+                    clearInterval(currentStopInterval);
+                }
+
+                clearInterval(aiInterval);
+                // Set an interval to stop the paddle's movement after the calculated time
+                currentStopInterval = setInterval(() => {
+                    player2.paddle.dy = 0;
+                    clearInterval(currentStopInterval);
+                    currentStopInterval = null;
+                }, timeToReach);
+                }
+            else {
+                const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
+                // console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
+                // Ball is moving towards the right, predict the ball's position
+                lastAiMoveCall = now; // Update the last call time
+                const targetY = predictBallPosition(); // Get the predicted position of the ball
+                let distance = targetY - paddleCenterY;
+
+                // check if invisibility is used and ai paddle is black
+                if (player2.paddle.color === 'black') {
+                    distance += (Math.random() - 0.5) * 50; // Random adjustment between -25 and 25
+                }
+
+                if (Math.abs(distance) > 30) {
+                    if (distance < 0) {
+                        player2.paddle.dy = -speed; // Move up with a speed of 5
+                    } else if (distance > 0) {
+                        player2.paddle.dy = speed; // Move down with a speed of 5
+                    }
+                } else {
+                    player2.paddle.dy = 0; // Stop if already aligned
+                }
+
+                // Calculate the time it will take to reach the target position
+                const timeToReach = Math.abs(distance) / speed * Math.floor(Math.random() * 8 + 12);// Convert to milliseconds
+
+                // Clear any existing interval
+                if (currentStopInterval) {
+                    clearInterval(currentStopInterval);
+                }
+
+                // Set an interval to stop the paddle's movement after the calculated time
+                currentStopInterval = setInterval(() => {
+                    player2.paddle.dy = 0;
+                    clearInterval(currentStopInterval);
+                    currentStopInterval = null;
+                    clearInterval(aiInterval);
+                    aiInterval = setInterval(() => {
+                        aiMove();
+                    }, 1000);
+                    lastAiMoveCall = now;
+                }, timeToReach * 1.10);
+            }
+        };
+
+        if (aiStarted === true) {
+            aiInterval = setInterval(() => {
+                aiMove();
+            }, 1000);
+        }
+
         const update = () => {
             playerDirection(player1);
             ballMovement();
@@ -424,14 +562,18 @@ function Game({
                 if (player1.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    saveMatch(player1, player2, player1, duration);
+                    if (tournamentStarted === false) {
+                        saveMatch(player1, player2, player1, duration);
+                    }
                 }
                 stopGame(player1);
             } else if (player2.point >= 5) {
                 if (player2.point === 5) {
                     const endTime = new Date();
                     const duration = (endTime - startTime) / 1000;
-                    saveMatch(player1, player2, player2, duration);
+                    if (tournamentStarted === false) {
+                        saveMatch(player1, player2, player2, duration);
+                    }
                 }
                 stopGame(player2);
             }
@@ -466,10 +608,26 @@ function Game({
         <>
             {isStarted ? (
                 <div className='gameContainer'>
+                    {/* <p>Controles left</p>
+                    <p>Controles right</p> */}
                     <div className="canvasContainer" ref={canvasContainer}>
+                        <p className='p1controles'>Controls Player 1 <br/>
+                            Up : 'W' <br/>
+                            Down : 'S'
+                        </p>
+                        <p className='p2controles'>Controls Player 2 <br/>
+                            Up : 'ArrowUp' <br/>
+                            Down : 'ArrowDown'
+                        </p>
+                        <p className='p1power'>Power UP <br/>
+                            Key : 'Space'
+                        </p>
+                        <p className='p2power'>Power UP <br/>
+                            Key : 'Enter'
+                        </p>
                         <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
                     </div>
-                    {isGameOver && (
+                    {isGameOver && tournamentStarted === false && (
                         <div className="screenContainer">
                             <div className='endScreen'>
                                 <div className='winnerName'>{winner.nickname} {translations.won} !</div>
@@ -497,7 +655,7 @@ function Game({
                         <h1 className='vsVs'> vs </h1>
                         <h1 className='vsPl2'>{player2Nickname}
                             <div className="pl2-profile-image">
-                                <img src={'/media/profile_pictures/pepe_boxe.png'} className="profile-picture" />
+                                <img src={aiStarted ? profilePictureIA : '/media/profile_pictures/pepe_boxe.png'} className="profile-picture" />
                             </div>
                         </h1>
                     </div>

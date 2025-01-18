@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import Game from './Game';
 import TournamentGame from './TournamentGame';
 import './Tournament.css'
 
@@ -125,12 +126,13 @@ const Tournament = () => {
         return (
             <div>
                 <h3 className='currentMatch'>{player1.nickname} vs {player2.nickname}</h3>
-                <TournamentGame
+                <Game
                     key={`${player1.nickname}-${player2.nickname}`} // Ensure the Game component resets
                     player1Id={player1.id}
                     player1Nickname={player1.nickname}
                     player2Id={player2.id}
                     player2Nickname={player2.nickname}
+                    tournamentStarted={true}
                     onGameEnd={(winner) => handleGameEnd(winner, player1, player2)}
                 />
                 {isGameFinished && !tournamentWinner && (
@@ -138,7 +140,7 @@ const Tournament = () => {
                         <div className='endScreen'>
                             <div className='winnerName'>{winners[currentMatch].nickname} won !</div>
                             <button className='gamebtn' onClick={nextGame}>Next Game</button>
-                            <button className='gamebtn' onClick={logGameState}>Log Game State</button>
+                            {/* <button className='gamebtn' onClick={logGameState}>Log Game State</button> */}
                             <button className='gamebtn' onClick={() => {
                                 navigate('/menu');
                             }}>Quit Game</button>
@@ -149,7 +151,7 @@ const Tournament = () => {
                     <div className="screenContainer">
                         <div className='endScreen'>
                             <h2 className='winnerName'>{tournamentWinner.nickname} won the Tournament !</h2>
-                            <button className='gamebtn' onClick={logGameState}>Log Game State</button>
+                            {/* <button className='gamebtn' onClick={logGameState}>Log Game State</button> */}
                             <button className='gamebtn' onClick={() => {
                                 navigate('/menu');
                             }}>Quit Game</button>

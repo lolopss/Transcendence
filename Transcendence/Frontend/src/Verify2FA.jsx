@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './Verify2FA.css'
 
 function Verify2FA() {
     const [otp, setOtp] = useState('');
@@ -62,18 +63,20 @@ function Verify2FA() {
     };
 
     return (
-        <div>
-            <h2>Verify 2FA</h2>
-            <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                placeholder="Enter OTP"
-            />
-            <button onClick={handleVerify}>Verify OTP</button>
-            <button onClick={handleQuit}>Quit</button>
-            {status && <p>{status}</p>}
-            {attempts > 0 && <p>Remaining attempts: {3 - attempts}</p>}
+        <div className="a2fBody">
+            <div className='a2f'>
+                <h2 className='a2fText'>Verify 2FA</h2>
+                <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    placeholder="Enter OTP"
+                />
+                <button onClick={handleVerify}>Verify OTP</button>
+                <button onClick={handleQuit}>Quit</button>
+                {status && <p>{status}</p>}
+                {attempts > 0 && <p>Remaining attempts: {3 - attempts}</p>}
+            </div>
         </div>
     );
 }

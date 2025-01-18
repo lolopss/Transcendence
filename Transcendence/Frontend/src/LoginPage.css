@@ -196,13 +196,13 @@
     transition: .5s;
 }
 
-.input-box:has(input:focus),
-.input-box:has(input:valid) {
+.input-box:has(input:focus) {
     border-bottom: 2px solid orange;
 }
 
 .input-box input:focus~label,
-.input-box input:valid~label {
+.input-box input:valid~label,
+.input-box input:not(:placeholder-shown)~label {
     top: -5px;
 }
 

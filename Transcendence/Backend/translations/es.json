@@ -54,5 +54,18 @@
 	"won": "Ganó",
     "restartGame": "Reiniciar juego",
 	"security": "Seguridad",
-	"nickname": "Apodo"
+	"nickname": "Apodo",
+	"dataprivacyrights": "Derechos de privacidad de datos",
+    "privacyrightstext": "Tiene derecho a eliminar o anonimizar su cuenta. Utilice los botones a continuación para ejercer estos derechos.",
+    "anonymizeaccount": "Anonimizar cuenta",
+    "deleteaccount": "Eliminar cuenta",
+    "editaccount": "Editar cuenta",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+	"nextgame": "Próximo partido",
+	"quitgame": "Salir del juego",
+    "twon": "ganó el torneo",
+    "tstart": "INICIAR",
+	"enterplnames": "Ingrese los nombres de los jugadores",
+	"player": "Jugador"
   }

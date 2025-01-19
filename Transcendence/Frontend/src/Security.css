@@ -39,6 +39,40 @@
     z-index: 999;
 }
 
+.securityHeader.shrink {
+    position: fixed;
+    height: 100%;
+    width: 50px;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background: var(--back-color-1);
+    color: white;
+    z-index: 999;
+}
+
+.securityHeader.shrink .navProfile, .securityHeader.shrink .navAccount, .securityHeader.shrink .navSecurity {
+    width: 100%;
+    background: var(--color-1);
+    padding: 25px 0 25px 5px;
+    transform-origin: left;
+    text-align: center;
+    text-decoration: none;
+    text-size-adjust: 100%;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.securityHeader.shrink .securityLogo {
+    font-size: 35px;
+    margin: 30px 0 30px 15px;
+    user-select: none;
+    transition: .2s;
+}
+
 .securityLogo {
     font-size: 35px;
     margin: 30px 0 30px 5px;
@@ -52,7 +86,7 @@
     text-shadow: 0 0 5px var(--color-1);
 }
 
-.navSecurity, .navAccount {
+.navSecurity, .navAccount, .navProfile {
     width: 100%;
     background: var(--color-1);
     padding: 25px 0 25px 5px;

@@ -54,5 +54,18 @@
 	"won": "Won",
     "restartGame": "Restart Game",
 	"security": "Security",
-	"nickname": "nickname"
+	"nickname": "nickname",
+	"dataprivacyrights" : "Data Privacy Rights",
+	"privacyrightstext" : "You have the right to delete or anonymize your account. Please use the buttons below to exercise these rights.",
+	"anonymizeaccount" : "Anonymize Account",
+	"deleteaccount" : "Delete Account",
+	"editaccount" : "Edit Account",
+	"enabled" : "Enabled",
+	"disabled" : "Disabled",
+	"nextgame" : "Next Game",
+	"quitgame" : "Quit Game",
+	"twon" : "won the Tournament",
+	"tstart" : "START",
+	"enterplnames" : "ENTER PLAYER NAMES",
+	"player" : "Player"
   }

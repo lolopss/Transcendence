@@ -112,22 +112,6 @@ function Game({
         }
     }, [isStarted]);
 
-    const handleResize = () => {
-        if (!isStarted) return;
-        const ctx = pongCanvas.current.getContext('2d');
-        const windowHeight = window.innerHeight;
-        const windowWidth = window.innerWidth;
-
-        let newHeight = windowHeight / ratio;
-        let newWidth = windowWidth / ratio;
-
-        const maxHeight = Math.min(newHeight, height);
-        const maxWidth = Math.min(newWidth, width);
-
-        ctx.canvas.height = maxHeight / ratio;
-        ctx.canvas.width = maxWidth;
-    };
-
     const saveMatch = async (player1, player2, winner, duration) => {
         try {
             const response = await fetch('/api/save-match-result/', {
@@ -181,18 +165,10 @@ function Game({
         let player2UsedPowerUp = false;
 
         const handleKeyDown = (event) => {
-            if (event.key === 'w') {
-                player1.paddle.dy = -5;
-            }
-            if (event.key === 's') {
-                player1.paddle.dy = 5;
-            }
-            if (event.key === 'ArrowUp' && aiStarted === false) {
-                player2.paddle.dy = -5;
-            }
-            if (event.key === 'ArrowDown' && aiStarted === false) {
-                player2.paddle.dy = 5;
-            }
+            if (event.key === 'w') {player1.paddle.dy = -5;}
+            if (event.key === 's') {player1.paddle.dy = 5;}
+            if (event.key === 'ArrowUp' && aiStarted === false) {player2.paddle.dy = -5;}
+            if (event.key === 'ArrowDown' && aiStarted === false) {player2.paddle.dy = 5;}
             if (powerUpsEnabled) {
                 if (gameOption === 'Invisibility') {
                     if (event.key === ' ' && !player2UsedPowerUp) {
@@ -596,13 +572,6 @@ function Game({
             }
         };
     }, [isReady]);
-
-    useEffect(() => {
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
 
     return (
         <>

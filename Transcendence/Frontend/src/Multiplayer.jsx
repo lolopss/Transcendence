@@ -1,111 +1,85 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Paddle, PlayerMulti, Ball, width, height, ratio } from './GameComponents';
 import './Game.css';
 
-const width = 800;
-const height = 400;
-const ratio = width / height;
 let shakeDuration = 10;
 let shakeSpeed = 5;
-
-class Paddle {
-    constructor(x, y, width, height, color) {
-        this.width = width;
-        this.height = height;
-        this.x = x;
-        this.y = y;
-        this.dy = 0;
-        this.color = color;
-    }
-}
-
-class Player {
-    constructor(paddle) {
-        this.paddle = paddle;
-        this.point = 0;
-    }
-}
-
-class Ball {
-    constructor(size, speed, shakeSpeed) {
-        this.size = size;
-        this.initialSpeed = speed;
-        this.speed = speed;
-        this.x = width / 2;
-        this.y = height / 2;
-        this.dx = this.speed;
-        this.dy = this.speed;
-    }
-}
 
 const restartGame = () => {
     window.location.reload();
 };
 
 function Multiplayer() {
-    // const [isStarted, setIsStarted] = useState(false);
     const [isGameOver, setIsGameOver] = useState(false);
     const [winner, setWinner] = useState('');
+    const [isStarted, setIsStarted] = useState(false);
     const [isReady, setIsReady] = useState(false);
     const pongCanvas = useRef(null);
     const canvasContainer = useRef(null);
+    const [language, setLanguage] = useState('en');
+    const [translations, setTranslations] = useState({});
     const navigate = useNavigate();
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
+
+    useEffect(() => {
+        const fetchUserDetails = async () => {
+            try {
+                const response = await fetch('/api/user-details/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setLanguage(data.language);
+                    loadTranslations(data.language);
+                    setNickname(data.nickname);
+                    setProfilePicture(data.profile_picture);
+                } else {
+                    console.error('Failed to fetch user details');
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        };
+        
+        fetchUserDetails();
+    }, []);
+    
+    const loadTranslations = async (language) => {
+        try {
+            const response = await fetch(`/api/translations/${language}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+            const data = await response.json();
+            setTranslations(data);
+        } catch (error) {
+            console.error('Error loading translations:', error);
+        }
+    };
 
     const startGame = () => {
         // console.log('yes');
     }
 
     useEffect(() => {
-        // console.log('Starting game...');
-        canvasContainer.current.classList.add('is-animated');
-        canvasContainer.current.addEventListener('animationend', () => {
-            startGame();
-            setIsReady(true);
-        });
-    }, []);
+        if (isStarted) {
+            // console.log('Starting game...');
+            canvasContainer.current.classList.add('is-animated');
+            canvasContainer.current.addEventListener('animationend', () => {
+                startGame();
+                setIsReady(true);
+            });
+        }
+    }, [isStarted]);
 
     // console.log(`is ready -> ${isReady}`);
-
-    const updateGoalsInDatabase = async (goals, goals_taken, longuest_exchange, ace) => {
-        try {
-            const response = await fetch('/api/update-goals/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`, // Assuming you use token-based authentication
-                },
-                body: JSON.stringify({ goals, goals_taken, longuest_exchange, ace }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update goals');
-            }
-
-            const data = await response.json();
-            // console.log(data.message);
-        } catch (error) {
-            console.error('Error updating goals:', error);
-        }
-    };
-
-    // const handleResize = () => {
-    //     if (!isStarted)
-    //         return ;
-    //     const ctx = pongCanvas.current.getContext('2d');
-    //     const windowHeight = window.innerHeight;
-    //     const windowWidth = window.innerWidth;
-
-    //     let newHeight = windowHeight / ratio;
-    //     let newWidth = windowWidth / ratio;
-
-    //     const maxHeight = Math.min(newHeight, height);
-    //     const maxWidth = Math.min(newWidth, width);
-
-    //     ctx.canvas.height = maxHeight / ratio;
-    //     ctx.canvas.width = maxWidth;
-    // };
 
     useEffect(() => {
         if (!isReady)
@@ -116,17 +90,17 @@ function Multiplayer() {
         const context = canvas.getContext('2d');
 
         let textPoint = { x: canvas.width / 2, y: 30};
-        let paddle = new Paddle(0, 0, 10, 100, 'white');
+        let paddle = new Paddle(0, 0, 10, 75, 'white');
         let middleBar = new Paddle(canvas.width / 2 - 2 / 2
             , 0
             , 2
             , canvas.height
             , 'white');
-			let player1 = new Player(new Paddle(15, canvas.height / 4 - paddle.height / 2, paddle.width, paddle.height, 'orange'));
-            let player2 = new Player(new Paddle(15, (3 * canvas.height) / 4 - paddle.height / 2, paddle.width, paddle.height, 'red'));
-            let player3 = new Player(new Paddle(canvas.width - paddle.width - 15, canvas.height / 4 - paddle.height / 2, paddle.width, paddle.height, 'violet'));
-            let player4 = new Player(new Paddle(canvas.width - paddle.width - 15, (3 * canvas.height) / 4 - paddle.height / 2, paddle.width, paddle.height, 'blue'));
-            let ball = new Ball(10, 4, 6);
+        let player1 = new PlayerMulti(new Paddle(15, canvas.height / 4 - paddle.height / 2, paddle.width, paddle.height, 'orange'));
+        let player2 = new PlayerMulti(new Paddle(15, (3 * canvas.height) / 4 - paddle.height / 2, paddle.width, paddle.height, 'red'));
+        let player3 = new PlayerMulti(new Paddle(canvas.width - paddle.width - 15, canvas.height / 4 - paddle.height / 2, paddle.width, paddle.height, 'violet'));
+        let player4 = new PlayerMulti(new Paddle(canvas.width - paddle.width - 15, (3 * canvas.height) / 4 - paddle.height / 2, paddle.width, paddle.height, 'blue'));
+        let ball = new Ball(10, 4, 6);
 
         document.addEventListener('keydown', (event) => {
 			if (event.key === 'w') player1.paddle.dy = -5;
@@ -247,13 +221,11 @@ function Multiplayer() {
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
-                updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
-                updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
@@ -378,50 +350,69 @@ function Multiplayer() {
             gameLoop();
 
     }, [isReady]);
-    // window.addEventListener('resize', handleResize);
 
     return (
-        <div className='gameContainer'>
-            <div className="canvasContainer" ref={canvasContainer}>
-                <canvas ref={pongCanvas} className={isReady ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
-            </div>
-            {isGameOver && (
-                <div className="screenContainer">
-                    <div className='endScreen'>
-                        <div className='winnerName'>{winner} won !</div>
-                        <button className='gamebtn' onClick={restartGame}>Restart Game</button>
-                        <button className='gamebtn' onClick={() => {
-                            setIsReady(false);
-                            navigate('/menu');
-                        }}>Quit Game</button>
+        <>
+            {isStarted ? (
+                <div className='gameContainer'>
+                    {/* <p>Controles left</p>
+                    <p>Controles right</p> */}
+                    <div className="canvasContainer" ref={canvasContainer}>
+                        {/* <p className='p1controles'>Controls Player 1 <br/>
+                            Up : 'W' <br/>
+                            Down : 'S'
+                        </p>
+                        <p className='p2controles'>Controls Player 2 <br/>
+                            Up : 'ArrowUp' <br/>
+                            Down : 'ArrowDown'
+                        </p>
+                        <p className='p1power'>Power UP <br/>
+                            Key : 'Space'
+                        </p>
+                        <p className='p2power'>Power UP <br/>
+                            Key : 'Enter'
+                        </p> */}
+                        <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
+                    </div>
+                    {isGameOver && (
+                        <div className="screenContainer">
+                            <div className='endScreen'>
+                                <div className='winnerName'>{winner} {translations.won} !</div>
+                                <button className='gamebtn' onClick={() => {
+                                    setIsStarted(false);
+                                    setIsGameOver(false);
+                                }}>{translations.restartGame}</button>
+                                <button className='gamebtn' onClick={() => {
+                                    setIsStarted(false);
+                                    navigate('/menu');
+                                }}>{translations.quit_game}</button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className='vsMenu'>
+                    <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
+                    <div className="vsTitles">
+                        <h1 className='vsPl1'>LEFT SIDE
+                            <div className="pl1-profile-image">
+                                <img src='/media/profile_pictures/pepe_boxe.png' className="profile-picture" />
+                            </div>
+                        </h1>
+                        <h1 className='vsVs'> vs </h1>
+                        <h1 className='vsPl2'>RIGHT SIDE
+                            <div className="pl2-profile-image">
+                                <img src='/media/profile_pictures/pepe_boxe.png' className="profile-picture" />
+                            </div>
+                        </h1>
+                    </div>
+                    <div className="vsBtnContainer">
+                        <button className='vsBtn' onClick={() => setIsStarted(true)}>{translations.start_game}</button>
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
-    // return (
-    //     <>
-    //         {isStarted ?
-    //             (
-    //                 <div>
-    //                     <canvas ref={pongCanvas} id='gameCanvas' width={width} height={height}></canvas>
-    //                     <div>
-    //                         <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-    //                     </div>
-    //                 </div>
-    //             )
-    //             :
-    //             (<div>
-    //                 <h1>
-    //                     Game Menu
-    //                 </h1>
-    //                 <div>
-    //                     <button onClick={() => {setIsStarted(isStarted => !isStarted)}}>Game = {isStarted ? 'On' : 'Off'}</button>
-    //                 </div>
-    //             </div>)
-    //         }
-    //     </>
-    // )
 }
 
 export default Multiplayer

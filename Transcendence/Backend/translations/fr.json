@@ -54,5 +54,18 @@
 	"won": "a Gagné",
 	"restartGame": "Rejouer",
 	"security": "Sécurité",
-	"nickname": "Pseudonyme"
+	"nickname": "Pseudonyme",
+	"dataprivacyrights": "Droits de confidentialité des données",
+    "privacyrightstext": "Vous avez le droit de supprimer ou d'anonymiser votre compte. Veuillez utiliser les boutons ci-dessous pour exercer ces droits.",
+    "anonymizeaccount": "Anonymiser le compte",
+    "deleteaccount": "Supprimer le compte",
+    "editaccount": "Modifier le compte",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+	"nextgame": "Prochaine Partie",
+	"quitgame": "Quitter le jeu",
+    "twon": "a gagné le Tournoi",
+    "tstart": "DÉMARRER",
+	"enterplnames": "Entrer les noms des joueurs",
+	"player": "Joueur"
   }

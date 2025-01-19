@@ -24,6 +24,13 @@ class Player {
     }
 }
 
+class PlayerMulti {
+    constructor(paddle) {
+        this.paddle = paddle;
+        this.point = 0;
+    }
+}
+
 class Ball {
     constructor(size, speed, shakeSpeed) {
         this.size = size;
@@ -36,4 +43,4 @@ class Ball {
     }
 }
 
-export {Paddle, Player, Ball};
+export {Paddle, Player, PlayerMulti, Ball};

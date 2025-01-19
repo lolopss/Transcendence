@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Game from './Game';
-import TournamentGame from './TournamentGame';
 import './Tournament.css'
 
 const Tournament = () => {
@@ -13,10 +12,12 @@ const Tournament = () => {
     const [tournamentWinner, setTournamentWinner] = useState(null);
     const [nickname, setNickname] = useState('User');
     const [profilePicture, setProfilePicture] = useState('/default-profile.png');
+    const [language, setLanguage] = useState('en');
+    const [translations, setTranslations] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUserProfile = async () => {
+        const fetchUserDetails = async () => {
             try {
                 const response = await fetch('/api/user-details/', {
                     method: 'GET',
@@ -25,9 +26,11 @@ const Tournament = () => {
                     },
                 });
                 if (response.ok) {
-                    const userDetails = await response.json();
-                    setNickname(userDetails.nickname);
-                    setProfilePicture(userDetails.profile_picture);
+                    const data = await response.json();
+                    setLanguage(data.language);
+                    loadTranslations(data.language);
+                    setNickname(data.nickname);
+                    setProfilePicture(data.profile_picture);
                 } else {
                     console.error('Failed to fetch user details');
                 }
@@ -35,9 +38,24 @@ const Tournament = () => {
                 console.error('Error fetching user details:', error);
             }
         };
-
-        fetchUserProfile();
+        
+        fetchUserDetails();
     }, []);
+    
+    const loadTranslations = async (language) => {
+        try {
+            const response = await fetch(`/api/translations/${language}/`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                },
+            });
+            const data = await response.json();
+            setTranslations(data);
+        } catch (error) {
+            console.error('Error loading translations:', error);
+        }
+    };
 
     const handleInputChange = (index, value) => {
         const newPlayers = [...players];
@@ -138,27 +156,24 @@ const Tournament = () => {
                 {isGameFinished && !tournamentWinner && (
                     <div className="screenContainer">
                         <div className='endScreen'>
-                            <div className='winnerName'>{winners[currentMatch].nickname} won !</div>
-                            <button className='gamebtn' onClick={nextGame}>Next Game</button>
-                            {/* <button className='gamebtn' onClick={logGameState}>Log Game State</button> */}
+                            <div className='winnerName'>{winners[currentMatch].nickname} {translations.won} !</div>
+                            <button className='gamebtn' onClick={nextGame}>{translations.nextgame}</button>
                             <button className='gamebtn' onClick={() => {
                                 navigate('/menu');
-                            }}>Quit Game</button>
+                            }}>{translations.quitgame}</button>
                         </div>
                     </div>
                 )}
                 {tournamentWinner && (
                     <div className="screenContainer">
                         <div className='endScreen'>
-                            <h2 className='winnerName'>{tournamentWinner.nickname} won the Tournament !</h2>
-                            {/* <button className='gamebtn' onClick={logGameState}>Log Game State</button> */}
+                            <h2 className='winnerName'>{tournamentWinner.nickname} {translations.twon} !</h2>
                             <button className='gamebtn' onClick={() => {
                                 navigate('/menu');
-                            }}>Quit Game</button>
+                            }}>{translations.quitgame}</button>
                         </div>
                     </div>
                 )}
-                <button onClick={logGameState}>Log Game State</button>
             </div>
         );
     };
@@ -169,7 +184,7 @@ const Tournament = () => {
                 <div className="tournamentContainer">
                     <h1 className='tournamentMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
                     <div className='tournamentInput'>
-                        <h2 className='tournamentPlayerNames'>ENTER PLAYER NAMES</h2>
+                        <h2 className='tournamentPlayerNames'>{translations.enterplnames}</h2>
                         {players.map((player, index) => (
                             <input
                                 className='playerInput'
@@ -177,12 +192,12 @@ const Tournament = () => {
                                 type="text"
                                 value={player.nickname}
                                 onChange={(e) => handleInputChange(index, e.target.value)}
-                                placeholder={`Player ${index + 1}`}
+                                placeholder={`${translations.player} ${index + 1}`}
                             />
                         ))}
-                        <button className='startTournamentBtn' onClick={startTournament}>START</button>
+                        <button className='startTournamentBtn' onClick={startTournament}>{translations.tstart}</button>
                         <div className="bracketContainer">
-                            <span className='bracket'>START</span>
+                            <span className='bracket'>{translations.tstart}</span>
                             <span className='bracket2'></span>
                             <span className='bracket3'></span>
                             <span className='bracket4'></span>

@@ -22,7 +22,7 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['nickname', 'wins', 'losses', 'profile_picture']
-        
+
     def save(self, commit=True):
         user = super(ProfileForm, self).save(commit=False)
         if self.cleaned_data['profile_picture']:

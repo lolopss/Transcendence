@@ -73,5 +73,11 @@
     "rightside": "Côté droit",
 	"friendprofile": "Profil d'ami",
 	"changesNotAccounted": "Les modifications ne seront pas prises en compte si vous etes connectez avec 42.",
-	"ai" : "IA"
+	"ai" : "IA",
+	"controls_player1": "Contrôles Joueur 1",
+    "controls_player2": "Contrôles Joueur 2",
+    "up": "Haut",
+    "down": "Bas",
+    "power_up": "Pouvoir",
+    "key": "Touche"
   }

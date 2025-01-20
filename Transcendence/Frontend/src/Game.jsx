@@ -667,35 +667,35 @@ function Game({
                 <div className='vsMenu'>
                     <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>{translations.title}</h1>
                     <div className="vsTitles">
-                        <h1 className='vsPl1'>{nickname}
-                            <div className="pl1-profile-image">
-                                <img src={profilePicture} className="profile-picture" />
-                                <p className='p1controlesMenu'>Controls Player 1 <br/>
-                                    Up : 'W' <br/>
-                                    Down : 'S'
+                    <h1 className='vsPl1'>{nickname}
+                        <div className="pl1-profile-image">
+                            <img src={profilePicture} className="profile-picture" />
+                            <p className='p1controlesMenu'>{translations.controls_player1} <br/>
+                                {translations.up} : 'W' <br/>
+                                {translations.down} : 'S'
+                            </p>
+                            <p className='p1powerMenu'>{translations.power_up} <br/>
+                                {translations.key} : 'Space'
+                            </p>
+                        </div>
+                    </h1>
+                    <h1 className='vsVs'> vs </h1>
+                    <h1 className='vsPl2'>{player2Nickname}
+                        <div className="pl2-profile-image">
+                            <img src={aiStarted ? profilePictureIA : '/media/profile_pictures/pepe_boxe.png'} className="profile-picture" />
+                            {!aiStarted &&
+                            <>
+                                <p className='p2controlesMenu'>{translations.controls_player2} <br/>
+                                    {translations.up} : 'ArrowUp' <br/>
+                                    {translations.down} : 'ArrowDown'
                                 </p>
-                                <p className='p1powerMenu'>Power UP <br/>
-                                    Key : 'Space'
+                                <p className='p2powerMenu'>{translations.power_up} <br/>
+                                    {translations.key} : 'Enter'
                                 </p>
-                            </div>
-                        </h1>
-                        <h1 className='vsVs'> vs </h1>
-                        <h1 className='vsPl2'>{player2Nickname}
-                            <div className="pl2-profile-image">
-                                <img src={aiStarted ? profilePictureIA : '/media/profile_pictures/pepe_boxe.png'} className="profile-picture" />
-                                {!aiStarted &&
-                                <>
-                                    <p className='p2controlesMenu'>Controls Player 2 <br/>
-                                        Up : 'ArrowUp' <br/>
-                                        Down : 'ArrowDown'
-                                    </p>
-                                    <p className='p2powerMenu'>Power UP <br/>
-                                        Key : 'Enter'
-                                    </p>
-                                </>
-                                }
-                            </div>
-                        </h1>
+                            </>
+                            }
+                        </div>
+                    </h1>
                     </div>
                     {player2Nickname === 'PaddleMan' && (
                         <div>

@@ -57,7 +57,9 @@ function Game({
                     const data = await response.json();
                     setLanguage(data.language);
                     loadTranslations(data.language);
-                    setNickname(data.nickname);
+                    if (nickname === 'Player1') {
+                        setNickname(data.nickname);
+                    }
                     setProfilePicture(data.profile_picture);
                 } else {
                     console.error('Failed to fetch user details');
@@ -681,13 +683,17 @@ function Game({
                         <h1 className='vsPl2'>{player2Nickname}
                             <div className="pl2-profile-image">
                                 <img src={aiStarted ? profilePictureIA : '/media/profile_pictures/pepe_boxe.png'} className="profile-picture" />
-                                <p className='p2controlesMenu'>Controls Player 2 <br/>
-                                    Up : 'ArrowUp' <br/>
-                                    Down : 'ArrowDown'
-                                </p>
-                                <p className='p2powerMenu'>Power UP <br/>
-                                    Key : 'Enter'
-                                </p>
+                                {!aiStarted &&
+                                <>
+                                    <p className='p2controlesMenu'>Controls Player 2 <br/>
+                                        Up : 'ArrowUp' <br/>
+                                        Down : 'ArrowDown'
+                                    </p>
+                                    <p className='p2powerMenu'>Power UP <br/>
+                                        Key : 'Enter'
+                                    </p>
+                                </>
+                                }
                             </div>
                         </h1>
                     </div>

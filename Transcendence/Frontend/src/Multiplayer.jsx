@@ -36,8 +36,6 @@ function Multiplayer() {
                     const data = await response.json();
                     setLanguage(data.language);
                     loadTranslations(data.language);
-                    setNickname(data.nickname);
-                    setProfilePicture(data.profile_picture);
                 } else {
                     console.error('Failed to fetch user details');
                 }

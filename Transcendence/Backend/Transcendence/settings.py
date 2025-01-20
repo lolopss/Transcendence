@@ -24,7 +24,7 @@ IS_SEARCHING = False
 SECRET_KEY = 'django-insecure-du&03o*5z)di#634%jy#11-3!loep#k3(%i%4sepx($6$ocgby'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*',]
 

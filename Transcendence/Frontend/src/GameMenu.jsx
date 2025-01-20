@@ -203,7 +203,7 @@ function GameMenu() {
             <span id="borderAnim" ref={borderAnim}></span>
             <span id="borderAnim2" ref={borderAnim2}></span>
             <div className="centerGameMenu" ref={menu}>
-                <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>The Pong</h1>
+                <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>{translations.title}</h1>
                 <div className="gameMenuButton">
                     <GameButton name={translations.vs} onClick={() => navigate('/game')} refbtn={buttonStartVs}/>
                     <GameButton name={translations.multiplayer} onClick={() => navigate('/multiplayer')} refbtn={buttonStartMultiplayer}/>

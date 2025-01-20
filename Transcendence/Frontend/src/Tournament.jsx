@@ -111,17 +111,17 @@ const Tournament = () => {
             const winner2 = winners[i + 1];
             if (winner1 && winner2) {
                 matches.push(`${winner1.nickname} vs ${winner2.nickname}`);
-            } else if (winner1) {
+            } else if (winner1 && currentMatch != 6) {
                 matches.push(`${winner1.nickname} vs ?`);
             }
         }
 
         return (
-            <div>
-                <h2>Tournament Bracket</h2>
-                <div>
+            <div className='bracketWrapper'>
+                <h2 className='bracketTitle'>{translations.tournamentbracket}</h2>
+                <div className='bracketContent'>
                     {matches.map((match, index) => (
-                        <div key={index}>{match}</div>
+                        <div className='bracketMatch' key={index}>{match}</div>
                     ))}
                 </div>
             </div>
@@ -182,7 +182,7 @@ const Tournament = () => {
         <div className='tournamentContainer'>
             {!isTournamentStarted ? (
                 <div className="tournamentContainer">
-                    <h1 className='tournamentMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
+                    <h1 className='tournamentMenuReturn' onClick={()=>navigate('/menu')}>{translations.title}</h1>
                     <div className='tournamentInput'>
                         <h2 className='tournamentPlayerNames'>{translations.enterplnames}</h2>
                         {players.map((player, index) => (
@@ -195,9 +195,9 @@ const Tournament = () => {
                                 placeholder={`${translations.player} ${index + 1}`}
                             />
                         ))}
-                        <button className='startTournamentBtn' onClick={startTournament}>{translations.tstart}</button>
+                        <button className='startTournamentBtn' onClick={startTournament}>START</button>
                         <div className="bracketContainer">
-                            <span className='bracket'>{translations.tstart}</span>
+                            <span className='bracket'>START</span>
                             <span className='bracket2'></span>
                             <span className='bracket3'></span>
                             <span className='bracket4'></span>

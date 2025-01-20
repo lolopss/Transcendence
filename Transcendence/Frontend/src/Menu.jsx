@@ -323,7 +323,7 @@ function Menu() {
             <span id="borderAnim" ref={borderAnim}></span>
             <span id="borderAnim2" ref={borderAnim2}></span>
             <div className="centerMenu" ref={menu}>
-                <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>The Pong</h1>
+                <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>{translations.title}</h1>
                 <div className="menuButton">
                     <GameButton name={translations.start_btn} onClick={() => navigate('/game-menu')} refbtn={buttonStart}/>
                     <GameButton name={translations.options_btn} onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>

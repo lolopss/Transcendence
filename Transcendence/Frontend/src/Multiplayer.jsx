@@ -392,15 +392,15 @@ function Multiplayer() {
                 </div>
             ) : (
                 <div className='vsMenu'>
-                    <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
+                    <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>{translations.title}</h1>
                     <div className="vsTitles">
-                        <h1 className='vsPl1'>LEFT SIDE
+                        <h1 className='vsPl1'>{translations.leftside}
                             <div className="pl1-profile-image">
                                 <img src='/media/profile_pictures/pepe_boxe.png' className="profile-picture" />
                             </div>
                         </h1>
                         <h1 className='vsVs'> vs </h1>
-                        <h1 className='vsPl2'>RIGHT SIDE
+                        <h1 className='vsPl2'>{translations.rightside}
                             <div className="pl2-profile-image">
                                 <img src='/media/profile_pictures/pepe_boxe.png' className="profile-picture" />
                             </div>

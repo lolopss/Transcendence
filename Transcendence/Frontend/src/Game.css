@@ -391,6 +391,7 @@
     position: absolute;
     top: -80px;
     right: 0;
+    text-align: right;
 }
 
 .p1power {
@@ -403,6 +404,7 @@
     position: absolute;
     bottom: -80px;
     right: 0;
+    text-align: right;
 }
 
 .p1controles,

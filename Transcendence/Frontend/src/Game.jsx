@@ -614,7 +614,7 @@ function Game({
                 </div>
             ) : (
                 <div className='vsMenu'>
-                    <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>THE PONG</h1>
+                    <h1 className='vsMenuReturn' onClick={()=>navigate('/menu')}>{translations.title}</h1>
                     <div className="vsTitles">
                         <h1 className='vsPl1'>{nickname}
                             <div className="pl1-profile-image">

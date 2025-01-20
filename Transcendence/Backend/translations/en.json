@@ -67,5 +67,9 @@
 	"twon" : "won the Tournament",
 	"tstart" : "START",
 	"enterplnames" : "ENTER PLAYER NAMES",
-	"player" : "Player"
+	"player" : "Player",
+	"tournamentbracket" : "Tournament Bracket",
+	"leftside" : "Left Side",
+	"rightside" : "Right Side",
+	"friendprofile" : "Friend Profile"
   }

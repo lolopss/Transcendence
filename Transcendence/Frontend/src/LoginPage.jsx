@@ -3,156 +3,87 @@ import { useNavigate, Link } from 'react-router-dom';
 import './LoginPage.css'
 
 const LoginPage = () => {
-  const [identifier, setIdentifier] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [clientId, setClientId] = useState(null);
-  const navigate = useNavigate();
+    const [identifier, setIdentifier] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+    const [clientId, setClientId] = useState(null);
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const authToken = localStorage.getItem('authToken');
-    if (authToken) {
-      navigate('/menu');
-    }
+    useEffect(() => {
+      const authToken = localStorage.getItem('authToken');
+      if (authToken) {
+        navigate('/menu');
+      }
 
-    // Fetch client ID for OAuth from Django
-    const fetchClientId = async () => {
+      // Fetch client ID for OAuth from Django
+      const fetchClientId = async () => {
+        try {
+          const response = await fetch('/api/client-id/');
+          const data = await response.json();
+          setClientId(data.client_id);
+        } catch (error) {
+          console.error("Failed to load client ID:", error);
+        }
+      };
+
+      fetchClientId();
+    }, [navigate]);
+
+    const handleLogin = async () => {
       try {
-        const response = await fetch('/api/client-id/');
-        const data = await response.json();
-        setClientId(data.client_id);
+          const response = await fetch('/api/login/', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ identifier, password }),
+          });
+
+          if (response.ok) {
+              const data = await response.json();
+              if (data.requires_2fa) {
+                  localStorage.setItem('userId', data.user_id);
+                  localStorage.setItem('isVerifying2FA', 'true'); // Set flag
+                  navigate('/verify-2fa');
+              } else {
+                  localStorage.setItem('authToken', data.access);
+                  localStorage.setItem('refreshToken', data.refresh);
+                  navigate('/menu');
+              }
+          } else {
+              const errorData = await response.json();
+              setError(errorData.error);
+          }
       } catch (error) {
-        console.error("Failed to load client ID:", error);
+          console.error('Error during login:', error);
+          setError('Login failed');
+      }
+  };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        handleLogin();
       }
     };
 
-    fetchClientId();
-  }, [navigate]);
+    const handleOAuthLogin = () => {
+      if (!clientId) {
+        setError('Unable to load OAuth client ID.');
+        return;
+      }
 
-  const handleLogin = async () => {
-    try {
-        const response = await fetch('/api/login/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ identifier, password }),
-        });
+      const redirectUri = encodeURIComponent('https://localhost:8000/register42');  // Ensure this matches the backend
+      const state = encodeURIComponent(Math.random().toString(36).substring(2));
+      const oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=public&state=${state}`;
 
-        if (response.ok) {
-            const data = await response.json();
-            if (data.requires_2fa) {
-                localStorage.setItem('userId', data.user_id);
-                localStorage.setItem('isVerifying2FA', 'true'); // Set flag
-                navigate('/verify-2fa');
-            } else {
-                localStorage.setItem('authToken', data.access);
-                localStorage.setItem('refreshToken', data.refresh);
-                navigate('/menu');
-            }
-        } else {
-            const errorData = await response.json();
-            setError(errorData.error);
-        }
-    } catch (error) {
-        console.error('Error during login:', error);
-        setError('Login failed');
-    }
-};
-
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      handleLogin();
-    }
-  };
-
-  const handleOAuthLogin = () => {
-    if (!clientId) {
-      setError('Unable to load OAuth client ID.');
-      return;
-    }
-
-    let redirectUri;
-    if (window.location.hostname === 'localhost') {
-        redirectUri = encodeURIComponent('https://localhost:8000/register42');
-    } else {
-        redirectUri = encodeURIComponent('https://10.12.2.4:8000/register42');
-    }
-    const state = encodeURIComponent(Math.random().toString(36).substring(2));
-    const oauthUrl = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=public&state=${state}`;
-
-    localStorage.setItem('oauthState', state);  // Save the state to validate on callback
-    window.location.href = oauthUrl;  // Redirect to the OAuth provider
-  };
-
-  /* ------------------- Register ------------------- */
-
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password1, setPassword1] = useState('');
-    const [password2, setPassword2] = useState('');
-    const [nickname, setNickname] = useState('');
-    const [csrftoken, setCsrfToken] = useState('');
-
-    useEffect(() => {
-        // Get CSRF token from cookies when component mounts
-        const getCookie = (name) => {
-        const cookieValue = `; ${document.cookie}`;
-        const parts = cookieValue.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-        };
-
-        const token = getCookie('csrftoken');
-        setCsrfToken(token);
-    }, []);
-
-    const handleRegister = async () => {
-        if (email.endsWith('@student.42lehavre.fr')) {
-            setError('Emails from @student.42lehavre.fr are not allowed for registration.');
-            return;
-        }
-        
-        try {
-        const response = await fetch('/api/register/', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken, // Ensure this is set
-            },
-            body: JSON.stringify({
-            username,
-            email,
-            password1,
-            password2,
-            nickname,
-            }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            // console.log('Registration successful!');
-            navigate('/login'); // Ensure `navigate` is defined or imported if using react-router
-        } else {
-            console.error(data);
-            setError(data.error || 'An error occurred during registration.');
-        }
-        } catch (error) {
-        console.error('Registration failed:', error);
-        setError('An error occurred during registration.');
-        }
-    }
+      localStorage.setItem('oauthState', state);  // Save the state to validate on callback
+      window.location.href = oauthUrl;  // Redirect to the OAuth provider
+    };
 
   /* ------------------- Frontend ------------------- */
 
   const [isWrapperActive, setIsWrapperActive] = useState(false);
   const [isPopupActive, setIsPopupActive] = useState(true);
-
-  const handleRegisterClick = ()=> {
-    //   setIsWrapperActive(true);
-    //   localStorage.setItem('registerVal', false);
-    navigate('/register');
-  }
 
   const handleLoginClick = ()=> {
       setIsWrapperActive(false);
@@ -211,13 +142,8 @@ const LoginPage = () => {
                         <label>Password</label>
                     </div>
                     <button type="submit" className="btn" onClick={handleLogin}>Login<i></i></button>
-                    <div className="login-42">
-                        <a onClick={handleOAuthLogin}>Login with 42</a>
-                    </div>
                     <div className="login-register">
-                        <p>Don't have an account ? <a
-                            className="register-link" onClick={handleRegisterClick}> Register</a>
-                        </p>
+                        <p>Don't have an account? <a href="/register?#">Register here</a></p>
                     </div>
                 </form>
             </div>

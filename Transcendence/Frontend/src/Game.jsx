@@ -628,8 +628,6 @@ function Game({
         <>
             {isStarted ? (
                 <div className='gameContainer'>
-                    {/* <p>Controles left</p>
-                    <p>Controles right</p> */}
                     <div className="canvasContainer" ref={canvasContainer}>
                         <p className='p1controles'>Controls Player 1 <br/>
                             Up : 'W' <br/>
@@ -670,12 +668,26 @@ function Game({
                         <h1 className='vsPl1'>{nickname}
                             <div className="pl1-profile-image">
                                 <img src={profilePicture} className="profile-picture" />
+                                <p className='p1controlesMenu'>Controls Player 1 <br/>
+                                    Up : 'W' <br/>
+                                    Down : 'S'
+                                </p>
+                                <p className='p1powerMenu'>Power UP <br/>
+                                    Key : 'Space'
+                                </p>
                             </div>
                         </h1>
                         <h1 className='vsVs'> vs </h1>
                         <h1 className='vsPl2'>{player2Nickname}
                             <div className="pl2-profile-image">
                                 <img src={aiStarted ? profilePictureIA : '/media/profile_pictures/pepe_boxe.png'} className="profile-picture" />
+                                <p className='p2controlesMenu'>Controls Player 2 <br/>
+                                    Up : 'ArrowUp' <br/>
+                                    Down : 'ArrowDown'
+                                </p>
+                                <p className='p2powerMenu'>Power UP <br/>
+                                    Key : 'Enter'
+                                </p>
                             </div>
                         </h1>
                     </div>

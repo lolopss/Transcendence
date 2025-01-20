@@ -355,23 +355,15 @@ function Multiplayer() {
         <>
             {isStarted ? (
                 <div className='gameContainer'>
-                    {/* <p>Controles left</p>
-                    <p>Controles right</p> */}
                     <div className="canvasContainer" ref={canvasContainer}>
-                        {/* <p className='p1controles'>Controls Player 1 <br/>
-                            Up : 'W' <br/>
-                            Down : 'S'
+                        <p className='p1controles'>Controls Left <br/>
+                            Up   : 'W' | 'O' <br/>
+                            Down : 'S' | 'L'
                         </p>
-                        <p className='p2controles'>Controls Player 2 <br/>
-                            Up : 'ArrowUp' <br/>
-                            Down : 'ArrowDown'
+                        <p className='p2controles'>Controls Right <br/>
+                            Up   : 'ArrowUp'   | '8' <br/>
+                            Down : 'ArrowDown' | '5'
                         </p>
-                        <p className='p1power'>Power UP <br/>
-                            Key : 'Space'
-                        </p>
-                        <p className='p2power'>Power UP <br/>
-                            Key : 'Enter'
-                        </p> */}
                         <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
                     </div>
                     {isGameOver && (
@@ -397,12 +389,20 @@ function Multiplayer() {
                         <h1 className='vsPl1'>{translations.leftside}
                             <div className="pl1-profile-image">
                                 <img src='/media/profile_pictures/pepe_boxe_multi_reverse.png' className="profile-picture" />
+                                <p className='p1controlesMenu'>Controls Left <br/>
+                                    Up   : 'W' | 'O' <br/>
+                                    Down : 'S' | 'L'
+                                </p>
                             </div>
                         </h1>
                         <h1 className='vsVs'> vs </h1>
                         <h1 className='vsPl2'>{translations.rightside}
                             <div className="pl2-profile-image">
                                 <img src='/media/profile_pictures/pepe_boxe_multi.png' className="profile-picture" />
+                                <p className='p2controlesMenu'>Controls Right <br/>
+                                    Up   : 'ArrowUp'   | '8' <br/>
+                                    Down : 'ArrowDown' | '5'
+                                </p>
                             </div>
                         </h1>
                     </div>

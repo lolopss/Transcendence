@@ -45,10 +45,10 @@ function Multiplayer() {
                 console.error('Error fetching user details:', error);
             }
         };
-        
+
         fetchUserDetails();
     }, []);
-    
+
     const loadTranslations = async (language) => {
         try {
             const response = await fetch(`/api/translations/${language}/`, {
@@ -232,9 +232,9 @@ function Multiplayer() {
             }
 
             if (player1.point >= 5) {
-                stopGame('Left players');
+                stopGame(translations.leftside);
             } else if (player2.point >= 5) {
-                stopGame('Right players');
+                stopGame(translations.rightside);
             }
         };
 

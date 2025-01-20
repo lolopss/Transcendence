@@ -5,7 +5,7 @@ import './Game.css'
 function AIGame() {
     return (
         <Game
-            player2Nickname={'AI'}
+            player2Nickname={translations.ai}
             aiStarted={true}
         />
     );

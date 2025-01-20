@@ -51,7 +51,7 @@
 	"invisibility": "Invisibilitée",
 	"switch": "Echanger",
 	"teleportation": "Téléportation",
-	"won": "a Gagné",
+	"won": " a Gagné",
 	"restartGame": "Rejouer",
 	"security": "Sécurité",
 	"nickname": "Pseudonyme",
@@ -64,12 +64,14 @@
     "disabled": "Désactivé",
 	"nextgame": "Prochaine Partie",
 	"quitgame": "Quitter le jeu",
-    "twon": "a gagné le Tournoi",
+    "twon": " a gagné le Tournoi",
     "tstart": "DÉMARRER",
 	"enterplnames": "Entrer les noms des joueurs",
 	"player": "Joueur",
 	"tournamentbracket": "Tableau du tournoi",
 	"leftside": "Côté gauche",
     "rightside": "Côté droit",
-	"friendprofile": "Profil d'ami"
+	"friendprofile": "Profil d'ami",
+	"changesNotAccounted": "Les modifications ne seront pas prises en compte si vous etes connectez avec 42.",
+	"ai" : "IA"
   }

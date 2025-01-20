@@ -210,6 +210,7 @@ const EditAccount = () => {
                         {preview && <img className='carouselImage' src={preview}/>}
                         <button className='carouselButton' type="button" onClick={handleNextImage}>→</button>
                     </div>
+                    <p className="warning-message">{translations.changesNotAccounted}</p>
                     <button className='accountChanges' type="submit">{translations.saveChanges}</button>
                 </form>
                 {/* {error && <div className="error-message">{error}</div>} */}

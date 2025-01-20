@@ -51,7 +51,7 @@
     "invisibility": "Invisibilidad",
     "switch": "Intercambiar",
     "teleportation": "Teletransportación",
-	"won": "Ganó",
+	"won": " Ganó",
     "restartGame": "Reiniciar juego",
 	"security": "Seguridad",
 	"nickname": "Apodo",
@@ -64,12 +64,14 @@
     "disabled": "Deshabilitado",
 	"nextgame": "Próximo partido",
 	"quitgame": "Salir del juego",
-    "twon": "ganó el torneo",
+    "twon": " ganó el Torneo",
     "tstart": "INICIAR",
 	"enterplnames": "Ingrese los nombres de los jugadores",
 	"player": "Jugador",
 	"tournamentbracket": "Cuadro del torneo",
 	"leftside": "Lado izquierdo",
     "rightside": "Lado derecho",
-	"friendprofile": "Perfil de amigo"
+	"friendprofile": "Perfil de amigo",
+	"changesNotAccounted": "Los cambios no se tendrán en cuenta si inicias sesión con 42.",
+	"ai" : "IA"
   }

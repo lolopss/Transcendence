@@ -66,10 +66,10 @@ function Game({
                 console.error('Error fetching user details:', error);
             }
         };
-        
+
         fetchUserDetails();
     }, []);
-    
+
     const loadTranslations = async (language) => {
         try {
             const response = await fetch(`/api/translations/${language}/`, {
@@ -97,7 +97,7 @@ function Game({
         // console.log('Game started');
         startTime = new Date();
     };
-    
+
     // Define player1 and player2 at the component level
     const player1 = new Player(player1Id, nickname, new Paddle(15, height / 2 - 50, 10, 100, 'orange'));
     const player2 = new Player(player2Id, player2Nickname, new Paddle(width - 25, height / 2 - 50, 10, 100, 'violet'));
@@ -111,7 +111,7 @@ function Game({
                 startGame();
                 setIsReady(true);
             });
- 
+
             // Cleanup function
             return () => {
                 // console.log("Cleaning up ...");

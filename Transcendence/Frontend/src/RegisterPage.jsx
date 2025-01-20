@@ -29,7 +29,7 @@ const RegistrationPage = () => {
           setError('Emails from @student.42lehavre.fr are not allowed for registration.');
           return;
       }
-      
+
       try {
       const response = await fetch('/api/register/', {
           method: 'POST',

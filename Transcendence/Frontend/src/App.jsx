@@ -3,12 +3,10 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import Game from './Game';
-import TournamentGame from './TournamentGame.jsx';
 import Multiplayer from './Multiplayer';
 import AIGame from './AIGame';
 import Menu from './Menu';
 import GameMenu from './GameMenu';
-import Matchmaking from './Matchmaking';
 import OAuthCallback from './OAuthCallback';
 import Verify2FA from './Verify2FA';
 import EditAccount from './EditAccount.jsx';
@@ -94,8 +92,8 @@ const App = () => {
       <>
         {showFriendList && <FriendList />}
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify-2fa" element={<Verify2FA />} />
         <Route path="/game-menu" element={<GameMenu />} />
         <Route path="/game" element={<Game />} />
@@ -104,7 +102,6 @@ const App = () => {
         <Route path="/menu" element={<Menu />} />
         <Route path="/edit-account" element={<EditAccount />} />
         <Route path="/security" element={<Security />} />
-        {/* <Route path="/matchmaking" element={<Matchmaking />} /> */}
         <Route path="/register42" element={<OAuthCallback />} /> {/* OAuth callback route */}
         <Route path="/profile/:username" element={<FriendProfile />} />
         <Route path="/profile/" element={<Profile />} />

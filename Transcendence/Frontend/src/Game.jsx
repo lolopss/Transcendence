@@ -35,7 +35,15 @@ function Game({
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
     let animationFrameId = useRef(null);
-    
+
+
+
+
+    /* ==================== UserDetails + Translations ==================== */
+
+
+
+
     useEffect(() => {
         const fetchUserDetails = async () => {
             try {
@@ -76,7 +84,15 @@ function Game({
             console.error('Error loading translations:', error);
         }
     };
-    
+
+
+
+
+    /* ==================== Game Started ==================== */
+
+
+
+
     const startGame = () => {
         // console.log('Game started');
         startTime = new Date();
@@ -86,6 +102,7 @@ function Game({
     const player1 = new Player(player1Id, nickname, new Paddle(15, height / 2 - 50, 10, 100, 'orange'));
     const player2 = new Player(player2Id, player2Nickname, new Paddle(width - 25, height / 2 - 50, 10, 100, 'violet'));
 
+    /* ---------- Canvas Animation ---------- */
     useEffect(() => {
         if (isStarted) {
             // console.log(`Animation running -> ${isStarted}`);
@@ -151,6 +168,14 @@ function Game({
         onGameEnd(winningPlayer); // Call the onGameEnd prop with the winner
     };
 
+
+
+
+    /* ==================== Game Mechanics ==================== */
+
+
+
+
     useEffect(() => {
         if (!isReady) return;
         const canvas = pongCanvas.current;
@@ -209,6 +234,8 @@ function Game({
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
+
+        /* ---------- render canvas component ---------- */
 
         const drawRect = (x, y, width, height, color) => {
             context.fillStyle = color;
@@ -325,7 +352,25 @@ function Game({
                 }
             }
         };
-        
+
+        const shakeScreen = () => {
+            if (shakeDuration > 0) {
+                shakeDuration--;
+                const shakeIntensity = shakeDuration * 3.5;
+                const offsetX = Math.random() * shakeIntensity - shakeIntensity / 2;
+                const offsetY = Math.random() * shakeIntensity - shakeIntensity / 2;
+                canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            } else {
+                canvas.style.transform = "translate(0, 0)";
+            }
+        };
+
+        const triggerImpactEffect = () => {
+            if (Math.abs(ball.dx) >= shakeSpeed) {
+                shakeDuration = 5;
+            }
+        };
+
         let lastAiMoveCall = Date.now(); // Track the last time aiMove was called
 
         const handlePaddleHit = (paddleY) => {
@@ -351,6 +396,8 @@ function Game({
                 limitHitbox--; // Reduce limitHitbox after every two paddle hits
             }
 
+            /* ---------- Ai gesture ---------- */
+
             if (ball.dx > 0 && aiStarted === true) {
                 const now = Date.now();
                 const timeSinceLastCall = now - lastAiMoveCall;
@@ -371,23 +418,11 @@ function Game({
             }
         };
 
-        const shakeScreen = () => {
-            if (shakeDuration > 0) {
-                shakeDuration--;
-                const shakeIntensity = shakeDuration * 3.5;
-                const offsetX = Math.random() * shakeIntensity - shakeIntensity / 2;
-                const offsetY = Math.random() * shakeIntensity - shakeIntensity / 2;
-                canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-            } else {
-                canvas.style.transform = "translate(0, 0)";
-            }
-        };
 
-        const triggerImpactEffect = () => {
-            if (Math.abs(ball.dx) >= shakeSpeed) {
-                shakeDuration = 5;
-            }
-        };
+
+        /* ==================== AI Mechanics ==================== */
+
+
 
         const predictBallPosition = () => {
             let predictedY = ball.y;
@@ -524,6 +559,14 @@ function Game({
             }, 1000);
         }
 
+
+
+
+        /* ==================== Game Loop ==================== */
+
+
+
+
         const update = () => {
             playerDirection(player1);
             ballMovement();
@@ -572,6 +615,14 @@ function Game({
             }
         };
     }, [isReady]);
+
+
+
+
+    /* ==================== Front ==================== */
+
+
+
 
     return (
         <>

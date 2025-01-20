@@ -169,11 +169,11 @@ const RegistrationPage = () => {
                     </div>
                     <button type="submit" className="btn" onClick={handleRegister}>Register<i></i></button>
                     <div className="login-42">
-                        <a href="#">Login with 42</a>
+                        <a>Login with 42</a>
                     </div>
                     <div className="login-register">
                         <p>Already have an account ? <a
-                            href="#" className="login-link" onClick={handleLoginClick}> Login</a>
+                            className="login-link" onClick={handleLoginClick}> Login</a>
                         </p>
                     </div>
                 </form>

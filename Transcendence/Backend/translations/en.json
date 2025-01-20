@@ -74,5 +74,11 @@
 	"friendprofile" : "Friend Profile",
 	"changesNotAccounted": "Changes won't be accounted if you're logging in with 42.",
 	"ai" : "AI",
-	"duration" : "Duration"
-}
+	"duration" : "Duration",
+	"controls_player1": "Controls Player 1",
+    "controls_player2": "Controls Player 2",
+    "up": "Up",
+    "down": "Down",
+    "power_up": "Power UP",
+    "key": "Key"
+  }

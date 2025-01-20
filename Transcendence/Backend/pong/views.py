@@ -59,7 +59,7 @@ def register42(request):
     if request.get_host().startswith('localhost'):
         redirect_uri = 'https://localhost:8000/register42'
     else:
-        redirect_uri = 'https://10.12.2.4:8000/register42'
+        redirect_uri = 'https://10.12.7.5:8000/register42'
 
     # Exchange the authorization code for access tokens
     token_url = 'https://api.intra.42.fr/oauth/token'
@@ -96,7 +96,7 @@ class CallbackView(APIView):
         if request.get_host().startswith('localhost'):
             redirect_uri = 'https://localhost:8000/register42'
         else:
-            redirect_uri = 'https://10.12.2.4:8000/register42'
+            redirect_uri = 'https://10.12.7.5:8000/register42'
 
         token_params = {
             "client_id": os.getenv("CLIENT_ID"),
@@ -596,7 +596,7 @@ class UserDetails(APIView):
                 'score_player2': match.score_player2,
                 'duration': match.duration,  # Time spent in seconds
 
-            }   
+            }
             for match in match_history
         ]
 

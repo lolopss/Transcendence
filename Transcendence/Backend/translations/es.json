@@ -74,5 +74,11 @@
 	"friendprofile": "Perfil de amigo",
 	"changesNotAccounted": "Los cambios no se tendrán en cuenta si inicias sesión con 42.",
 	"ai" : "IA",
-	"duration": "Duración"
+	"duration": "Duración",
+	"controls_player1": "Controles Jugador 1",
+    "controls_player2": "Controles Jugador 2",
+    "up": "Arriba",
+    "down": "Abajo",
+    "power_up": "Poder",
+    "key": "Tecla"
   }

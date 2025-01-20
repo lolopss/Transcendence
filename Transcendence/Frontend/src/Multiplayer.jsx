@@ -396,13 +396,13 @@ function Multiplayer() {
                     <div className="vsTitles">
                         <h1 className='vsPl1'>{translations.leftside}
                             <div className="pl1-profile-image">
-                                <img src='/media/profile_pictures/pepe_boxe.png' className="profile-picture" />
+                                <img src='/media/profile_pictures/pepe_boxe_multi_reverse.png' className="profile-picture" />
                             </div>
                         </h1>
                         <h1 className='vsVs'> vs </h1>
                         <h1 className='vsPl2'>{translations.rightside}
                             <div className="pl2-profile-image">
-                                <img src='/media/profile_pictures/pepe_boxe.png' className="profile-picture" />
+                                <img src='/media/profile_pictures/pepe_boxe_multi.png' className="profile-picture" />
                             </div>
                         </h1>
                     </div>

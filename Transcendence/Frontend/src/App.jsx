@@ -29,6 +29,7 @@ const ProtectedRoute = ({ children }) => {
 const App = () => {
   const location = useLocation();
   const [showFriendList, setShowFriendList] = useState(false);
+  const [userLoaded, setUserLoaded] = useState(false);
 
   const validateToken = async () => { // To check if the token is still valid when reloading the page
     const token = localStorage.getItem("authToken");
@@ -44,6 +45,9 @@ const App = () => {
             localStorage.removeItem("authToken");
             window.location.href = "/login";  // Redirect to login
         }
+        else {
+          setUserLoaded(true)
+        }
     } catch (error) {
         console.error("Token validation error:", error);
         localStorage.removeItem("authToken");
@@ -57,7 +61,7 @@ const App = () => {
 
   useEffect(() => {
     // Update the showFriendList state based on the current route
-    if (location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/register42') {
+    if (location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/register42' && userLoaded) {
       setShowFriendList(true);
     } else {
       setShowFriendList(false);
@@ -90,7 +94,7 @@ const App = () => {
 
   return (
       <>
-        {showFriendList && <FriendList />}
+        {showFriendList && userLoaded && <FriendList />}
         <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

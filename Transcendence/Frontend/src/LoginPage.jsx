@@ -142,6 +142,9 @@ const LoginPage = () => {
                         <label>Password</label>
                     </div>
                     <button type="submit" className="btn" onClick={handleLogin}>Login<i></i></button>
+                    <div className="login-42">
+                        <a onClick={handleOAuthLogin}>Login with 42</a>
+                    </div>
                     <div className="login-register">
                         <p>Don't have an account? <a href="/register?#">Register here</a></p>
                     </div>

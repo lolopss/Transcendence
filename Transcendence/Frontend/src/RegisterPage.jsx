@@ -29,7 +29,7 @@ const RegistrationPage = () => {
           setError('Emails from @student.42lehavre.fr are not allowed for registration.');
           return;
       }
-      
+
       try {
       const response = await fetch('/api/register/', {
           method: 'POST',
@@ -168,9 +168,6 @@ const RegistrationPage = () => {
                         <label>Nickname</label>
                     </div>
                     <button type="submit" className="btn" onClick={handleRegister}>Register<i></i></button>
-                    <div className="login-42">
-                        <a>Login with 42</a>
-                    </div>
                     <div className="login-register">
                         <p>Already have an account ? <a
                             className="login-link" onClick={handleLoginClick}> Login</a>

@@ -264,3 +264,9 @@
     font-size: large;
     letter-spacing: 3px;
 }
+
+.match-duration {
+    font-weight: normal; /* Ensure the duration is not bold */
+    text-align: center; /* Center the text */
+    margin-top: 5px; /* Add some space above the duration */
+}

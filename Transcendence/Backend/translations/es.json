@@ -73,5 +73,6 @@
     "rightside": "Lado derecho",
 	"friendprofile": "Perfil de amigo",
 	"changesNotAccounted": "Los cambios no se tendrán en cuenta si inicias sesión con 42.",
-	"ai" : "IA"
+	"ai" : "IA",
+	"duration": "Duración"
   }

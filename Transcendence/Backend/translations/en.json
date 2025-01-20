@@ -73,5 +73,6 @@
 	"rightside" : "Right Side",
 	"friendprofile" : "Friend Profile",
 	"changesNotAccounted": "Changes won't be accounted if you're logging in with 42.",
-	"ai" : "AI"
-  }
+	"ai" : "AI",
+	"duration" : "Duration"
+}

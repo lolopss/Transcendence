@@ -664,11 +664,16 @@ class AnonymizeAccount(APIView):
 
     def post(self, request):
         user = request.user
+        profile = Profile.objects.get(user=user)
         user.email = f'anonymized_{user.id}@example.com'
         user.username = f'anonymized_{user.id}'
+        user.profile.nickname = f'anonymized_{user.id}'
         user.first_name = ''
         user.last_name = ''
         user.save()
+
+        profile.nickname = f'anonymized_{user.id}'
+        profile.save()
         return Response({'message': 'User account anonymized successfully'}, status=status.HTTP_200_OK)
 
 

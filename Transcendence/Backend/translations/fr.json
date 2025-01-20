@@ -73,5 +73,6 @@
     "rightside": "Côté droit",
 	"friendprofile": "Profil d'ami",
 	"changesNotAccounted": "Les modifications ne seront pas prises en compte si vous etes connectez avec 42.",
-	"ai" : "IA"
+	"ai" : "IA",
+	"duration": "Durée"
   }

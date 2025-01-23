@@ -72,7 +72,7 @@
 	"leftside": "Lado izquierdo",
     "rightside": "Lado derecho",
 	"friendprofile": "Perfil de amigo",
-	"changesNotAccounted": "Los cambios no se tendrán en cuenta si inicias sesión con 42.",
+	"changesNotAccounted": "El usuario conectado con 42AUTH solo puede cambiar la foto de perfil.",
 	"ai" : "IA",
 	"duration": "Duración",
 	"controls_player1": "Controles Jugador 1",

@@ -1,6 +1,5 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import './Edit.css'; // Import the CSS file
 
 const pepeImages = [
@@ -24,6 +23,7 @@ const EditAccount = () => {
     const [preview, setPreview] = useState(pepeImages[pepeImages.length - 1]); // Default to the last image
     const [currentImageIndex, setCurrentImageIndex] = useState(pepeImages.length - 1);
     const [isFileUploaded, setIsFileUploaded] = useState(false);
+    const [connectedFrom42API, setConnectedFrom42API] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -40,6 +40,7 @@ const EditAccount = () => {
                     const data = await response.json();
                     setLanguage(data.language);
                     loadTranslations(data.language);
+                    setConnectedFrom42API(data.connected_from_42_api);
                 } else {
                     console.error('Failed to fetch user details');
                 }
@@ -102,8 +103,7 @@ const EditAccount = () => {
         const formData = new FormData();
         formData.append('username', userDetails.username);
         formData.append('email', userDetails.email);
-        formData.append('firstName', userDetails.firstName);
-        formData.append('lastName', userDetails.lastName);
+        formData.append('nickname', userDetails.nickname);
         if (isFileUploaded && userDetails.profilePicture) {
             formData.append('profilePicture', userDetails.profilePicture);
         } else {
@@ -122,7 +122,11 @@ const EditAccount = () => {
                 navigate('/menu');
             } else {
                 const errorData = await response.json();
+                // if (errorData.connected_from_42_api) {
+                //     setError('You are connected from 42API and cannot change user information except the profile picture.');
+                // } else {
                 setError(`Failed to update account: ${errorData.message || 'Unknown error'}`);
+                // }
             }
         } catch (error) {
             setError(`Error updating account: ${error.message}`);
@@ -164,7 +168,7 @@ const EditAccount = () => {
     }
 
     window.addEventListener("resize", handleResize);
-
+    
     return (
         <div className='accountBody'>
             <header className={`accountHeader ${isShrink ? 'shrink' : ''}`}>
@@ -189,17 +193,18 @@ const EditAccount = () => {
             </header>
             <div className="accountWrapper">
                 <form className='accountForm' onSubmit={handleSubmit}>
+                    <p className="warning-message">{translations.changesNotAccounted}</p>
                     <label className='accountLabel'>
                         {translations.username}:
-                        <input className='accountInput' type="text" name="username" value={userDetails.username} onChange={handleChange} />
+                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="text" name="username" value={userDetails.username} onChange={handleChange} readOnly={connectedFrom42API}/>
                     </label>
                     <label className='accountLabel'>
                     {translations.email}:
-                        <input className='accountInput' type="email" name="email" value={userDetails.email} onChange={handleChange} />
+                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="email" name="email" value={userDetails.email} onChange={handleChange} readOnly={connectedFrom42API}/>
                     </label>
                     <label className='accountLabel'>
                     {translations.nickname}:
-                        <input className='accountInput' type="text" name="nickname" value={userDetails.nickname} onChange={handleChange} />
+                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="text" name="nickname" value={userDetails.nickname} onChange={handleChange} readOnly={connectedFrom42API}/>
                     </label>
                     <label className='accountLabel'>
                     {translations.profilePicture}:
@@ -210,10 +215,9 @@ const EditAccount = () => {
                         {preview && <img className='carouselImage' src={preview}/>}
                         <button className='carouselButton' type="button" onClick={handleNextImage}>→</button>
                     </div>
-                    <p className="warning-message">{translations.changesNotAccounted}</p>
                     <button className='accountChanges' type="submit">{translations.saveChanges}</button>
                 </form>
-                {/* {error && <div className="error-message">{error}</div>} */}
+                {error && <div className="error-message">{error}</div>}
             </div>
         </div>
     );

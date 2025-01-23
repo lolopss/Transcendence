@@ -72,7 +72,7 @@
 	"leftside" : "Left Side",
 	"rightside" : "Right Side",
 	"friendprofile" : "Friend Profile",
-	"changesNotAccounted": "Changes won't be accounted if you're logging in with 42.",
+	"changesNotAccounted": "User connected with 42AUTH can only change profile picture.",
 	"ai" : "AI",
 	"duration" : "Duration",
 	"controls_player1": "Controls Player 1",

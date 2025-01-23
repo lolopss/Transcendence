@@ -687,23 +687,21 @@ def edit_account(request):
     data = request.data
     # Initialize a dictionary to collect errors
     errors = {}
-    # Check if the user is connected with 42 API
-    if not user.profile.connected_from_42_api:
-        # Validate and update the username
-        username = data.get('username')
-        if username:
-            if User.objects.exclude(pk=user.pk).filter(username=username).exists():
-                errors['username'] = 'This username is already taken.'
-            else:
-                user.username = username
+    
+    username = data.get('username')
+    if username:
+        if User.objects.exclude(pk=user.pk).filter(username=username).exists():
+            errors['username'] = 'This username is already taken.'
+        else:
+            user.username = username
 
-        # Validate and update the email
-        email = data.get('email')
-        if email:
-            if User.objects.exclude(pk=user.pk).filter(email=email).exists():
-                errors['email'] = 'This email is already in use.'
-            else:
-                user.email = email
+    # Validate and update the email
+    email = data.get('email')
+    if email:
+        if User.objects.exclude(pk=user.pk).filter(email=email).exists():
+            errors['email'] = 'This email is already in use.'
+        else:
+            user.email = email
 
     # Validate and update the profile picture
     try:
@@ -738,6 +736,7 @@ def edit_account(request):
     user.save()
     user.profile.save()
     return Response({'message': 'Account updated successfully'}, status=status.HTTP_200_OK)
+
 
 
 # views.py

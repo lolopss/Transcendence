@@ -214,11 +214,11 @@ function Game({
                     }
                 } else if (gameOption === 'Teleportation') {
                     if (event.key === ' ' && !player2UsedPowerUp) {
-                        ball.y = height - ball.y;
+                        ball.y = (height-11) - (ball.y-11);
                         player2UsedPowerUp = true;
                     }
                     if (event.key === 'Enter' && !player1UsedPowerUp && aiStarted === false) {
-                        ball.y = height - ball.y;
+                        ball.y = (height-11) - (ball.y-11);
                         player1UsedPowerUp = true;
                     }
                 }

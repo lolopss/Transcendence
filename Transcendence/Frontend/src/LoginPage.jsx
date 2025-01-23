@@ -94,10 +94,6 @@ const LoginPage = () => {
     navigate('/register');
   }
 
-  const handleLoginClick = ()=> {
-      setIsWrapperActive(false);
-  }
-
   const handleBtnPopupClick = ()=> {
       setIsPopupActive(true);
   }

@@ -14,7 +14,8 @@ To complete this project with have to make some modules (at least 7 majors modul
 Minor module: RGPD ✅ 
 Minor module: Use a front-end framework or toolkit ✅ 
 Minor module: Use a database for the backend ✅ 
-Minor module: Expanding Browser Compatibility ✅ 
+Minor module: Expanding Browser Compatibility ✅
+Minor module: Support on all devices ✅
 Minor module: Multiple language supports ✅ 
 Minor module: Game Customization Options ✅ (power ups)
 
@@ -25,7 +26,7 @@ Major module: Multiple players ✅
 Major module: Implement Two-Factor Authentication (2FA) and JWT ✅ 
 Major module: Introduce an AI Opponent ✅
 
-9 Major modules (6 Maj / 6 Min)
+9 Major + 1 Minor modules (6 Maj / 7 Min)
 ```
 
 ## Requirements

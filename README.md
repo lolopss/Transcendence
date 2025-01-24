@@ -6,6 +6,27 @@ Create a Pong website to play with friends or vs ai
 
 ![Screenshot from 2025-01-24 15-20-35](https://github.com/user-attachments/assets/9d1f5415-025a-4b1c-a0c8-3dd3d45b0af1)
 
+### Modules
+
+To complete this project with have to make some modules (at least 7 majors modules where 2 minors modules are equal to 1 major module)
+
+```
+Minor module: RGPD ✅ 
+Minor module: Use a front-end framework or toolkit ✅ 
+Minor module: Use a database for the backend ✅ 
+Minor module: Expanding Browser Compatibility ✅ 
+Minor module: Multiple language supports ✅ 
+Minor module: Game Customization Options ✅ (power ups)
+
+Major module: Standard user management, authentication, users across tournaments ✅
+Major module: Implementing a remote authentication ✅ 
+Major module: Use a Framework for the backend ✅ 
+Major module: Multiple players ✅ 
+Major module: Implement Two-Factor Authentication (2FA) and JWT ✅ 
+Major module: Introduce an AI Opponent ✅
+
+9 Major modules (6 Maj / 6 Min)
+```
 
 ## Requirements
 This project uses docker and docker-compose to works.

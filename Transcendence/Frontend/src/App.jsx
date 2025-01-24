@@ -68,7 +68,7 @@ const App = () => {
     <>
       {showFriendList && <FriendList />}
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
+        {/* <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/verify-2fa" element={<Verify2FA />} />
         <Route path="/game-menu" element={<ProtectedRoute><GameMenu /></ProtectedRoute>} />
@@ -79,9 +79,24 @@ const App = () => {
         <Route path="/edit-account" element={<ProtectedRoute><EditAccount /></ProtectedRoute>} />
         <Route path="/security" element={<ProtectedRoute><Security /></ProtectedRoute>} />
         <Route path="/register42" element={<OAuthCallback />} /> {/* OAuth callback route */}
-        <Route path="/profile/:username" element={<ProtectedRoute><FriendProfile /></ProtectedRoute>} />
+        {/*<Route path="/profile/:username" element={<ProtectedRoute><FriendProfile /></ProtectedRoute>} />
         <Route path="/profile/" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/tournament" element={<ProtectedRoute><Tournament /></ProtectedRoute>} />
+        <Route path="*" element={<Navigate to="/login" />} /> */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-2fa" element={<Verify2FA />} />
+        <Route path="/game-menu" element={<GameMenu />} /> 
+        <Route path="/game" element={<Game />} /> 
+        <Route path="/ai-game" element={<AIGame />} /> 
+        <Route path="/multiplayer" element={<Multiplayer />} /> 
+        <Route path="/menu" element={<Menu />} /> 
+        <Route path="/edit-account" element={<EditAccount />} /> 
+        <Route path="/security" element={<Security />} /> 
+        <Route path="/register42" element={<OAuthCallback />} /> 
+        <Route path="/profile/:username" element={<FriendProfile />} /> 
+        <Route path="/profile/" element={<Profile />} /> 
+        <Route path="/tournament" element={<Tournament />} /> 
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </>

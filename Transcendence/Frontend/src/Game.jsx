@@ -31,6 +31,10 @@ function Game({
     const canvasContainer = useRef(null);
     const [language, setLanguage] = useState('en');
     const [translations, setTranslations] = useState({});
+    const p1up = useRef(null);
+    const p1do = useRef(null);
+    const p2up = useRef(null);
+    const p2do = useRef(null);
     const navigate = useNavigate();
     let limitHitbox = 25;       // Starting limitHitbox value
     let paddleHitCount = 0;     // Track paddle hits
@@ -236,6 +240,56 @@ function Game({
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
+
+        const p1upuse = p1up.current;
+        const p1douse = p1do.current;
+        const p2upuse = p2up.current;
+        const p2douse = p2do.current;
+        const handleKeyDownp1up = () => {
+            player1.paddle.dy = -5;
+        };
+
+        const handleKeyUpp1up = () => {
+            player1.paddle.dy = 0;
+        };
+
+        const handleKeyDownp1do = () => {
+            player1.paddle.dy = 5;
+        };
+
+        const handleKeyUpp1do = () => {
+            player1.paddle.dy = 0;
+        };
+
+        const handleKeyDownp2up = () => {
+            player2.paddle.dy = -5;
+        };
+
+        const handleKeyUpp2up = () => {
+            player2.paddle.dy = 0;
+        };
+
+        const handleKeyDownp2do = () => {
+            player2.paddle.dy = 5;
+        };
+
+        const handleKeyUpp2do = () => {
+            player2.paddle.dy = 0;
+        };
+
+        if (p1upuse && p1douse) {
+            p1upuse.addEventListener('touchstart', handleKeyDownp1up);
+            p1upuse.addEventListener('touchend', handleKeyUpp1up);
+            p1douse.addEventListener('touchstart', handleKeyDownp1do);
+            p1douse.addEventListener('touchend', handleKeyUpp1do);
+        }
+
+        if (aiStarted == false && (p2upuse && p2douse)) {
+            p2upuse.addEventListener('touchstart', handleKeyDownp2up);
+            p2upuse.addEventListener('touchend', handleKeyUpp2up);
+            p2douse.addEventListener('touchstart', handleKeyDownp2do);
+            p2douse.addEventListener('touchend', handleKeyUpp2do);
+        }
 
         /* ---------- render canvas component ---------- */
 
@@ -623,28 +677,46 @@ function Game({
 
     /* ==================== Front ==================== */
 
+    
+    const [isMobile, setIsMobile] = useState(false);
 
+    useEffect(() => {
+        const userAgent = navigator.userAgent;
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+        setIsMobile(isMobile);
+    }, []);
 
 
     return (
         <>
             {isStarted ? (
                 <div className='gameContainer'>
+                    {isMobile &&
+                        <>
+                            <span className='p1up' ref={p1up}></span>
+                            <span className='p1do' ref={p1do}></span>
+                            <span className='p2up' ref={p2up}></span>
+                            <span className='p2do' ref={p2do}></span>
+                        </>
+                    }
                     <div className="canvasContainer" ref={canvasContainer}>
-                        <p className='p1controles'>Controls Player 1 <br/>
-                            Up : 'W' <br/>
-                            Down : 'S'
-                        </p>
-                        <p className='p2controles'>Controls Player 2 <br/>
-                            Up : 'ArrowUp' <br/>
-                            Down : 'ArrowDown'
-                        </p>
-                        <p className='p1power'>Power UP <br/>
-                            Key : 'Space'
-                        </p>
-                        <p className='p2power'>Power UP <br/>
-                            Key : 'Enter'
-                        </p>
+                        { !isMobile && <>
+                                <p className='p1controles'>Controls Player 1 <br/>
+                                    Up : 'W' <br/>
+                                    Down : 'S'
+                                </p>
+                                <p className='p2controles'>Controls Player 2 <br/>
+                                    Up : 'ArrowUp' <br/>
+                                    Down : 'ArrowDown'
+                                </p>
+                                <p className='p1power'>Power UP <br/>
+                                    Key : 'Space'
+                                </p>
+                                <p className='p2power'>Power UP <br/>
+                                    Key : 'Enter'
+                                </p>
+                            </>
+                        }
                         <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
                     </div>
                     {isGameOver && tournamentStarted === false && (
@@ -710,7 +782,7 @@ function Game({
                                 {translations.powerUps} {powerUpsEnabled ? 'On' : 'Off'}
                             </button>
                         </div>
-                        {powerUpsEnabled && (
+                        {powerUpsEnabled && !isMobile && (
                             <div className='vsPowerUps'>
                                 <h3 className={`vsInv ${gameOption}`}>{translations.invisibility}</h3>
                                 <button className='vsBtn' onClick={() => setGameOption(gameOption === 'Invisibility' ? 'Teleportation' : 'Invisibility')}>

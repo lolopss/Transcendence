@@ -453,3 +453,43 @@
     font-weight: 600;
     color: white;
 }
+
+.p1up {
+    position: absolute;
+    width: 50vw;
+    height: 50vh;
+    top: 0;
+    left: 0;
+    background: transparent;
+    z-index: 98;
+}
+
+.p1do {
+    position: absolute;
+    width: 50vw;
+    height: 50vh;
+    top: 50%;
+    left: 0;
+    background: transparent;
+    z-index: 98;
+}
+
+.p2up {
+    position: absolute;
+    width: 50vw;
+    height: 50vh;
+    top: 0;
+    right: 0;
+    background: transparent;
+    z-index: 98;
+}
+
+.p2do {
+    position: absolute;
+    width: 50vw;
+    height: 50vh;
+    top: 50%;
+    right: 0;
+    background: transparent;
+    z-index: 98;
+}

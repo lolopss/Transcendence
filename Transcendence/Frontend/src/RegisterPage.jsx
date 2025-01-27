@@ -116,8 +116,9 @@ const handleRegister = async () => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 onKeyDown={handleKeyDown}
+                                maxLength={15}
                                 required/>
-                        <label>Username</label>
+                        <label>Username - max 15 characters</label>
                     </div>
                     <div className="input-box">
                         <span className="icon">
@@ -141,7 +142,7 @@ const handleRegister = async () => {
                                 onChange={(e) => setPassword1(e.target.value)}
                                 onKeyDown={handleKeyDown}
                                 required/>
-                        <label>Password</label>
+                        <label>Password - min 8 characters</label>
                     </div>
                     <div className="input-box">
                         <span className="icon">
@@ -164,8 +165,9 @@ const handleRegister = async () => {
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
                                 onKeyDown={handleKeyDown}
+                                maxLength={15}
                                 required/>
-                        <label>Nickname</label>
+                        <label>Nickname  - max 15 characters</label>
                     </div>
                     <button type="submit" className="btn" onClick={handleRegister}>Register<i></i></button>
                     <div className="login-register">

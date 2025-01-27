@@ -292,3 +292,9 @@
     transform: scale(1.1);
     color: var(--color-1);
 }
+
+.warning-message {
+    font-size: 13px;
+    font-weight: 600;
+    color: red;
+}

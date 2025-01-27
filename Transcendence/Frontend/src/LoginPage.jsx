@@ -132,6 +132,7 @@ const LoginPage = () => {
                                 value={identifier}
                                 onChange={(e) => setIdentifier(e.target.value)}
                                 onKeyDown={handleKeyDown}
+                                maxLength={15}
                                 required/>
                         <label>Username</label>
                     </div>

@@ -119,7 +119,7 @@ const EditAccount = () => {
                 body: formData,
             });
             if (response.ok) {
-                navigate('/menu');
+                navigate('/profile');
             } else {
                 const errorData = await response.json();
                 // if (errorData.connected_from_42_api) {
@@ -196,7 +196,7 @@ const EditAccount = () => {
                     <p className="warning-message">{translations.changesNotAccounted}</p>
                     <label className='accountLabel'>
                         {translations.username}:
-                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="text" name="username" value={userDetails.username} onChange={handleChange} readOnly={connectedFrom42API}/>
+                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="text" name="username" value={userDetails.username} onChange={handleChange} maxLength={15} readOnly={connectedFrom42API}/>
                     </label>
                     <label className='accountLabel'>
                     {translations.email}:
@@ -204,7 +204,7 @@ const EditAccount = () => {
                     </label>
                     <label className='accountLabel'>
                     {translations.nickname}:
-                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="text" name="nickname" value={userDetails.nickname} onChange={handleChange} readOnly={connectedFrom42API}/>
+                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="text" name="nickname" value={userDetails.nickname} onChange={handleChange} maxLength={15} readOnly={connectedFrom42API}/>
                     </label>
                     <label className='accountLabel'>
                     {translations.profilePicture}:

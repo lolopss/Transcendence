@@ -4,7 +4,8 @@ The final project of 42 common core
 ## Goal
 Create a Pong website to play with friends or vs ai
 
-![Screenshot from 2025-01-24 15-20-35](https://github.com/user-attachments/assets/9d1f5415-025a-4b1c-a0c8-3dd3d45b0af1)
+![Transcendence_gameplay](https://github.com/user-attachments/assets/892a11a8-116d-440a-91c9-6a7b09b2d7c3)
+
 
 ### Modules
 

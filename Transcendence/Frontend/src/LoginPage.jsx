@@ -16,20 +16,20 @@ const LoginPage = () => {
     }
 
     // Fetch client ID for OAuth from Django
-    // const fetchClientId = async () => {
-    //   try {
-    //     const response = await fetch('/api/client-id/');
-    //     const data = await response.json();
-    //     setClientId(data.client_id);
-    //   } catch (error) {
-    //     console.error("Failed to load client ID:", error);
-    //   }
-    // };
+    const fetchClientId = async () => {
+      try {
+        const response = await fetch('/api/client-id/');
+        const data = await response.json();
+        setClientId(data.client_id);
+      } catch (error) {
+        console.error("Failed to load client ID:", error);
+      }
+    };
 
-    // fetchClientId();
+    fetchClientId();
   }, [navigate]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (event) => {
     event.preventDefault();
     try {
         const response = await fetch('/api/login/', {
@@ -59,11 +59,11 @@ const LoginPage = () => {
         console.error('Error during login:', error);
         setError('Login failed');
     }
-};
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      handleLogin();
+      handleLogin(event);
     }
   };
 

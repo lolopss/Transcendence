@@ -575,7 +575,9 @@ def edit_account(request):
             errors['email'] = 'This email is already in use.'
         else:
             user.email = email
-
+    nickname = data.get('nickname')
+    if nickname:
+        user.profile.nickname = nickname
     # Validate and update the profile picture
     try:
         profile_picture = request.FILES['profilePicture']

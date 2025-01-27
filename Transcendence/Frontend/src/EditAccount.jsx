@@ -100,6 +100,13 @@ const EditAccount = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+    
+        // Check if any required fields are null
+        if (!userDetails.username || !userDetails.email || !userDetails.nickname) {
+            setError('All fields are required.');
+            return;
+        }
+    
         const formData = new FormData();
         formData.append('username', userDetails.username);
         formData.append('email', userDetails.email);
@@ -109,7 +116,7 @@ const EditAccount = () => {
         } else {
             formData.append('profilePictureUrl', preview);
         }
-
+    
         try {
             const response = await fetch('/api/edit-account/', {
                 method: 'POST',
@@ -122,11 +129,7 @@ const EditAccount = () => {
                 navigate('/profile');
             } else {
                 const errorData = await response.json();
-                // if (errorData.connected_from_42_api) {
-                //     setError('You are connected from 42API and cannot change user information except the profile picture.');
-                // } else {
                 setError(`Failed to update account: ${errorData.message || 'Unknown error'}`);
-                // }
             }
         } catch (error) {
             setError(`Error updating account: ${error.message}`);

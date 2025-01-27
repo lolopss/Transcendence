@@ -80,5 +80,11 @@
     "up": "Up",
     "down": "Down",
     "power_up": "Power UP",
-    "key": "Key"
+    "key": "Key",
+	"space": "Space",
+	"enter": "Enter",
+	"arrup": "Arrow Up",
+    "arrdown": "Arrow Down",
+	"controls_left": "Left Controls",
+    "controls_right": "Right Controls"
   }

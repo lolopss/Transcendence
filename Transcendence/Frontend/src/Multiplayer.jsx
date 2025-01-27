@@ -354,13 +354,13 @@ function Multiplayer() {
             {isStarted ? (
                 <div className='gameContainer'>
                     <div className="canvasContainer" ref={canvasContainer}>
-                        <p className='p1controles'>Controls Left <br/>
-                            Up   : 'W' | 'O' <br/>
-                            Down : 'S' | 'L'
+                        <p className='p1controles'>{translations.controls_left} <br/>
+                            {translations.up}   : 'W' | 'O' <br/>
+                            {translations.down} : 'S' | 'L'
                         </p>
-                        <p className='p2controles'>Controls Right <br/>
-                            Up   : 'ArrowUp'   | '8' <br/>
-                            Down : 'ArrowDown' | '5'
+                        <p className='p2controles'>{translations.controls_right} <br/>
+                            {translations.up}   : '{translations.arrup}'   | '8' <br/>
+                            {translations.down} : '{translations.arrdown}' | '5'
                         </p>
                         <canvas ref={pongCanvas} className={isStarted ? 'gameCanvas' : 'animateCanvas'} width={width} height={height}></canvas>
                     </div>
@@ -387,9 +387,9 @@ function Multiplayer() {
                         <h1 className='vsPl1'>{translations.leftside}
                             <div className="pl1-profile-image">
                                 <img src='/media/profile_pictures/pepe_boxe_multi_reverse.png' className="profile-picture" />
-                                <p className='p1controlesMenu'>Controls Left <br/>
-                                    Up   : 'W' | 'O' <br/>
-                                    Down : 'S' | 'L'
+                                <p className='p1controlesMenu'>{translations.controls_left} <br/>
+                                    {translations.up}   : 'W' | 'O' <br/>
+                                    {translations.down} : 'S' | 'L'
                                 </p>
                             </div>
                         </h1>
@@ -397,9 +397,9 @@ function Multiplayer() {
                         <h1 className='vsPl2'>{translations.rightside}
                             <div className="pl2-profile-image">
                                 <img src='/media/profile_pictures/pepe_boxe_multi.png' className="profile-picture" />
-                                <p className='p2controlesMenu'>Controls Right <br/>
-                                    Up   : 'ArrowUp'   | '8' <br/>
-                                    Down : 'ArrowDown' | '5'
+                                <p className='p2controlesMenu'>{translations.controls_right} <br/>
+                                    {translations.up}   : '{translations.arrup}'   | '8' <br/>
+                                    {translations.down} : '{translations.arrdown}' | '5'
                                 </p>
                             </div>
                         </h1>

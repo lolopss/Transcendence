@@ -80,5 +80,11 @@
     "up": "Arriba",
     "down": "Abajo",
     "power_up": "Poder",
-    "key": "Tecla"
+    "key": "Tecla",
+	"space": "Espacio",
+	"enter": "Entrar",
+	"arrup": "Flecha Arriba",
+    "arrdown": "Flecha Abajo",
+	"controls_left": "Controles Izquierdos",
+    "controls_right": "Controles Derechos"
   }

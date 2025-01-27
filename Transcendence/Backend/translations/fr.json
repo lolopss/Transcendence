@@ -80,5 +80,11 @@
     "up": "Haut",
     "down": "Bas",
     "power_up": "Pouvoir",
-    "key": "Touche"
+    "key": "Touche",
+	"space": "Espace",
+	"enter": "Entrer",
+	"arrup": "Flèche Haut",
+    "arrdown": "Flèche Bas",
+	"controls_left": "Contrôles Gauche",
+    "controls_right": "Contrôles Droite"
   }

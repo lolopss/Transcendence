@@ -701,19 +701,19 @@ function Game({
                     }
                     <div className="canvasContainer" ref={canvasContainer}>
                         { !isMobile && <>
-                                <p className='p1controles'>Controls Player 1 <br/>
-                                    Up : 'W' <br/>
-                                    Down : 'S'
+                                <p className='p1controles'>{translations.controls_player1} <br/>
+                                    {translations.up} : 'W' <br/>
+                                    {translations.down} : 'S'
                                 </p>
-                                <p className='p2controles'>Controls Player 2 <br/>
-                                    Up : 'ArrowUp' <br/>
-                                    Down : 'ArrowDown'
+                                <p className='p2controles'>{translations.controls_player2} <br/>
+                                    {translations.up} : '{translations.arrup}' <br/>
+                                    {translations.down} : '{translations.arrdown}'
                                 </p>
-                                <p className='p1power'>Power UP <br/>
-                                    Key : 'Space'
+                                <p className='p1power'>{translations.power_up} <br/>
+                                    {translations.key} : '{translations.space}'
                                 </p>
-                                <p className='p2power'>Power UP <br/>
-                                    Key : 'Enter'
+                                <p className='p2power'>{translations.power_up} <br/>
+                                    {translations.key} : '{translations.enter}'
                                 </p>
                             </>
                         }
@@ -747,7 +747,7 @@ function Game({
                                 {translations.down} : 'S'
                             </p>
                             <p className='p1powerMenu'>{translations.power_up} <br/>
-                                {translations.key} : 'Space'
+                                {translations.key} : '{translations.space}'
                             </p>
                         </div>
                     </h1>
@@ -758,11 +758,11 @@ function Game({
                             {!aiStarted &&
                             <>
                                 <p className='p2controlesMenu'>{translations.controls_player2} <br/>
-                                    {translations.up} : 'ArrowUp' <br/>
-                                    {translations.down} : 'ArrowDown'
+                                    {translations.up} : '{translations.arrup}' <br/>
+                                    {translations.down} : '{translations.arrdown}'
                                 </p>
                                 <p className='p2powerMenu'>{translations.power_up} <br/>
-                                    {translations.key} : 'Enter'
+                                    {translations.key} : '{translations.enter}'
                                 </p>
                             </>
                             }

@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pong',
-    'corsheaders',
     'channels',
     'rest_framework',
     'social_django',

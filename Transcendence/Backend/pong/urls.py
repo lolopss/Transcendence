@@ -23,5 +23,4 @@ urlpatterns = [
     path('api/save-match-result/', SaveMatchResult.as_view(), name='save-match-result'),
     path('api/friend-list/', FriendListView.as_view(), name='friend-list'),
     path('api/add-friend/', AddFriendView.as_view(), name='add-friend'),
-
 ]

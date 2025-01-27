@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect
 from django.utils.translation import get_language
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.core.exceptions import ValidationError
 from .forms import RegistrationForm, ProfileForm, AnonymizationRequestForm, DeletionRequestForm
@@ -162,6 +163,7 @@ class CallbackView(APIView):
             return Response({'error': 'Error during token exchange'}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
 # Register new user
+@method_decorator(csrf_exempt, name='dispatch')
 class UserRegister(APIView):
     permission_classes = [AllowAny]
 
@@ -188,55 +190,46 @@ class UserRegister(APIView):
 
 
 # Login user and generate JWT token
+@method_decorator(csrf_exempt, name='dispatch')
 class UserLogin(APIView):
     permission_classes = [AllowAny]
 
-    @csrf_exempt
     def post(self, request):
         data = request.data
         identifier = data.get("identifier")  # Use identifier for email or username
         password = data.get("password")
-
         # Check if identifier and password are provided
         if not identifier or not password:
             return Response({"error": "Identifier and password are required"}, status=status.HTTP_400_BAD_REQUEST)
-
         # Attempt to retrieve user by email or username
         try:
             user = UserModel.objects.get(Q(email=identifier) | Q(username=identifier))
         except UserModel.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-
         # Check password correctness
         if not user.check_password(password):
             return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
-
         # Check if 2FA is enabled
         if user.profile.is_2fa_enabled:
             return Response({
                 "requires_2fa": True,
                 "user_id": user.id
             }, status=status.HTTP_200_OK)
-
         # Generate the JWT tokens (access and refresh)
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)
-
         # Add `user_id` to the access token
         refresh.access_token["user_id"] = user.id
-
         # Set user to online (if your app has an 'isOnline' field in the profile model)
         if hasattr(user, 'profile'):
             user.profile.isOnline = True
             user.profile.save()
-
         return Response({
             "access": access_token,
             "refresh": refresh_token,
             "isOnline": user.profile.isOnline
         }, status=status.HTTP_200_OK)
-
 # Logout user and update online status
 
 class UserLogout(APIView):
@@ -530,25 +523,6 @@ class UserDetails(APIView):
             'winrate': winrate,
             'total_time_spent': total_time_spent,
         })
-
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# def update_win_loss(request):
-#     user = request.user
-#     data = request.data
-#     winningPlayer = data.get('winningPlayer')
-
-#     if winningPlayer == 'Player1':
-#         user.profile.wins += 1
-#     elif winningPlayer == 'Player2':
-#         user.profile.losses += 1
-#     else:
-#         return Response({'error': 'Invalid winner'}, status=status.HTTP_400_BAD_REQUEST)
-
-#     user.profile.save()
-
-#     return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
-
 
 class DeleteAccount(APIView):
     permission_classes = [IsAuthenticated]

@@ -16,20 +16,21 @@ const LoginPage = () => {
     }
 
     // Fetch client ID for OAuth from Django
-    const fetchClientId = async () => {
-      try {
-        const response = await fetch('/api/client-id/');
-        const data = await response.json();
-        setClientId(data.client_id);
-      } catch (error) {
-        console.error("Failed to load client ID:", error);
-      }
-    };
+    // const fetchClientId = async () => {
+    //   try {
+    //     const response = await fetch('/api/client-id/');
+    //     const data = await response.json();
+    //     setClientId(data.client_id);
+    //   } catch (error) {
+    //     console.error("Failed to load client ID:", error);
+    //   }
+    // };
 
-    fetchClientId();
+    // fetchClientId();
   }, [navigate]);
 
   const handleLogin = async () => {
+    event.preventDefault();
     try {
         const response = await fetch('/api/login/', {
             method: 'POST',
@@ -151,9 +152,7 @@ const LoginPage = () => {
                         <a onClick={handleOAuthLogin}>Login with 42</a>
                     </div>
                     <div className="login-register">
-                        <p>Don't have an account ? <a href='?'
-                            className="register-link" onClick={handleRegisterClick}> Register</a>
-                        </p>
+                        <p>Don't have an account? <Link to="/register">Register</Link></p>
                     </div>
                 </form>
             </div>

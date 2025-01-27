@@ -24,42 +24,42 @@ const RegistrationPage = () => {
     setCsrfToken(token);
   }, []);
 
-  const handleRegister = async () => {
-      if (email.endsWith('@student.42lehavre.fr')) {
-          setError('Emails from @student.42lehavre.fr are not allowed for registration.');
-          return;
-      }
+const handleRegister = async () => {
+    event.preventDefault();
+    if (email.endsWith('@student.42lehavre.fr')) {
+        setError('Emails from @student.42lehavre.fr are not allowed for registration.');
+        return;
+    }
 
-      try {
-      const response = await fetch('/api/register/', {
-          method: 'POST',
-          headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrftoken, // Ensure this is set
-          },
-          body: JSON.stringify({
-          username,
-          email,
-          password1,
-          password2,
-          nickname,
-          }),
-      });
+    try {
+        const response = await fetch('/api/register/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken, // Ensure this is set
+            },
+            body: JSON.stringify({
+                username,
+                email,
+                password1,
+                password2,
+                nickname,
+            }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-          // console.log('Registration successful!');
-          navigate('/login'); // Ensure `navigate` is defined or imported if using react-router
-      } else {
-          console.error(data);
-          setError(data.error || 'An error occurred during registration.');
-      }
-      } catch (error) {
-      console.error('Registration failed:', error);
-      setError('An error occurred during registration.');
-      }
-  }
+        if (response.ok) {
+            // console.log('Registration successful!');
+            navigate('/login'); // Ensure `navigate` is defined or imported if using react-router
+        } else {
+            // console.error(data);
+            setError(data.error || data.message || 'An error occurred during registration.');
+        }
+    } catch (error) {
+        setError(error || 'An error occurred during registration.');
+    }
+}
 
   // Function to handle Enter key press
   const handleKeyDown = (event) => {

@@ -1,7 +1,0 @@
-[?1049h[22;0;0t[?1h= id |                                         password                                          | last_login | is_superuser | username  | first_name | last_name  |         email         | is_staff | is_active |          date_joined          
-----+--------------------------------------------------------------------------- ---------------+------------+--------------+-----------+------------+----------- +-----------------------+----------+-----------+-------------------------------
-  1 | pbkdf2_sha256$600000$uKO4ENkIdjmlsKr35rNQE5$/6mcMaNyh+b9dZEzY0ex7HIFCV1XER HRi4uoqYsK8Ew= |            | t            | superUser |            |            | superUser@example.com | t        | t         | 2025-01-24 17:14:40.300734+00
-  2 | pbkdf2_sha256$600000$U6tncVs4HuXn8TWMIOuPQX$e7kYXoI6hKE74CvQDgO99omtEHuy7C GimdxlSq21iwA= |            | f            | test      |            |            | test@gmail.com        | f        | t         | 2025-01-24 17:15:10.943358+00
-(2 rows)
-
-[7m(END)[27m[K

@@ -193,6 +193,7 @@ const handleRegister = async () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     onKeyDown={handleKeyDown}
+                                    maxLength={30}
                                     required/>
                             <label>Email</label>
                         </div>

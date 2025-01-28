@@ -205,7 +205,7 @@ const EditAccount = () => {
                     </label>
                     <label className='accountLabel'>
                     {translations.email}:
-                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="email" name="email" value={userDetails.email} onChange={handleChange} readOnly={connectedFrom42API}/>
+                        <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="email" name="email" value={userDetails.email} onChange={handleChange} maxLength={30} readOnly={connectedFrom42API}/>
                     </label>
                     <label className='accountLabel'>
                     {translations.nickname}:

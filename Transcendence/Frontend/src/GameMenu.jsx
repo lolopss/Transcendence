@@ -206,7 +206,7 @@ function GameMenu() {
                 <h1 onClick={()=>navigate('/menu')} ref={pongTitle}>{translations.title}</h1>
                 <div className="gameMenuButton">
                     <GameButton name={translations.vs} onClick={() => navigate('/game')} refbtn={buttonStartVs}/>
-                    <GameButton name={translations.multiplayer} onClick={() => navigate('/multiplayer')} refbtn={buttonStartMultiplayer}/>
+                    <GameButton name={"2vs2"} onClick={() => navigate('/multiplayer')} refbtn={buttonStartMultiplayer}/>
                     <GameButton name={translations.vsAI} onClick={() => navigate('/ai-game')} refbtn={buttonStartAi}/>
                     <GameButton name={translations.tournament} onClick={() => navigate('/tournament')} refbtn={buttonStartTournament}/>
                 </div>

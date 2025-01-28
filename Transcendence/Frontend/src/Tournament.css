@@ -20,16 +20,6 @@
     align-items: center;
 }
 
-/* .tournamentContainer::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: calc(50% - 1px);
-    width: 1px;
-    height: 100%;
-    background: white;
-} */
-
 .tournamentMenuReturn {
     position: absolute;
     top: 3vh;
@@ -83,10 +73,6 @@
     border-bottom: 3px solid rgb(145, 88, 23);
 }
 
-/* .playerInput:nth-child(even) {
-    left: calc(30vw - 200px);
-    top: calc((var(--index) * 50px) + 25vh);
-} */
 
 .playerInput:nth-child(2) {
     left: calc(30vw - 200px);
@@ -114,10 +100,6 @@
     color: var(--back-color);
 }
 
-/* .playerInput:nth-child(odd) {
-    left: 70vw;
-    top: calc(((var(--index) - 1) * 50px) + 25vh);
-} */
 
 .playerInput:nth-child(6) {
     left: 70vw;

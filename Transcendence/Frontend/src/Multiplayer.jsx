@@ -68,7 +68,6 @@ function Multiplayer() {
 
     useEffect(() => {
         if (isStarted) {
-            // console.log('Starting game...');
             canvasContainer.current.classList.add('is-animated');
             canvasContainer.current.addEventListener('animationend', () => {
                 startGame();
@@ -76,8 +75,6 @@ function Multiplayer() {
             });
         }
     }, [isStarted]);
-
-    // console.log(`is ready -> ${isReady}`);
 
     useEffect(() => {
         if (!isReady)
@@ -324,9 +321,8 @@ function Multiplayer() {
 			ballToPaddleCheck(4);
 			shakeScreen();
 		};
-
+        // Game ended
         const stopGame = (winningPlayer) => {
-            // console.log('Game Finished');
             setIsReady(false); // Stop the game loop
             setIsGameOver(true);
             setWinner(winningPlayer);

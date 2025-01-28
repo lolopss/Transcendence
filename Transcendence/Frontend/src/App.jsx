@@ -66,7 +66,7 @@ const App = () => {
 
   return (
     <>
-      {showFriendList && <FriendList />}
+      {showFriendList && location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/register42' && <FriendList />}
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

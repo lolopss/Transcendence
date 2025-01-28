@@ -111,7 +111,6 @@ function Game({
     /* ---------- Canvas Animation ---------- */
     useEffect(() => {
         if (isStarted) {
-            // console.log(`Animation running -> ${isStarted}`);
             canvasContainer.current.classList.add('is-animated');
             canvasContainer.current.addEventListener('animationend', () => {
                 startGame();
@@ -120,7 +119,6 @@ function Game({
 
             // Cleanup function
             return () => {
-                // console.log("Cleaning up ...");
                 if (canvasContainer.current) {
                     canvasContainer.current.removeEventListener('animationend', () => {
                         startGame();
@@ -156,14 +154,12 @@ function Game({
                 throw new Error('Failed to save match');
             }
             const data = await response.json();
-            // console.log(data.message);
         } catch (error) {
             console.error('Error saving match:', error);
         }
     };
 
     const stopGame = (winningPlayer) => {
-        // console.log('Game Over');
         if (aiStarted){
             clearInterval(aiInterval);
             clearInterval(currentStopInterval);
@@ -326,7 +322,7 @@ function Game({
         const draw = () => {
             context.clearRect(0, 0, canvas.width, canvas.height);
 
-            // console log the player1 and player2 invsiibility status
+            // player1 and player2 invsiibility status
             drawRect(player1.paddle.x, player1.paddle.y, player1.paddle.width, player1.paddle.height, player1.paddle.color);
             drawRect(player2.paddle.x, player2.paddle.y, player2.paddle.width, player2.paddle.height, player2.paddle.color);
 
@@ -377,13 +373,11 @@ function Game({
             // Check if the ball passes the left or right limit hitbox
             if (ball.x < limitHitbox) {
                 player2.point++;
-                // updateGoalsInDatabase(0, 1, paddleHitCount, 0); // Increment goals taken for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
             } else if (ball.x > canvas.width - limitHitbox) {
                 player1.point++;
-                // updateGoalsInDatabase(1, 0, paddleHitCount, paddleHitCount); // Increment goals for player 1
                 paddleHitCount = 0;
                 limitHitbox = 25;
                 resetBall();
@@ -464,8 +458,6 @@ function Game({
                     lastAiMoveCall = now;
                 } else {
                     clearInterval(aiInterval);
-                    // wait for 1000 - timeSinceLastCall before calling aiMove
-                    // console.log(`Waiting for ${1000 - timeSinceLastCall} milliseconds`);
                     setTimeout(() => {
                         aiMove();
                         lastAiMoveCall = now;
@@ -566,7 +558,6 @@ function Game({
                 }
             else {
                 const timeSinceLastCall = (now - lastAiMoveCall) / 1000; // Convert to seconds
-                // console.log(`Time since last predict aiMove call: ${timeSinceLastCall.toFixed(2)} seconds`);
                 // Ball is moving towards the right, predict the ball's position
                 lastAiMoveCall = now; // Update the last call time
                 const targetY = predictBallPosition(); // Get the predicted position of the ball
@@ -662,7 +653,6 @@ function Game({
         if (isReady) gameLoop();
 
         return () => {
-            // Cleanup logic here...
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('keyup', handleKeyUp);
             if (animationFrameId.current) {

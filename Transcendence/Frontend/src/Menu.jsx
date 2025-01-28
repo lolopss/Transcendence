@@ -107,7 +107,6 @@ function Menu() {
             });
             if (response.ok) {
                 const userDetails = await response.json();
-                // console.log('User Details:', userDetails);
             } else {
                 console.error('Failed to fetch user details');
             }

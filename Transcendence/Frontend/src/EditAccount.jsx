@@ -196,7 +196,7 @@ const EditAccount = () => {
             </header>
             <div className="accountWrapper">
                 <form className='accountForm' onSubmit={handleSubmit}>
-                    <p className="warning-message">{translations.changesNotAccounted}</p>
+                    {connectedFrom42API && <p className="warning-message">{translations.changesNotAccounted}</p>}
                     <label className='accountLabel'>
                         {translations.username}:
                         <input className={`accountInput ${connectedFrom42API ? 'connected' : ''}`} type="text" name="username" value={userDetails.username} onChange={handleChange} maxLength={15} readOnly={connectedFrom42API}/>

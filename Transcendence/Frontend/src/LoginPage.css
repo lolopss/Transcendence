@@ -113,6 +113,10 @@
     transition: transform .5s ease, height .2s ease;
 }
 
+.wrapper:has(.form-box.register.rgpd) {
+    overflow: scroll;
+}
+
 .wrapper.active-popup {
     transform: scale(1);
 }
@@ -141,9 +145,23 @@
     transform: translateX(400px);
 }
 
+.form-box.register.rgpd {
+    position: absolute;
+    top: 0;
+    left: 0;
+    scrollbar-width: thin;
+    color: white;
+}
+
 .wrapper.active .form-box.register {
     transition: transform .18s ease;
     transform: translateX(0);
+}
+
+.conditionexit {
+    top: 5px;
+    left: 5px;
+    position: fixed;
 }
 
 .wrapper .icon-close {
@@ -362,4 +380,24 @@
     width: max-content;
     padding: 20px 35px;
     top: 100px;
+}
+
+.rgpd {
+    width: fit-content;
+    font-weight: 600;
+    color: white;
+    border-bottom: solid 2px white;
+}
+.rgpd:hover {
+    color: orange;
+    border-bottom: solid 2px orange;
+}
+.rgpdInput {
+    color: white;
+    font-size: 13px;
+    margin: 15px;
+}
+
+.rgpdInput input {
+    margin-left: 5px;
 }

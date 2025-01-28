@@ -19,7 +19,7 @@ from .models import Profile, GameServerModel, WaitingPlayerModel
 from django.db.models import Q
 from .serializers import UserRegisterSerializer, UserLoginSerializer
 import os
-from .utils import custom_validation, valid_email, valid_password, create_user_token, ManageGameQueue, check_inactive_users, update_user_profile
+from .utils import custom_validation, valid_email, create_user_token, ManageGameQueue, check_inactive_users, update_user_profile
 import json
 import urllib.parse
 import urllib.request

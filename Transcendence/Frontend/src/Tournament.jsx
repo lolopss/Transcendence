@@ -64,12 +64,21 @@ const Tournament = () => {
     };
 
     const startTournament = () => {
-        if (players.some(player => player.nickname === '')) {
-            alert('All player names must be entered to start the tournament.');
-            return;
-        }
-        setIsTournamentStarted(true);
-    };
+    if (players.some(player => player.nickname === '')) {
+        alert('All player names must be entered to start the tournament.');
+        return;
+    }
+
+    const nicknames = players.map(player => player.nickname);
+    const uniqueNicknames = new Set(nicknames);
+
+    if (uniqueNicknames.size !== nicknames.length) {
+        alert('Each player must have a unique nickname.');
+        return;
+    }
+
+    setIsTournamentStarted(true);
+};
 
     const handleGameEnd = (winner, player1, player2) => {
         const newWinners = [...winners];

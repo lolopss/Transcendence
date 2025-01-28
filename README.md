@@ -6,7 +6,6 @@ Create a Pong website to play with friends or vs ai
 
 ![Transcendence_gameplay](https://github.com/user-attachments/assets/892a11a8-116d-440a-91c9-6a7b09b2d7c3)
 
-
 ### Modules
 
 To complete this project with have to make some modules (at least 7 majors modules where 2 minors modules are equal to 1 major module)
@@ -62,6 +61,13 @@ Firstly when you have all the requirements needed, you will have to run the proj
 This will use the ```docker-compose -build``` and ```docker-compose -up``` commands to build the docker images and run them.
 When this is complete you can access our ***PONG*** website with this url : https://localhost:8000
 
+To check the containers status and the current images on your device, you can use the command ```make check```,
+
+![Screenshot from 2025-01-28 10-31-24](https://github.com/user-attachments/assets/0d10778c-940f-4a1e-89d6-362c628b1abd)
+
+and to access the **Data Base** you can use the ```make db-users``` or ```make db-profile``` commands.
+
+
 ### The Game
 
 ![Screenshot from 2025-01-24 15-18-40](https://github.com/user-attachments/assets/c1c74702-6ea5-4949-86d4-b0c6cddbd0e9)
@@ -69,7 +75,7 @@ When this is complete you can access our ***PONG*** website with this url : http
 You will arrived on a **Login / Register** menu,
 - if you have a 42 account you can use the ```Login with 42```
 - else you have to create an account by using register and then login
-- 
+
 ![Screenshot from 2025-01-17 16-09-50](https://github.com/user-attachments/assets/a2f3bad9-3b11-45c5-936d-bfef3ce03110)
 ![Screenshot from 2025-01-24 15-17-54](https://github.com/user-attachments/assets/c331e6c6-9ca3-4bf7-ad3f-94df1d0610d4)
 

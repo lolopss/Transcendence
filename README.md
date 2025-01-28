@@ -100,9 +100,6 @@ ___
 You can access your profile where you will see your **Stats**, **Edit your account** in the edit account tab and apply **2FA** in a Security tab
 where you can also **Anonymize** or/and **Delete** your account.
 
-![Screenshot from 2025-01-24 15-19-42](https://github.com/user-attachments/assets/13ebff4f-274c-483e-85e3-70f7e63a8826)
-
-
 ⚠️ **If you enable 2FA be sure to scan the QR code otherwise you wouldn't be able to connect to your account anymore**
 
 ## Specifications

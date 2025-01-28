@@ -170,7 +170,6 @@ const Security = () => {
                 </nav>
             </header>
             <div className="security-container">
-                {/* <GameButton name={`${translations.toggle_2fa} ${is2FAEnabled ? `${translations.enabled}` : `${translations.disabled}`}`} onClick={toggle2FA} /> */}
                 <button className="securityButton" onClick={toggle2FA}>{`${translations.toggle_2fa} ${is2FAEnabled ? `${translations.enabled}` : `${translations.disabled}`}`}</button>
                 {is2FAEnabled && (
                     <div>
@@ -180,12 +179,9 @@ const Security = () => {
                 )}
                 <div>
                     <h3 className='securityTitle'>{translations.account}</h3>
-                    {/* <GameButton name={translations.editaccount} onClick={() => navigate('/edit-account')} /> */}
                     <button className="securityButton edit" onClick={() => navigate('/edit-account')}>{translations.editaccount}</button>
                     <div className="data-privacy">
-                        {/* <GameButton name={translations.anonymizeaccount} onClick={anonymizeAccount} /> */}
                         <button className="securityButton" onClick={anonymizeAccount}>{translations.anonymizeaccount}</button>
-                        {/* <GameButton name={translations.deleteaccount} onClick={deleteAccount} /> */}
                         <button className="securityButton" onClick={deleteAccount}>{translations.deleteaccount}</button>
                         <h3 className='securityTitle'>{translations.dataprivacyrights}</h3>
                         <p>{translations.privacyrightstext}</p>

@@ -36,7 +36,7 @@ const handleRegister = async () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken, // Ensure this is set
+                'X-CSRFToken': csrftoken,
             },
             body: JSON.stringify({
                 username,
@@ -50,10 +50,8 @@ const handleRegister = async () => {
         const data = await response.json();
 
         if (response.ok) {
-            // console.log('Registration successful!');
-            navigate('/login'); // Ensure `navigate` is defined or imported if using react-router
+            navigate('/login');
         } else {
-            // console.error(data);
             setError(data.error || data.message || 'An error occurred during registration.');
         }
     } catch (error) {
@@ -74,7 +72,6 @@ const handleRegister = async () => {
   const [isPopupActive, setIsPopupActive] = useState(true);
 
   const handleLoginClick = ()=> {
-      // setIsWrapperActive(false);
       navigate('/login');
   }
 

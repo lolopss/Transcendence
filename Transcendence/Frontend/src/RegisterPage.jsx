@@ -235,8 +235,8 @@ const handleRegister = async () => {
                         </div>
                         <div className="rgpd" onClick={() => setIsRGPD(true)}>Condition of utilisation</div>
                         <div className="rgpdInput">
-                            Accept the Terms and Conditions of utilisation
                             <input type='checkbox' id='terms' required />
+                            Accept the Terms and Conditions of utilisation
                         </div>
                         <button type="submit" className="btn" onClick={handleRegister}>Register<i></i></button>
                         <div className="login-register">

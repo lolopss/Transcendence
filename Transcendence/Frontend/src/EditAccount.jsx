@@ -102,15 +102,17 @@ const EditAccount = () => {
         e.preventDefault();
     
         // Check if any required fields are null
-        if (!userDetails.username || !userDetails.email || !userDetails.nickname) {
+        if ((!userDetails.username || !userDetails.email || !userDetails.nickname) && !connectedFrom42API) {
             setError('All fields are required.');
             return;
         }
     
         const formData = new FormData();
-        formData.append('username', userDetails.username);
-        formData.append('email', userDetails.email);
-        formData.append('nickname', userDetails.nickname);
+        if (!connectedFrom42API) {
+            formData.append('username', userDetails.username);
+            formData.append('email', userDetails.email);
+            formData.append('nickname', userDetails.nickname);
+        }
         if (isFileUploaded && userDetails.profilePicture) {
             formData.append('profilePicture', userDetails.profilePicture);
         } else {

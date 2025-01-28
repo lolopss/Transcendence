@@ -21,11 +21,19 @@ check:
 	@docker images
 	@echo "\033[031m\n________________________\n\033[0m"
 
+include Transcendence/.env
+
 db-users:
 	@echo "\033[031mEntering db\033[0m"
-	@docker exec -it db psql -U superUser -d db -c "SELECT * FROM auth_user;"
+	@docker exec -it "${POSTGRES_DB}" psql -U "${POSTGRES_USER}" -d db -c "SELECT * FROM auth_user;"
 	@echo "\033[031m\n________________________\n\033[0m"
 	@echo "\033[031mShow auth_user tables\n\033[0m"
+
+db-profile:
+	@echo "\033[031mEntering db\033[0m"
+	@docker exec -it "${POSTGRES_DB}" psql -U "${POSTGRES_USER}" -d db -c "SELECT * FROM pong_profile;"
+	@echo "\033[031m\n________________________\n\033[0m"
+	@echo "\033[031mShow pong_profile tables\n\033[0m"
 
 
 re: stop clean all

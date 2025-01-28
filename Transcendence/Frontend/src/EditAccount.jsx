@@ -69,10 +69,17 @@ const EditAccount = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setUserDetails((prevDetails) => ({
-            ...prevDetails,
-            [name]: value,
-        }));
+        const regex = /^[a-zA-Z0-9_@.]*$/; // Alphanumeric characters and underscores
+    
+        if (regex.test(value)) {
+            setUserDetails((prevDetails) => ({
+                ...prevDetails,
+                [name]: value,
+            }));
+            setError(null); // Clear any previous error
+        } else {
+            setError('Nicknames and usernames can only contain letters, numbers, and underscores.');
+        }
     };
 
     const handleImageChange = (e) => {

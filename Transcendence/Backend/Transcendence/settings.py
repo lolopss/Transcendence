@@ -141,7 +141,7 @@ DATABASES = {
 CSRF_TRUSTED_ORIGINS = [
     'https://localhost:8000',
     'http://localhost:8000',
-    'https://10.12.7.5:8000',  # For non-HTTPS connections
+    'https://10.12.5.4:8000',  # For non-HTTPS connections
 ]
 
 
@@ -150,8 +150,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:8000',
-    'https://10.12.7.5:8000',
-    'https://10.12.7.5:8000',
+    'https://10.12.5.4:8000',
+    'https://10.12.5.4:8000',
     'https://*'
 ]
 

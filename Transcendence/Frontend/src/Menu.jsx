@@ -327,7 +327,6 @@ function Menu() {
                 <div className="menuButton">
                     <GameButton name={translations.start_btn} onClick={() => navigate('/game-menu')} refbtn={buttonStart}/>
                     <GameButton name={translations.options_btn} onClick={() => navigate('/edit-account')} refbtn={buttonOptions}/>
-                    {/* <GameButton name={translations.profile} onClick={() => navigate('/profile')} refbtn={buttonProfile}/> */}
                     <GameButton name={translations.logout_btn} onClick={handleLogout} refbtn={buttonLogout}/>
                 </div>
             </div>

@@ -115,3 +115,5 @@ We used :
 - and some JSON conf file
 
 [![docker](https://skillicons.dev/icons?i=docker,django,html,css,js,react,vite)](https://skillicons.dev)
+
+Final Score : 125 ⭐
